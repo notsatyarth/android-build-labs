@@ -14,7 +14,7 @@ Results from GitHub-hosted runners are x86 Linux numbers. Do not compare their t
 | `samples/missing-dimension/` | What `missingDimensionStrategy` and `matchingFallbacks` actually pick when a library has a flavor the app lacks | yes: `missing-dimension` (`checkpoints.py` replays checkpoints 1 to 5) |
 | `samples/kmp-single-variant/` | The KMP Android library plugin has one variant: what happens to build types and flavors | yes: `kmp-single-variant` (`checkpoints.py` replays c1 to c3c) |
 | `samples/nia-variants/` | How many variants and tasks nowinandroid configures, and what `beforeVariants` filtering saves (init script) | yes: `nia-variants` (`run.sh`, `compare.py`) |
-| `labs/compact-headers/` | Does `-XX:+UseCompactObjectHeaders` (JDK 25, JEP 519) reduce Gradle and Kotlin daemon memory? | planned |
+| `labs/compact-headers/` | Does `-XX:+UseCompactObjectHeaders` (JDK 25, JEP 519) reduce Gradle and Kotlin daemon memory? | yes: `compact-headers` (ABBA series, `compare.py`) |
 | `labs/daemons-ide-cli/` | Do an IDE-style build (Tooling API) and a CLI build share a daemon and a configuration cache entry? What happens to the Kotlin daemon under `--no-daemon`, and with two worktrees building at once? | planned |
 | `labs/old-vs-new/` | Old versus new nowinandroid commits with gradle-profiler: configuration and build time, daemon memory | no (needs gradle-profiler built from source) |
 | `tools/version-matrix/` | Run one project against a matrix of Gradle, AGP, Kotlin and KSP versions and report what broke and who owns it | example workflows in `ci/` |

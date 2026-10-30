@@ -1,0 +1,65 @@
+# Compact object headers (JEP 519, -XX:+UseCompactObjectHeaders) on the Gradle and Kotlin daemons,
+# nowinandroid :app:assembleDemoDebug, clean builds, fresh daemons. One warm-up build fills the
+# dependency cache (discarded), then the original ABBA series (B1 C1 C2 B2 B3 C3 C4 B4) on one runner.
+# Numbers are x86 Linux runner numbers: compare conclusions with the macOS series, not values.
+name: compact-headers
+on:
+  workflow_dispatch:
+    inputs:
+      java:
+        description: "Temurin JDK for the daemons (25 or later)"
+        required: false
+        default: "25"
+      nia_ref:
+        description: "nowinandroid commit (full SHA)"
+        required: false
+        default: "2982e63cb691ad49cd009aab43dc206fee6699c2"
+permissions:
+  contents: read
+jobs:
+  series:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.java }}
+      - name: Runner info
+        run: |
+          bash .github/scripts/runner_info.sh
+          java -XX:+PrintFlagsFinal -version 2>/dev/null | grep UseCompactObjectHeaders | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Clone nowinandroid
+        env:
+          REF: ${{ inputs.nia_ref }}
+        run: bash .github/scripts/clone_nia.sh "$RUNNER_TEMP/nia" "$REF"
+      - name: Warm-up build (fills caches, discarded)
+        working-directory: labs/compact-headers
+        env:
+          NIA: ${{ runner.temp }}/nia
+        run: ./run.sh W0 base; tail -3 raw/W0.log; mkdir -p raw/discarded; mv raw/W0.* raw/discarded/
+      - name: ABBA series
+        working-directory: labs/compact-headers
+        env:
+          NIA: ${{ runner.temp }}/nia
+        run: ./series.sh; cat raw/progress.txt
+      - name: Summary
+        if: always()
+        working-directory: labs/compact-headers
+        run: |
+          {
+            echo "### Compact object headers, nowinandroid (CI: x86 Linux runner; footprint = VmRSS+VmSwap)"
+            echo
+            python3 -I analyze.py raw
+            echo
+            echo "#### Conclusions compared with the macOS series"
+            echo
+            python3 -I compare.py raw
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: compact-headers-raw
+          path: labs/compact-headers/raw/
+          retention-days: 30
