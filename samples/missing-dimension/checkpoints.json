@@ -1,0 +1,8 @@
+[
+ {"id": "1", "change": "Blog setup, resValue per flavor, resValues not enabled", "mac": "fails at configuration: 'Product Flavor emulator contains custom resource values, but the feature is disabled.'"},
+ {"id": "1b", "change": "resValues enabled, no strategy in the intermediates", "mac": "fails: cannot choose between emulatorDebugApiElements, realdeviceDebugApiElements of ':leaf' (required by ':intermediate1')"},
+ {"id": "2", "change": "missingDimensionStrategy(\"target\", \"emulator\") in both intermediates", "mac": "both debug builds succeed; intermediate1 compiles against leaf emulatorDebugApiElements; app realdeviceDebug packages leaf realdeviceDebugRuntimeElements; APK strings right per flavor"},
+ {"id": "3", "change": "FakeSensor only in leaf/src/emulator, used by intermediate1.Reader", "mac": "both debug builds succeed; realdevice APK has Reader, no FakeSensor; emulator APK has both"},
+ {"id": "4", "change": "app calls Reader; release minified with R8", "mac": "assembleRealdeviceRelease fails: 'ERROR: R8: Missing class lab.leaf.FakeSensor (referenced from: java.lang.String lab.intermediate1.Reader.read())'"},
+ {"id": "5", "change": "blog fix: intermediates declare the target flavors, no strategy", "mac": ":intermediate1:compileRealdeviceDebugJavaWithJavac fails: 'error: cannot find symbol ... class FakeSensor'"}
+]
