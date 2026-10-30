@@ -10,9 +10,9 @@
   "mac_generated": 1,
   "mac_ksp_task": "ran",
   "mac_rc": 0,
-  "proc_kotlin": "none",
+  "proc_kotlin": "2.1.21",
   "ksp_api": "2.1.21-2.0.2",
-  "note": "old run.sh without processor section"
+  "note": "old run.sh without processor section; CI: processor module needs a KGP version in A1 (absent from the original run, which had no processor)"
  },
  {
   "label": "agp8101-A2",
@@ -130,9 +130,9 @@
   "mac_generated": 1,
   "mac_ksp_task": "ran",
   "mac_rc": 0,
-  "proc_kotlin": "none",
+  "proc_kotlin": "2.2.21",
   "ksp_api": "2.2.21-2.0.5",
-  "note": "old run.sh without processor section"
+  "note": "old run.sh without processor section; CI: processor module needs a KGP version in A1 (absent from the original run, which had no processor)"
  },
  {
   "label": "agp8101-k222-B",
@@ -235,9 +235,9 @@
   "mac_generated": 1,
   "mac_ksp_task": "ran",
   "mac_rc": 0,
-  "proc_kotlin": "none",
+  "proc_kotlin": "2.1.21",
   "ksp_api": "2.1.21-2.0.2",
-  "note": "old run.sh without processor section"
+  "note": "old run.sh without processor section; CI: processor module needs a KGP version in A1 (absent from the original run, which had no processor)"
  },
  {
   "label": "agp8132-A2",
@@ -340,9 +340,9 @@
   "mac_generated": 1,
   "mac_ksp_task": "ran",
   "mac_rc": 0,
-  "proc_kotlin": "none",
+  "proc_kotlin": "2.2.21",
   "ksp_api": "2.2.21-2.0.5",
-  "note": "old run.sh without processor section"
+  "note": "old run.sh without processor section; CI: processor module needs a KGP version in A1 (absent from the original run, which had no processor)"
  },
  {
   "label": "agp8132-k222-B",
@@ -370,9 +370,9 @@
   "mac_generated": 1,
   "mac_ksp_task": "ran",
   "mac_rc": 0,
-  "proc_kotlin": "none",
+  "proc_kotlin": "2.3.21",
   "ksp_api": "2.3.12",
-  "note": "old run.sh without processor section"
+  "note": "old run.sh without processor section; CI: processor module needs a KGP version in A1 (absent from the original run, which had no processor)"
  },
  {
   "label": "agp8132-ksp23-B",
@@ -415,9 +415,9 @@
   "mac_generated": 1,
   "mac_ksp_task": "ran",
   "mac_rc": 0,
-  "proc_kotlin": "none",
+  "proc_kotlin": "2.1.21",
   "ksp_api": "2.1.21-2.0.2",
-  "note": "old run.sh without processor section"
+  "note": "old run.sh without processor section; CI: processor module needs a KGP version in A1 (absent from the original run, which had no processor)"
  },
  {
   "label": "agp893-A2",
