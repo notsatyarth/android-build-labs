@@ -1,0 +1,47 @@
+# Variant and task counts on nowinandroid with and without beforeVariants filtering (init script,
+# nowinandroid unmodified), compared with the original macOS run (samples/nia-variants/expected.json).
+name: nia-variants
+on:
+  workflow_dispatch:
+    inputs:
+      nia_ref:
+        description: "nowinandroid commit (full SHA)"
+        required: false
+        default: "2982e63cb691ad49cd009aab43dc206fee6699c2"
+      timing_n:
+        description: "help -q timings per arm"
+        required: false
+        default: "6"
+permissions:
+  contents: read
+jobs:
+  counts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Runner info
+        run: bash .github/scripts/runner_info.sh
+      - name: Clone nowinandroid
+        env:
+          REF: ${{ inputs.nia_ref }}
+        run: bash .github/scripts/clone_nia.sh "$RUNNER_TEMP/nia" "$REF"
+      - name: Count variants and tasks
+        env:
+          N: ${{ inputs.timing_n }}
+        run: bash samples/nia-variants/run.sh "$RUNNER_TEMP/nia" out "$N"
+      - name: Compare with macOS run
+        if: always()
+        run: |
+          echo "### nowinandroid variants (CI: x86 Linux runner)" >> "$GITHUB_STEP_SUMMARY"
+          python3 samples/nia-variants/compare.py out | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: nia-variants-logs
+          path: out/
+          retention-days: 30

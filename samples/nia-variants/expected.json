@@ -1,0 +1,10 @@
+{
+ "_comment": "Original macOS run (Apple M1, nowinandroid 2982e63, Gradle 9.7.1, AGP 9.3.2, JDK 17.0.13), values recounted from the raw logs with the same rules as compare.py.",
+ "variants_all": 126, "variants_all_by_plugin": {"com.android.application": 10, "com.android.library": 112, "com.android.test": 4},
+ "variants_keep": 30,
+ "projects_counted": 47, "tasks_all": 13135, "tasks_keep": 5708, "app_tasks_all": 1126, "app_tasks_keep": 271,
+ "dryrun_all": 665, "dryrun_keep": 665,
+ "tasks_all_ok": true,
+ "tasks_keep_error": "Dependency Guard could not resolve the configurations named [prodReleaseRuntimeClasspath] for :app",
+ "config_time_s": {"all": [1.2, 1.38, 1.46, 1.66, 1.47, 1.19], "keep": [1.16, 1.08, 1.06, 1.11, 1.75, 1.08]}
+}
