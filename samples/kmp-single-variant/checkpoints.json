@@ -1,0 +1,7 @@
+[
+ {"id": "c1", "change": "flavored app (3 build types x 2 dimensions) on a com.android.kotlin.multiplatform.library :shared; ./gradlew assemble", "mac": "BUILD SUCCESSFUL, 12 APKs, no fallbacks needed; paidAmazonStagingRuntimeClasspath selects :shared androidRuntimeElements with no build type or flavor attributes"},
+ {"id": "c2", "change": "buildTypes {} inside the KMP library's android {} block", "mac": "script compilation error: Unresolved reference 'buildTypes'."},
+ {"id": "c3", "change": "legacy KMP: androidTarget() + com.android.library on AGP 9.3.2", "mac": "AGP stops: 'The com.android.library (or com.android.application) plugin is not compatible with the org.jetbrains.kotlin.multiplatform plugin since AGP 9.0.'"},
+ {"id": "c3b", "change": "c3 with -Pandroid.builtInKotlin=false", "mac": "KGP fails: androidTarget() not compatible with AGP's 9.0 new DSL, plus ClassCastException (LibraryExtensionImpl to BaseExtension)"},
+ {"id": "c3c", "change": "c3 with builtInKotlin=false and newDsl=false", "mac": "configuration succeeds with warnings: 'android.newDsl=false' is deprecated; androidTarget() deprecation"}
+]

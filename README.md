@@ -12,7 +12,7 @@ Results from GitHub-hosted runners are x86 Linux numbers. Do not compare their t
 |---|---|---|
 | `samples/ksp-root-classpath/` | Does KSP still run when AGP, or only AGP's API jar, is on a parent classloader (root `buildscript`, `buildSrc`)? | yes: `ksp-root-classpath` |
 | `samples/missing-dimension/` | What `missingDimensionStrategy` and `matchingFallbacks` actually pick when a library has a flavor the app lacks | yes: `missing-dimension` (`checkpoints.py` replays checkpoints 1 to 5) |
-| `samples/kmp-single-variant/` | The KMP Android library plugin has one variant: what happens to build types and flavors | planned |
+| `samples/kmp-single-variant/` | The KMP Android library plugin has one variant: what happens to build types and flavors | yes: `kmp-single-variant` (`checkpoints.py` replays c1 to c3c) |
 | `samples/nia-variants/` | How many variants and tasks nowinandroid configures, and what `beforeVariants` filtering saves (init script) | planned |
 | `labs/compact-headers/` | Does `-XX:+UseCompactObjectHeaders` (JDK 25, JEP 519) reduce Gradle and Kotlin daemon memory? | planned |
 | `labs/daemons-ide-cli/` | Do an IDE-style build (Tooling API) and a CLI build share a daemon and a configuration cache entry? What happens to the Kotlin daemon under `--no-daemon`, and with two worktrees building at once? | planned |
