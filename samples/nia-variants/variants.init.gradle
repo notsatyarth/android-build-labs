@@ -1,0 +1,20 @@
+// Lab: list (and optionally restrict) Android variants per project. IP-safe hook.
+gradle.lifecycle.beforeProject { p ->
+  ['com.android.application','com.android.library','com.android.test','com.android.dynamic-feature'].each { id ->
+    p.plugins.withId(id) {
+      def ac = p.extensions.getByName('androidComponents')
+      def keep = System.getProperty('lab.keep')
+      if (keep) {
+        def allowed = keep.split(',') as List
+        ac.beforeVariants(ac.selector().all()) { vb -> if (!(vb.name in allowed)) vb.enable = false }
+      }
+      if (System.getProperty('lab.print')) {
+        ac.onVariants(ac.selector().all()) { v -> println "VARIANT ${p.path} ${id} ${v.name}" }
+      }
+    }
+  }
+}
+// Count after AGP has created variant tasks (needs isolated projects off).
+gradle.projectsEvaluated { g ->
+  if (System.getProperty('lab.count')) g.rootProject.allprojects { p -> println "TASKCOUNT ${p.path} ${p.tasks.names.size()}" }
+}

@@ -1,0 +1,21 @@
+{
+  "_comment": "Example the skill writes. One change per cell. JDK path is an example; the skill resolves it on the user's machine.",
+  "project": "~/Code/nowinandroid-lab/nowinandroid",
+  "mode": "auto",
+  "tasks": [["help"], [":app:assembleDemoDebug"]],
+  "gradle_args": ["--console=plain", "--warning-mode=all", "--stacktrace"],
+  "guard_tasks": ["buildEnvironment", ":app:buildEnvironment"],
+  "timeout_sec": 3600,
+  "gradle_user_home": "~/.vmatrix-gradle",
+  "daemon_cleanup": "stop",
+  "cells": [
+    {"name": "baseline", "baseline": true},
+    {"name": "gradle-next", "axes": {"gradle": "@next"}},
+    {"name": "agp-next", "axes": {"agp": "@next"}},
+    {"name": "kotlin-next", "axes": {"kotlin": "@next"}},
+    {"name": "flag-simulate-agp10", "flags": {"android.simulateAgpVersionBehavior": "10.0.0"},
+     "java_home": "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home"},
+    {"name": "flag-kotlin-tryNext", "flags": {"kotlin.experimental.tryNext": "true"}},
+    {"name": "flag-warning-fail", "gradle_args": ["--warning-mode=fail"]}
+  ]
+}

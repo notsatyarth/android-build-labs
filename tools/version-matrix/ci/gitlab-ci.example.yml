@@ -1,0 +1,25 @@
+# EXAMPLE ONLY (documentation). Not installed anywhere, never run by the agent that wrote it.
+# Assumes the harness is in tools/version-matrix and the app is checked out at ./app (submodule or clone step).
+stages: [matrix]
+
+.vmatrix:
+  stage: matrix
+  image: eclipse-temurin:21-jdk      # needs python3: apt-get install -y python3 (stdlib only, 3.9+)
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq python3 git
+  script:
+    - python3 tools/version-matrix/vmatrix.py run --config tools/version-matrix/matrix.example.json
+        --project app --cells "$CELL" --out out --fail-on invalid
+  artifacts:
+    when: always
+    paths: [out/report.md, out/report.json, out/*/*.log]
+    expire_in: 30 days
+
+cell:
+  extends: .vmatrix
+  parallel:
+    matrix:
+      - CELL: [baseline, gradle-next, agp-next, kotlin-next]
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "web"

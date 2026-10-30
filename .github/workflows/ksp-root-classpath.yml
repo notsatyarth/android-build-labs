@@ -1,0 +1,72 @@
+# KSP silently skipped when AGP's API jar sits in a parent classloader (AGP 8.10+).
+# Re-runs every cell of samples/ksp-root-classpath/cells.json and compares with the original macOS run.
+name: ksp-root-classpath
+on:
+  workflow_dispatch:
+    inputs:
+      filter:
+        description: "Regex on cell label (empty = all cells)"
+        required: false
+        default: ""
+permissions:
+  contents: read
+jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    outputs:
+      cells: ${{ steps.cells.outputs.cells }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - id: cells
+        env:
+          FILTER: ${{ inputs.filter }}
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os, re
+          cells = json.load(open("samples/ksp-root-classpath/cells.json"))
+          f = os.environ.get("FILTER") or ""
+          cells = [c for c in cells if not f or re.search(f, c["label"])]
+          print("cells=" + json.dumps(cells))
+          PY
+  cell:
+    needs: plan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        cell: ${{ fromJSON(needs.plan.outputs.cells) }}
+    name: ${{ matrix.cell.label }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Run cell
+        working-directory: samples/ksp-root-classpath
+        env:
+          C: ${{ toJSON(matrix.cell) }}
+          GRADLE_OPTS: -Dorg.gradle.daemon=false
+        run: |
+          get() { python3 -c 'import json,os,sys; print(json.loads(os.environ["C"])[sys.argv[1]])' "$1"; }
+          export PROC_KOTLIN=$(get proc_kotlin) KSP_API=$(get ksp_api)
+          LABEL=$(get label)
+          # extra is empty or a single -P flag
+          EXTRA=$(get extra)
+          bash ./run.sh "$LABEL" "$(get agp)" "$(get kotlin)" "$(get ksp)" "$(get gradle)" "$(get layout)" $EXTRA | tee result.txt
+      - name: Compare with macOS run
+        if: always()
+        working-directory: samples/ksp-root-classpath
+        env:
+          C: ${{ toJSON(matrix.cell) }}
+        run: python3 ../../.github/scripts/ksp_compare.py result.txt logs >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: ${{ matrix.cell.label }}
+          path: |
+            samples/ksp-root-classpath/logs/
+            samples/ksp-root-classpath/result.txt
+          retention-days: 30

@@ -1,0 +1,10 @@
+.gradle/
+.kotlin/
+build/
+*/build/
+local.properties
+__pycache__/
+raw/
+runs/
+logs/
+*.log
