@@ -44,14 +44,19 @@ if bsum is None:
 else:
     info = (log("Binfo.B3.log") or "") + (log("Binfo.B4.log") or "")
     check("B3/B4 --info: 'single-use Daemon' message", "present", bool(re.search(r"single-use Daemon", info)) if info else None)
-    kd = re.findall(r"^(\d\d:\d\d:\d\d) pid=\d+ ppid=\d+ home=\w+ .* kind=kotlin-daemon", log("B.samples") or "", re.M)
-    ends = re.findall(r"^B1 rc=\d+ end (\d\d:\d\d:\d\d)", bsum, re.M)
-    def sec(h): a, b, c = map(int, h.split(":")); return a * 3600 + b * 60 + c
-    if kd and ends:
-        lag = sec(max(kd)) - sec(ends[0])
-        check(f"B1 Kotlin daemon last seen vs build end (lag {lag:+d} s)", "within ~2 s after end", lag <= 3)
+    def sec(h): x, y, z = map(int, h.split(":")); return x * 3600 + y * 60 + z
+    starts = {k: v for k, v in re.findall(r"^=== (B\d) start (\d\d:\d\d:\d\d)", bsum, re.M)}
+    ends = {k: v for k, v in re.findall(r"^(B\d) rc=\d+ end (\d\d:\d\d:\d\d)", bsum, re.M)}
+    samples = re.findall(r"^(\d\d:\d\d:\d\d) pid=\d+ ppid=\d+ home=\w+ .* kind=kotlin-daemon", log("B.samples") or "", re.M)
+    if "B1" in starts and "B1" in ends and "B2" in starts:
+        window = [t for t in samples if sec(starts["B1"]) <= sec(t) < sec(starts["B2"])]  # samples of the B1 run only
+        if window:
+            lag = sec(max(window)) - sec(ends["B1"])
+            check(f"B1 Kotlin daemon (child of the single-use daemon) last seen vs build end (lag {lag:+d} s)", "gone within ~2 s after end", lag <= 3)
+        else:
+            check("B1 Kotlin daemon sampled during the build", "sampled", False)
     else:
-        check("B1 Kotlin daemon sampled during the build", "sampled", False if log("B.samples") else None)
+        check("B1 window found in B.summary", "found", None)
 
 print("| checkpoint | macOS | CI (x86 Linux runner) |\n|---|---|---|")
 for r in rows: print("| " + " | ".join(r) + " |")
