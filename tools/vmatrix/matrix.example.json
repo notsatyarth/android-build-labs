@@ -1,6 +1,6 @@
 {
   "_comment": "Example matrix for nowinandroid. '@channel' values are resolved by discovery (stable, rc, beta, alpha, milestone, nightly, next, latest). Plain strings are exact versions.",
-  "project": "~/Code/nowinandroid-lab/nowinandroid",
+  "project": "path/to/nowinandroid",
   "mode": "auto",
   "tasks": [["help"], [":app:assembleDemoDebug"]],
   "gradle_args": ["--console=plain", "--warning-mode=all", "--stacktrace"],

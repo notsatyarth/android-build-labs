@@ -1,0 +1,68 @@
+{
+  "_comment": "CI matrix for nowinandroid at 2982e63. The project path is passed with --project. '@next' = highest pre-release newer than stable. One change per cell.",
+  "project": "path/to/nowinandroid",
+  "mode": "auto",
+  "tasks": [
+    [
+      "help"
+    ],
+    [
+      ":app:assembleDemoDebug"
+    ]
+  ],
+  "gradle_args": [
+    "--console=plain",
+    "--warning-mode=all",
+    "--stacktrace",
+    "--no-build-cache"
+  ],
+  "guard_tasks": [
+    "buildEnvironment",
+    ":app:buildEnvironment"
+  ],
+  "timeout_sec": 2400,
+  "java_home": null,
+  "gradle_user_home": null,
+  "daemon_cleanup": "stop+kill",
+  "cells": [
+    {
+      "name": "baseline"
+    },
+    {
+      "name": "gradle-next",
+      "axes": {
+        "gradle": "@next"
+      }
+    },
+    {
+      "name": "agp-next",
+      "axes": {
+        "agp": "@next"
+      }
+    },
+    {
+      "name": "kotlin-next",
+      "axes": {
+        "kotlin": "@next"
+      }
+    },
+    {
+      "name": "flag-simulate-agp10",
+      "flags": {
+        "android.simulateAgpVersionBehavior": "10.0.0"
+      }
+    },
+    {
+      "name": "flag-kotlin-tryNext",
+      "flags": {
+        "kotlin.experimental.tryNext": "true"
+      }
+    },
+    {
+      "name": "flag-warning-fail",
+      "gradle_args": [
+        "--warning-mode=fail"
+      ]
+    }
+  ]
+}
