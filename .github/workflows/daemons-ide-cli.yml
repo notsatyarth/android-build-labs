@@ -1,0 +1,52 @@
+# IDE-like (Tooling API) versus CLI daemons, Kotlin daemon lifetime with --no-daemon, and two parallel worktrees,
+# on nowinandroid. Experiments A, B, C of the original macOS lab. Numbers are x86 Linux runner numbers:
+# compare conclusions, not values. Experiment C (parallel builds) is informational.
+name: daemons-ide-cli
+on:
+  workflow_dispatch:
+    inputs:
+      nia_ref:
+        description: "nowinandroid commit (full SHA)"
+        required: false
+        default: "2982e63cb691ad49cd009aab43dc206fee6699c2"
+permissions:
+  contents: read
+jobs:
+  lab:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    env:
+      LAB_WORK: ${{ github.workspace }}/../daemons-lab
+      NIA_SHA: ${{ inputs.nia_ref }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: |
+            21
+            17
+      - name: Runner info and JDKs
+        run: |
+          bash .github/scripts/runner_info.sh
+          echo "JAVA_HOME=$JAVA_HOME JAVA_HOME_21_X64=$JAVA_HOME_21_X64"
+          echo "JAVA21_HOME=$JAVA_HOME_21_X64" >> "$GITHUB_ENV"
+      - name: Setup (clone, Tooling API jar, prime dependency cache)
+        run: bash labs/daemons-ide-cli/ci_run.sh setup
+      - name: Experiment A (Tooling API vs CLI)
+        run: bash labs/daemons-ide-cli/ci_run.sh A
+      - name: Experiment B (--no-daemon)
+        run: bash labs/daemons-ide-cli/ci_run.sh B
+      - name: Experiment C (two worktrees at once)
+        run: bash labs/daemons-ide-cli/ci_run.sh C
+      - name: Compare with macOS
+        if: always()
+        run: |
+          echo "### Daemons: IDE vs CLI, --no-daemon, parallel worktrees (CI: x86 Linux runner)" >> "$GITHUB_STEP_SUMMARY"
+          python3 -I labs/daemons-ide-cli/compare.py "$LAB_WORK/out" | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: daemons-ide-cli-logs
+          path: ${{ github.workspace }}/../daemons-lab/out/
+          retention-days: 30

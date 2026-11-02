@@ -1,0 +1,61 @@
+"""Check the CI run of the daemons lab against the conclusions of the original macOS run.
+Usage: python3 -I compare.py OUT_DIR   (reads A.*.log, A.summary, B.*, C.*, C2run.*). Prints a Markdown table.
+Experiment C is informational only: the original builds failed on a transforms-cache lock under heavy machine load,
+and a quiet 4-core runner may behave differently."""
+import re, sys
+from pathlib import Path
+
+out = Path(sys.argv[1])
+def log(name):
+    p = out / name
+    return p.read_text(errors="replace") if p.exists() else None
+rows = []
+def check(label, expected, ok):
+    rows.append((label, expected, {True: "match", False: "DIFFERS", None: "no data"}[ok]))
+def has(name, pat):
+    t = log(name)
+    return None if t is None else re.search(pat, t) is not None
+def n(name, pat):
+    t = log(name)
+    return None if t is None else len(re.findall(pat, t))
+def both(*v):
+    return None if any(x is None for x in v) else all(v)
+
+check("A1 Tooling API cold: one Gradle daemon started", "1 start", n("A.A1_tapi.log", r"Starting a Gradle Daemon") == 1 if log("A.A1_tapi.log") else None)
+check("A2 CLI after A1: daemon reused, configuration cache reused", "reused", both(n("A.A2_cli.log", r"Starting a Gradle Daemon") == 0, has("A.A2_cli.log", r"Reusing configuration cache")))
+check("A3 Tooling API again: daemon reused", "reused", None if log("A.A3_tapi.log") is None else n("A.A3_tapi.log", r"Starting a Gradle Daemon") == 0)
+for k, f in (("A4", "A.A4_tapi_ide.log"), ("A5", "A.A5_cli.log")):
+    check(f"{k} android.injected.invoked.from.ide toggled: configuration cache invalidated", "invalidated", has(f, r"android\.injected\.invoked\.from\.ide.{0,20}has changed"))
+check("A6 IDE on JDK 21 vs CLI on 17: second daemon, 'JVM has changed'", "invalidated", both(has("A.A6_tapi_jdk21.log", r"Starting a Gradle Daemon"), has("A.A6_tapi_jdk21.log", r"JVM has changed")))
+check("A7 CLI on 17 after A6: configuration cache invalidated again", "invalidated", has("A.A7_cli.log", r"JVM has changed|cannot be reused"))
+t = log("A.A8_updateDaemonJvm.log")
+check("A8 updateDaemonJvm fails without toolchain download repositories", "fails", None if t is None else "Toolchain download repositories have not been configured" in t)
+for k, f in (("A13", "A.A13_cli.log"), ("A22", "A.A22_cli_jdk21.log"), ("A23", "A.A23_cli_jdk17.log")):
+    check(f"{k} with toolchainVersion=17 file: build succeeds", "success", has(f, r"BUILD SUCCESSFUL"))
+
+bsum = log("B.summary")
+if bsum is None:
+    check("B --no-daemon: single-use daemon forked (-Xmx4g)", "forked", None)
+else:
+    info = (log("Binfo.B3.log") or "") + (log("Binfo.B4.log") or "")
+    check("B3/B4 --info: 'single-use Daemon' message", "present", bool(re.search(r"single-use Daemon", info)) if info else None)
+    kd = re.findall(r"^(\d\d:\d\d:\d\d) pid=\d+ ppid=\d+ home=lab .* kind=kotlin-daemon", log("B.samples") or "", re.M)
+    ends = re.findall(r"^B1 rc=\d+ end (\d\d:\d\d:\d\d)", bsum, re.M)
+    def sec(h): a, b, c = map(int, h.split(":")); return a * 3600 + b * 60 + c
+    if kd and ends:
+        lag = sec(max(kd)) - sec(ends[0])
+        check(f"B1 Kotlin daemon last seen vs build end (lag {lag:+d} s)", "within ~2 s after end", lag <= 3)
+    else:
+        check("B1 Kotlin daemon sampled during the build", "sampled", False if log("B.samples") else None)
+
+print("| checkpoint | macOS | CI (x86 Linux runner) |\n|---|---|---|")
+for r in rows: print("| " + " | ".join(r) + " |")
+print()
+for tag, name in (("C (shared Gradle user home)", "C"), ("C (fresh Gradle user home)", "C2run")):
+    s = log(f"{name}.summary")
+    if s is None:
+        print(f"- {tag}: no data"); continue
+    walls = re.findall(r"^(C\d) rc=(\d+) wall_s=(\d+)", s, re.M)
+    lock = sum((len(re.findall(r"Timeout waiting to lock", log(f"{name}.{c}.log") or "")) for c in ("C1", "C2")))
+    lost = sum((len(re.findall(r"Connection to the Kotlin daemon has been unexpectedly lost", log(f"{name}.{c}.log") or "")) for c in ("C1", "C2")))
+    print(f"- {tag}: " + ", ".join(f"{c} rc={rc} {w} s" for c, rc, w in walls) + f"; transforms-cache lock timeouts {lock}; Kotlin daemon connection lost {lost} (macOS: 3 of 4 builds failed on a lock timeout, 9 connection losses, machine under heavy load)")
