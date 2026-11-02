@@ -10,7 +10,11 @@ OUT=$OUT_ROOT/raw
 mkdir -p "$OUT"
 # Required: JAVA_HOME pointing at a JDK 25 or later (UseCompactObjectHeaders is a product flag from JDK 25, JEP 519).
 : "${JAVA_HOME:?set JAVA_HOME to a JDK 25+}"
-: "${ANDROID_HOME:=$HOME/Library/Android/sdk}"; export ANDROID_HOME JAVA_HOME
+: "${ANDROID_HOME:=$HOME/Library/Android/sdk}"
+# Resolve symlinks: Gradle starts daemons from the real path (CI runners link JAVA_HOME to /usr/lib/jvm/...),
+# and the process match below compares command lines against this path.
+JAVA_HOME=$(python3 -I -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$JAVA_HOME")
+export ANDROID_HOME JAVA_HOME
 LOAD_MAX=${LOAD_MAX:-8}   # idle gate: 1-minute load must be below this
 # Same strings as nowinandroid gradle.properties (commit 2982e63); coh arm appends one flag.
 GJ="-Dfile.encoding=UTF-8 -XX:+UseG1GC -XX:SoftRefLRUPolicyMSPerMB=1 -XX:ReservedCodeCacheSize=256m -XX:+HeapDumpOnOutOfMemoryError -Xmx4g -Xms4g"
@@ -60,4 +64,5 @@ for pat in GradleDaemon KotlinCompileDaemon; do
     "$JAVA_HOME/bin/jcmd" "$pid" GC.heap_info >> "$OUT/$LABEL.heap" 2>&1
   done
 done
-stop_mine
+stop_mine || true
+exit 0
