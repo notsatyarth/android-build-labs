@@ -1,0 +1,14 @@
+<!-- SYNTHETIC FIXTURE: invented shape of the internal problems-report data; the real format is undocumented. -->
+<html><body><div id="app"></div>
+<script type="text/javascript">
+function unrelated() { return {a: 1}; }
+</script>
+<script type="text/javascript">
+window.problemsReport = {"diagnostics": [
+ {"problemId": [{"name": "deprecation", "displayName": "Deprecation"}, {"name": "task-usage", "displayName": "Task usage"}],
+  "contextualLabel": "Task.getProject() has been deprecated", "severity": "WARNING",
+  "locations": [{"path": "build.gradle.kts", "line": 12}]},
+ {"problemId": [{"name": "kgp", "displayName": "KGP"}, {"name": "misconfig", "displayName": "Misconfiguration"}],
+  "contextualLabel": "Kotlin option x is misconfigured", "severity": "WARNING"}
+]};
+</script></body></html>

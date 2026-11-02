@@ -1,0 +1,51 @@
+# Version-matrix shadow job (tools/vmatrix) on nowinandroid: baseline plus one change per cell
+# (next Gradle, AGP, Kotlin; simulate AGP 10; Kotlin tryNext; warnings as errors). Unit tests first.
+# Cells that fail are findings, not workflow failures; the workflow fails only if the harness itself errors.
+name: version-matrix
+on:
+  workflow_dispatch:
+    inputs:
+      nia_ref:
+        description: "nowinandroid commit (full SHA)"
+        required: false
+        default: "2982e63cb691ad49cd009aab43dc206fee6699c2"
+permissions:
+  contents: read
+jobs:
+  matrix:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Runner info
+        run: bash .github/scripts/runner_info.sh
+      - name: Harness unit tests
+        run: python3 -I -m unittest discover tools/vmatrix/tests
+      - name: Discover latest versions
+        run: python3 tools/vmatrix/vmatrix.py discover | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Clone nowinandroid
+        env:
+          REF: ${{ inputs.nia_ref }}
+        run: bash .github/scripts/clone_nia.sh "$RUNNER_TEMP/nia" "$REF" && git -C "$RUNNER_TEMP/nia" config user.email ci@example.invalid && git -C "$RUNNER_TEMP/nia" config user.name ci
+      - name: Plan
+        run: python3 tools/vmatrix/vmatrix.py plan --config labs/version-matrix/matrix.ci.json --project "$RUNNER_TEMP/nia"
+      - name: Run the matrix
+        run: python3 tools/vmatrix/vmatrix.py run --config labs/version-matrix/matrix.ci.json --project "$RUNNER_TEMP/nia" --out out --fail-on never
+      - name: Report
+        if: always()
+        run: |
+          echo "### Version matrix on nowinandroid (CI: x86 Linux runner)" >> "$GITHUB_STEP_SUMMARY"
+          cat out/report.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: version-matrix-out
+          path: |
+            out/report.*
+            out/*/*.log
+            out/*/cell.json
+          retention-days: 30

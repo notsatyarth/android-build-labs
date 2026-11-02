@@ -1,0 +1,14 @@
+# SYNTHETIC FIXTURE
+
+------------------------------------------------------------
+Gradle 9.8.2
+------------------------------------------------------------
+
+Build time:    2026-10-01 10:00:00 UTC
+Revision:      deadbeef
+
+Kotlin:        2.2.21
+Groovy:        4.0.28
+Launcher JVM:  21.0.9 (Eclipse Adoptium 21.0.9+10-LTS)
+Daemon JVM:    /jdk (no match)
+OS:            Mac OS X 15.0 aarch64

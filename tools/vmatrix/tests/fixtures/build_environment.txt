@@ -1,0 +1,20 @@
+# SYNTHETIC FIXTURE: shape of `./gradlew :app:buildEnvironment`.
+
+> Task :app:buildEnvironment
+
+------------------------------------------------------------
+Project ':app'
+------------------------------------------------------------
+
+classpath
++--- com.android.application:com.android.application.gradle.plugin:9.3.2
+|    \--- com.android.tools.build:gradle:9.3.2
+|         +--- com.android.tools.build:gradle-api:9.3.2
+|         +--- org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.10 -> 2.3.0 (*)
+|         \--- org.jetbrains.kotlin:kotlin-stdlib:2.2.10 -> 2.3.0
++--- org.jetbrains.kotlin.android:org.jetbrains.kotlin.android.gradle.plugin:2.3.0
+|    \--- org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.0 (*)
+\--- com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:2.3.4
+     \--- com.google.devtools.ksp:symbol-processing-gradle-plugin:2.3.4
+
+(*) - Indicates repeated occurrences of a transitive dependency subtree.
