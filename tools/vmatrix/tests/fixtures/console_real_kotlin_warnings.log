@@ -1,0 +1,12 @@
+# REAL: trimmed from nowinandroid agp-next run 2026-10-26 (workspace path shortened)
+> Task :core:model:compileKotlin
+w: Opt-in requirement marker kotlinx.coroutines.ExperimentalCoroutinesApi is unresolved. Please make sure it's present in the module dependencies
+> Task :core:notifications:compileDemoDebugKotlin
+w: file:///ws/agp-next/core/notifications/src/main/kotlin/com/google/samples/apps/nowinandroid/core/notifications/SystemTrayNotifier.kt:57:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to field.
+> Task :core:network:compileDemoDebugKotlin
+w: file:///ws/agp-next/core/network/src/main/kotlin/com/google/samples/apps/nowinandroid/core/network/demo/DemoNiaNetworkDataSource.kt:40:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+> Task :core:data:compileDemoDebugKotlin
+w: file:///ws/agp-next/core/data/src/main/kotlin/com/google/samples/apps/nowinandroid/core/data/repository/DefaultSearchContentsRepository.kt:44:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///ws/agp-next/core/data/src/main/kotlin/com/google/samples/apps/nowinandroid/core/data/util/ConnectivityManagerNetworkMonitor.kt:40:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to field.
+w: file:///ws/agp-next/build-logic/convention/src/main/kotlin/AndroidLintConventionPlugin.kt:45:5 'var xmlReport: Boolean' is deprecated. Lint reports are now always generated. Use SingleArtifact.LINT_XML_REPORT or SingleArtifact.AGGREGATED_LINT_XML_REPORT to consume lint report artifacts.

@@ -1,0 +1,22 @@
+# SYNTHETIC FIXTURE: modelled on a real Gradle failure shape, not captured from a build.
+# cmd: ./gradlew help --console=plain --warning-mode all -Pandroid.builtInKotlin=false
+Starting a Gradle Daemon
+Isolated Projects is an incubating feature.
+
+FAILURE: Build failed with an exception.
+
+* Where:
+Build file '/work/nia/build-logic/convention/build.gradle.kts' line: 19
+
+* What went wrong:
+An exception occurred applying plugin request [id: 'com.android.lint', version: '9.3.2']
+> Failed to apply plugin 'com.android.internal.lint'.
+   > The option 'android.builtInKotlin' is deprecated.
+     It was removed in version 10.0 of the Android Gradle plugin.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+
+BUILD FAILED in 5s
+Configuration cache entry stored.
+# exit=1

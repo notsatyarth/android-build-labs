@@ -1,0 +1,39 @@
+# SYNTHETIC FIXTURE: invented lines in the shapes Gradle, AGP, KGP and KSP print. Not from a real build.
+> Configure project :app
+WARNING: The option setting 'android.simulateAgpVersionBehavior=10.0.0' is experimental.
+Add android.sync.suppressAgpWarnings=UNSUPPORTED_PROJECT_OPTION_USE to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+The Project.getConvention() method has been deprecated. This is scheduled to be removed in Gradle 10.0. Consult the upgrading guide for further information: https://docs.gradle.org/9.8.2/userguide/upgrading_version_9.html#convention_api_deprecation
+	at com.android.build.gradle.internal.plugins.BasePlugin.configureProject(BasePlugin.kt:200)
+	at org.gradle.api.internal.plugins.ImperativeOnlyPluginTarget.applyImperative(ImperativeOnlyPluginTarget.java:43)
+
+The Task.getProject() method has been deprecated. This is scheduled to be removed in Gradle 10.0.
+	at org.gradle.api.internal.AbstractTask.getProject(AbstractTask.java:300)
+	at org.gradle.api.internal.project.DefaultProject.tasks(DefaultProject.java:100)
+
+The org.jetbrains.kotlin.gradle.plugin.mpp.Foo API has been deprecated. This is scheduled to be removed in Gradle 10.0.
+	at org.jetbrains.kotlin.gradle.plugin.KotlinBasePlugin.apply(KotlinBasePlugin.kt:10)
+	at org.gradle.api.internal.plugins.ImperativeOnlyPluginTarget.applyImperative(ImperativeOnlyPluginTarget.java:43)
+
+> Task :build-logic:convention:compileKotlin
+Problem found: Kotlin compiler warning (id: kotlin:compiler:warning:compiler-warning)
+  Kotlin compiler warning
+    'var xmlReport: Boolean' is deprecated. Lint reports are now always generated.
+    Location: /work/nia/build-logic/convention/src/main/kotlin/AndroidLintConventionPlugin.kt line 45
+Problem found: Recipient not set (in Others > Hello Problems)
+  No recipient configured
+    Possible solution: Set the recipient.
+
+w: file:///work/nia/core/data/src/main/kotlin/Repo.kt:12:5 Variable 'x' is never used
+> Task :core:data:kspDebugKotlin
+w: [ksp] com.google.devtools.ksp symbol processing took longer than expected
+
+> Task :app:mergeDemoDebugResources FAILED
+
+[Incubating] Problems report is available at: file:///work/nia/build/reports/problems/problems-report.html
+BUILD FAILED in 1m 3s
+# exit=1
