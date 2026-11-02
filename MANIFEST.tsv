@@ -71,9 +71,9 @@ samples/nia-variants/variants.init.gradle	variants-lab/b-nia-variants/variants.i
 tools/procwatch/jvmsnap.sh	lab/daemons-ide-cli-parallel/jvmsnap.sh
 tools/procwatch/procwatch_match.py	lab/compact-headers/procwatch_match.py
 tools/procwatch/procwatch.py	lab/nowinandroid-extra-daemon/procwatch.py
-tools/time-share/attribute.py	lab/time-share/attribute.py
-tools/time-share/run_traced.sh	lab/time-share/run_traced.sh
-tools/time-share/scenarios.conf	lab/time-share/scenarios.conf
+labs/time-share/attribute.py	lab/time-share/attribute.py
+labs/time-share/run_traced.sh	lab/time-share/run_traced.sh
+labs/time-share/scenarios.conf	lab/time-share/scenarios.conf
 tools/version-matrix/ci/github-actions.example.yml	lab/version-matrix/ci/github-actions.example.yml
 tools/version-matrix/ci/gitlab-ci.example.yml	lab/version-matrix/ci/gitlab-ci.example.yml
 tools/version-matrix/matrix.example.json	lab/version-matrix/matrix.example.json

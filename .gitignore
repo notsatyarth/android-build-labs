@@ -8,4 +8,4 @@ raw/
 runs/
 logs/
 *.log
-!tools/vmatrix/tests/fixtures/*.log
+!tools/version-matrix/tests/fixtures/*.log

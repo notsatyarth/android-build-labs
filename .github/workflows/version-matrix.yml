@@ -1,4 +1,4 @@
-# Version-matrix shadow job (tools/vmatrix) on nowinandroid: baseline plus one change per cell
+# Version-matrix shadow job (tools/version-matrix) on nowinandroid: baseline plus one change per cell
 # (next Gradle, AGP, Kotlin; simulate AGP 10; Kotlin tryNext; warnings as errors). Unit tests first.
 # Cells that fail are findings, not workflow failures; the workflow fails only if the harness itself errors.
 name: version-matrix
@@ -24,17 +24,17 @@ jobs:
       - name: Runner info
         run: bash .github/scripts/runner_info.sh
       - name: Harness unit tests
-        run: python3 -I -m unittest discover tools/vmatrix/tests
+        run: python3 -I -m unittest discover tools/version-matrix/tests
       - name: Discover latest versions
-        run: python3 tools/vmatrix/vmatrix.py discover | tee -a "$GITHUB_STEP_SUMMARY"
+        run: python3 tools/version-matrix/vmatrix.py discover | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Clone nowinandroid
         env:
           REF: ${{ inputs.nia_ref }}
         run: bash .github/scripts/clone_nia.sh "$RUNNER_TEMP/nia" "$REF" && git -C "$RUNNER_TEMP/nia" config user.email ci@example.invalid && git -C "$RUNNER_TEMP/nia" config user.name ci
       - name: Plan
-        run: python3 tools/vmatrix/vmatrix.py plan --config labs/version-matrix/matrix.ci.json --project "$RUNNER_TEMP/nia"
+        run: python3 tools/version-matrix/vmatrix.py plan --config labs/version-matrix/matrix.ci.json --project "$RUNNER_TEMP/nia"
       - name: Run the matrix
-        run: python3 tools/vmatrix/vmatrix.py run --config labs/version-matrix/matrix.ci.json --project "$RUNNER_TEMP/nia" --out out --fail-on never
+        run: python3 tools/version-matrix/vmatrix.py run --config labs/version-matrix/matrix.ci.json --project "$RUNNER_TEMP/nia" --out out --fail-on never
       - name: Report
         if: always()
         run: |
