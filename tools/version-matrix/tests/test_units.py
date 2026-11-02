@@ -260,5 +260,15 @@ class CollectClassifyTests(unittest.TestCase):
         self.assertEqual(classify.classify({"text": "acme broke"}, rs), ("Acme", "x"))
 
 
+
+
+class CellArgsTests(unittest.TestCase):
+    def test_cell_option_replaces_common_option(self):
+        from vmlib import runner
+        cell = {"flags": {}, "gradle_args": ["--warning-mode=fail"]}
+        args = runner.cell_args(cell, ["--console=plain", "--warning-mode=all", "--stacktrace"])
+        self.assertEqual(args, ["--console=plain", "--stacktrace", "--warning-mode=fail"])
+
+
 if __name__ == "__main__":
     unittest.main()

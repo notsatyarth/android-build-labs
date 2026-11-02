@@ -12,7 +12,10 @@ DAEMON_RE = re.compile(r"GradleDaemon|KotlinCompileDaemon|GradleWorkerMain|Gradl
 
 
 def cell_args(cell, common, with_flags=True):
-    args = list(common)
+    # A cell's own `--name=value` option replaces the same option in the common arguments: Gradle rejects
+    # a repeated --warning-mode ("Multiple arguments were provided for command-line option").
+    own = {a.split("=", 1)[0] for a in cell["gradle_args"] if a.startswith("--") and "=" in a}
+    args = [a for a in common if a.split("=", 1)[0] not in own]
     args += ["-P%s=%s" % (k, v) for k, v in sorted(cell["flags"].items())] if with_flags else []
     args += cell["gradle_args"]
     return args
