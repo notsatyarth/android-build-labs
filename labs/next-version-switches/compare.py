@@ -5,7 +5,7 @@ from pathlib import Path
 out = Path(sys.argv[1])
 def L(i):
     p = out / f"{i}.log"
-    return p.read_text(errors="replace") if p.exists() else None
+    return re.sub(r"\s+", " ", p.read_text(errors="replace")) if p.exists() else None
 def ok_build(t): return "BUILD SUCCESSFUL" in t
 def fail_build(t): return "BUILD FAILED" in t
 def has(t, s): return s in t
@@ -28,11 +28,11 @@ chk("e4b_no_implicit_lookup", "NO_IMPLICIT_LOOKUP_IN_PARENT_PROJECTS preview", "
 chk("e4c_featurepreview_enum_check", "feature name present in Gradle jars", "NO_IMPLICIT_LOOKUP_IN_PARENT_PROJECTS", lambda t: "NO_IMPLICIT_LOOKUP_IN_PARENT_PROJECTS" in t)
 chk("e5a_bl_cc_false_run1", "build-logic cc=false, run 1", "entry stored (property ignored)", lambda t: has(t, "Configuration cache entry stored."))
 chk("e5a_bl_cc_false_run2", "build-logic cc=false, run 2", "entry reused", lambda t: has(t, "Reusing configuration cache."))
-chk("e5b_1_clean_then_compile", "build-logic caching=false, clean then compile", "build-logic compileKotlin still from cache", lambda t: "Loaded cache entry for task ':build-logic:convention:compileKotlin'" in t)
+chk("e5b_2_help_after_clean", "build-logic caching=false, build-logic cleaned, then help", "build-logic compileKotlin still from cache", lambda t: "build-logic:convention:compileKotlin FROM-CACHE" in t or "Loaded cache entry for task ':build-logic:convention:compileKotlin'" in t)
 chk("e5c_all_flipped", "all four build-logic properties flipped", "root keeps configurationCache=true", lambda t: re.search(r"configurationCache=true", t) is not None)
 chk("e5d_kotlin_daemon_included_build", "Kotlin daemons while building build-logic and a module", "two daemons: compiler 2.4.0 (256m, ParallelGC) and 2.3.0 (320m, G1)", lambda t: "2.4.0" in t and "2.3.0" in t and "ReservedCodeCacheSize=256m" in t and "ReservedCodeCacheSize=320m" in t)
 chk("e6a_kotlin_android_plugin", "kotlin.android plugin on an AGP 9.3.2 module", "fails: no longer required since AGP 9.0", lambda t: fail_build(t) and "plugin is no longer required for Kotlin support since AGP 9.0" in t)
-chk("e6a2_kotlin_android_plugin_with_optouts", "same with both opt-outs", "AGP no longer objects; build fails elsewhere", lambda t: fail_build(t) and "no longer required for Kotlin support" not in t and "KotlinAndroidProjectExtension" in t)
+chk("e6a2_kotlin_android_plugin_with_optouts", "same with both opt-outs", "AGP only warns (no AGP error); build fails later on the missing Kotlin extension", lambda t: fail_build(t) and "Failed to apply plugin 'com.android.internal" not in t and "KotlinAndroidProjectExtension" in t)
 chk("e6b_assemble_rerun_warning_mode_all", "full assembleDemoDebug, warning-mode all", "success, problems report written", lambda t: ok_build(t) and "Problems report is available at" in t)
 chk("e6c_buildEnvironment", "buildEnvironment", "KGP 2.2.10 -> 2.3.0", lambda t: "kotlin-gradle-plugin:2.2.10 -> 2.3.0" in t)
 print("| experiment | what | macOS result | CI (x86 Linux runner) |\n|---|---|---|---|")

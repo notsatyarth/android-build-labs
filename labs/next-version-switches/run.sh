@@ -23,6 +23,7 @@ exp() {
   local id=$1 jdk=$2 edit=$3; shift 3
   local jh=$JAVA17_HOME; [ "$jdk" = 21 ] && jh=$JAVA21_HOME
   [ "$edit" != "-" ] && { reset; "ed_$edit"; }
+  stop   # AGP reports some deprecations once per daemon, so each experiment starts with fresh daemons (as in the macOS lab)
   { echo "# experiment: $id  nowinandroid $SHA  edit=$edit"; echo "# JAVA_HOME=$jh"; "$jh/bin/java" -version 2>&1 | head -1; echo "# cmd: ./gradlew $*"; } > "$OUT/$id.log"
   (cd "$NIA" && JAVA_HOME=$jh ./gradlew "$@" --console=plain >> "$OUT/$id.log" 2>&1; echo "# build exit=$?" >> "$OUT/$id.log")
   grep -E "BUILD (SUCCESSFUL|FAILED)|# build exit" "$OUT/$id.log" | tr '\n' ' '; echo " <- $id"

@@ -18,15 +18,20 @@ def has(name, pat):
 def n(name, pat):
     t = log(name)
     return None if t is None else len(re.findall(pat, t))
+def gd(tag):
+    """Number of Gradle daemons in the process snapshot taken after step TAG (A.summary)."""
+    t = log("A.summary")
+    if t is None: return None
+    return len(re.findall(rf"^\s*after-{re.escape(tag)} pid=.*kind=gradle-daemon", t, re.M))
 def both(*v):
     return None if any(x is None for x in v) else all(v)
 
-check("A1 Tooling API cold: one Gradle daemon started", "1 start", n("A.A1_tapi.log", r"Starting a Gradle Daemon") == 1 if log("A.A1_tapi.log") else None)
-check("A2 CLI after A1: daemon reused, configuration cache reused", "reused", both(n("A.A2_cli.log", r"Starting a Gradle Daemon") == 0, has("A.A2_cli.log", r"Reusing configuration cache")))
-check("A3 Tooling API again: daemon reused", "reused", None if log("A.A3_tapi.log") is None else n("A.A3_tapi.log", r"Starting a Gradle Daemon") == 0)
+check("A1 Tooling API cold: one Gradle daemon running afterwards", "1 daemon", None if gd("A1_tapi") is None else gd("A1_tapi") == 1)
+check("A2 CLI after A1: same daemon, configuration cache reused", "reused", both(None if gd("A2_cli") is None else gd("A2_cli") == 1, has("A.A2_cli.log", r"Reusing configuration cache")))
+check("A3 Tooling API again: same daemon, configuration cache reused", "reused", both(None if gd("A3_tapi") is None else gd("A3_tapi") == 1, has("A.A3_tapi.log", r"Reusing configuration cache")))
 for k, f in (("A4", "A.A4_tapi_ide.log"), ("A5", "A.A5_cli.log")):
     check(f"{k} android.injected.invoked.from.ide toggled: configuration cache invalidated", "invalidated", has(f, r"android\.injected\.invoked\.from\.ide.{0,20}has changed"))
-check("A6 IDE on JDK 21 vs CLI on 17: second daemon, 'JVM has changed'", "invalidated", both(has("A.A6_tapi_jdk21.log", r"Starting a Gradle Daemon"), has("A.A6_tapi_jdk21.log", r"JVM has changed")))
+check("A6 IDE on JDK 21 vs CLI on 17: second daemon, 'JVM has changed'", "2 daemons, invalidated", both(None if gd("A6_tapi_jdk21") is None else gd("A6_tapi_jdk21") == 2, has("A.A6_tapi_jdk21.log", r"JVM has changed")))
 check("A7 CLI on 17 after A6: configuration cache invalidated again", "invalidated", has("A.A7_cli.log", r"JVM has changed|cannot be reused"))
 t = log("A.A8_updateDaemonJvm.log")
 check("A8 updateDaemonJvm fails without toolchain download repositories", "fails", None if t is None else "Toolchain download repositories have not been configured" in t)
@@ -39,7 +44,7 @@ if bsum is None:
 else:
     info = (log("Binfo.B3.log") or "") + (log("Binfo.B4.log") or "")
     check("B3/B4 --info: 'single-use Daemon' message", "present", bool(re.search(r"single-use Daemon", info)) if info else None)
-    kd = re.findall(r"^(\d\d:\d\d:\d\d) pid=\d+ ppid=\d+ home=lab .* kind=kotlin-daemon", log("B.samples") or "", re.M)
+    kd = re.findall(r"^(\d\d:\d\d:\d\d) pid=\d+ ppid=\d+ home=\w+ .* kind=kotlin-daemon", log("B.samples") or "", re.M)
     ends = re.findall(r"^B1 rc=\d+ end (\d\d:\d\d:\d\d)", bsum, re.M)
     def sec(h): a, b, c = map(int, h.split(":")); return a * 3600 + b * 60 + c
     if kd and ends:

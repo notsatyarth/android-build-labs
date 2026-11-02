@@ -9,6 +9,10 @@ on:
         description: "measured iterations per scenario"
         required: false
         default: "3"
+      pairs:
+        description: "pairs to run: all, p1, p2 or p3"
+        required: false
+        default: "all"
       rounds:
         description: "1 = old then new, 2 = also new then old"
         required: false
@@ -18,14 +22,15 @@ permissions:
 jobs:
   pair:
     runs-on: ubuntu-24.04
+    if: inputs.pairs == 'all' || inputs.pairs == matrix.pair
     timeout-minutes: 345
     strategy:
       fail-fast: false
       matrix:
         include:
-          - {pair: p1, old: c5b604f72, new: 83d6dbb85, what: "AGP 8.12.2 to 8.13.0, Kotlin 2.1.10 to 2.2.20, Gradle 9.0.0 to 9.1.0"}
-          - {pair: p2, old: ade8065442, new: 2c56ce13b, what: "AGP 8.13.1 to 9.0.0 (migration branch merge), Gradle 9.2.1"}
-          - {pair: p3, old: 7d45eae4f, new: 94571e675, what: "AGP 9.0.0 to 9.3.2, Gradle 9.4.0 to 9.7.1"}
+          - {pair: p1, old: "c5b604f72", new: "83d6dbb85", what: "AGP 8.12.2 to 8.13.0, Kotlin 2.1.10 to 2.2.20, Gradle 9.0.0 to 9.1.0"}
+          - {pair: p2, old: "ade8065442", new: "2c56ce13b", what: "AGP 8.13.1 to 9.0.0 (migration branch merge), Gradle 9.2.1"}
+          - {pair: p3, old: "7d45eae4f", new: "94571e675", what: "AGP 9.0.0 to 9.3.2, Gradle 9.4.0 to 9.7.1"}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0

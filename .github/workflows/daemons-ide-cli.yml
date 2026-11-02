@@ -44,9 +44,12 @@ jobs:
         run: |
           echo "### Daemons: IDE vs CLI, --no-daemon, parallel worktrees (CI: x86 Linux runner)" >> "$GITHUB_STEP_SUMMARY"
           python3 -I labs/daemons-ide-cli/compare.py "$LAB_WORK/out" | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Collect logs
+        if: always()
+        run: cp -r "$LAB_WORK/out" "$GITHUB_WORKSPACE/daemons-out"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: daemons-ide-cli-logs
-          path: ${{ github.workspace }}/../daemons-lab/out/
+          path: daemons-out/
           retention-days: 30
