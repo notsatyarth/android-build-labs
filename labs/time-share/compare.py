@@ -1,7 +1,7 @@
 """Compare the share of task time per tool owner on the CI runner with the original macOS runs (Apple M1, JDK 17).
 Usage: python3 -I compare.py RAW_DIR   (reads RAW_DIR/<scenario>-<n>.json written by run_traced.sh)
 Shares are shares of the summed task time (internal Gradle build operation trace; owner = package of the task class).
-A scenario 'matches' when every owner's share is within 10 percentage points of the macOS median and the owner ranking by share has the same top owner."""
+A scenario 'matches' when every owner's share is within 10 percentage points of the macOS median and the leading owner (ties within 1 pp) overlaps."""
 import glob, json, statistics, sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -26,7 +26,8 @@ for scn, mac in MAC.items():
     wall = statistics.median(a["wall_ms"] for a in an) / 1000
     for o in attribute.OWNERS:
         print(f"| {scn} | {o} | {mac[o]:.1f} | {ci[o]:.1f} | {wall:.1f} ({MAC_WALL_S[scn]}) | {'' if abs(ci[o]-mac[o]) <= 10 else 'off by >10 pp'} |")
-    same_top = max(mac, key=mac.get) == max(ci, key=ci.get)
+    top = lambda d: {o for o, v in d.items() if v >= max(d.values()) - 1.0}  # ties within 1 pp count as co-leaders
+    same_top = bool(top(mac) & top(ci))
     within = all(abs(ci[o] - mac[o]) <= 10 for o in mac)
     verdicts.append((scn, "match" if same_top and within else f"DIFFERS (same top owner: {same_top})"))
 print()
