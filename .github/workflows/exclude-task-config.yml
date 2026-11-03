@@ -1,0 +1,31 @@
+# Does `-x <task>` make Gradle configure the Android projects again? Runs labs/exclude-task-config/run.py
+# on the samples/missing-dimension project with and without the configuration cache and counts
+# configuration markers per run.
+name: exclude-task-config
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Runner info
+        run: bash .github/scripts/runner_info.sh
+      - name: Run
+        working-directory: labs/exclude-task-config
+        run: |
+          echo "### -x and the configuration phase (CI: x86 Linux runner)" >> "$GITHUB_STEP_SUMMARY"
+          python3 run.py --logs logs --summary "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: exclude-task-config-logs
+          path: labs/exclude-task-config/logs/
+          retention-days: 30

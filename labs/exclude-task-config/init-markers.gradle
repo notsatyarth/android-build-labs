@@ -1,0 +1,13 @@
+// Prints one marker line per configured project and per AGP variant, so a run's log shows
+// whether the configuration phase (including the Android plugins) ran. With a configuration
+// cache hit none of these lines appear.
+allprojects { p ->
+    ["com.android.application", "com.android.library"].each { id ->
+        p.pluginManager.withPlugin(id) {
+            p.androidComponents.onVariants(p.androidComponents.selector().all(), { v ->
+                println "LAB_VARIANT ${p.path} ${v.name}"
+            })
+        }
+    }
+    p.afterEvaluate { println "LAB_CONFIGURED ${p.path}" }
+}
