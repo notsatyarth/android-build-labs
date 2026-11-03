@@ -24,7 +24,7 @@ def build_gradle(agp, proguard):
 android {{
     namespace = "lab.app"; compileSdk = {COMPILE_SDK}
     defaultConfig {{ applicationId = "lab.app"; minSdk = {MIN_SDK} }}
-    buildTypes {{ getByName("release") {{ isMinifyEnabled = true; proguardFiles(getDefaultProguardFile("{proguard}")) }} }}
+    buildTypes {{ getByName("release") {{ isMinifyEnabled = true; proguardFiles(getDefaultProguardFile("{proguard}"), "proguard-rules.pro") }} }}
 }}
 '''
 
@@ -56,6 +56,7 @@ def write_project(proj, agp, gradle, proguard="proguard-android-optimize.txt", s
     for p, t in FILES.items():
         os.makedirs(os.path.dirname(os.path.join(proj, p)), exist_ok=True)
         open(os.path.join(proj, p), "w").write(t)
+    open(os.path.join(proj, "app/proguard-rules.pro"), "w").write("-keep,allowobfuscation class lab.app.model.User\n-keep,allowobfuscation class lab.app.util.Helper\n")
     open(os.path.join(proj, "app/build.gradle.kts"), "w").write(build_gradle(agp, proguard))
     if switch:
         open(os.path.join(proj, "app/src/main/java/lab/app/Switchy.java"), "w").write(SWITCH)
