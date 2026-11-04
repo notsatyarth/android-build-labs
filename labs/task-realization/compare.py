@@ -115,6 +115,21 @@ def main():
           lambda: to["by_phase"].get("tooling-model", 0) == 0 and to["model_tasks_listed"] == 0,
           lambda: "realized %d (phases %s), tasks listed %d" % (to["realized"], to["by_phase"], to["model_tasks_listed"]))
 
+    # Cross-check with a measured macOS result: samples/nia-variants (nowinandroid 2982e63, Gradle 9.7.1, AGP 9.3.2,
+    # Apple M1) counted tasks.names per project: 13135 in all projects (the root build and build-logic both print
+    # ":"), 1126 in :app. Same commit and versions, so :app should match exactly; the total may differ by the
+    # build-logic root and by tasks registered only with isolated projects off.
+    exp_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "samples", "nia-variants", "expected.json")
+    if os.path.exists(exp_path) and not os.environ.get("LAB_APP"):
+        with open(exp_path) as f:
+            ex = json.load(f)
+        check("X1", "registered tasks in :app equal the macOS count of the nia-variants lab",
+              lambda: b["registered_by_project"][":app"] == ex["app_tasks_all"],
+              lambda: ":app registered %d here, %d on macOS" % (b["registered_by_project"][":app"], ex["app_tasks_all"]))
+        check("X2", "registered tasks in the whole build within 2% of the macOS count (informational)",
+              lambda: abs(b["registered"] - ex["tasks_all"]) <= 0.02 * ex["tasks_all"],
+              lambda: "%d here (main build), %d on macOS (all projects incl. build-logic root)" % (b["registered"], ex["tasks_all"]))
+
     tp = os.path.join(logs, "timing.json")
     timing_line = None
     if os.path.exists(tp):
