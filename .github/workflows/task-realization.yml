@@ -1,0 +1,61 @@
+# Task configuration avoidance on nowinandroid: what is realized during configuration, what one eager line costs,
+# what Gradle reports (and does not), configuration cache and IDE-model effects. Runs labs/task-realization/run.py
+# and checks the hypotheses with compare.py (no macOS run exists for this lab; compare.py states expectations).
+name: task-realization
+on:
+  workflow_dispatch:
+    inputs:
+      nia_ref:
+        description: "nowinandroid commit (full SHA)"
+        required: false
+        default: "2982e63cb691ad49cd009aab43dc206fee6699c2"
+      repeat:
+        description: "configuration-time repeats per timed scenario"
+        required: false
+        default: "3"
+permissions:
+  contents: read
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Runner info
+        run: bash .github/scripts/runner_info.sh
+      - name: Clone nowinandroid
+        env:
+          REF: ${{ inputs.nia_ref }}
+        run: bash .github/scripts/clone_nia.sh "$RUNNER_TEMP/nia" "$REF"
+      - name: Tooling API jar
+        run: |
+          mkdir -p "$RUNNER_TEMP/tapi"
+          curl -sfL -o "$RUNNER_TEMP/tapi/gradle-tooling-api-9.7.1.jar" https://repo.gradle.org/gradle/libs-releases/org/gradle/gradle-tooling-api/9.7.1/gradle-tooling-api-9.7.1.jar
+          echo "e40a1f7707e4bf22f8039f6bbcdb012198f0f172d9331963bc7b41eb0ff5051b  $RUNNER_TEMP/tapi/gradle-tooling-api-9.7.1.jar" | sha256sum -c -
+          (cd "$RUNNER_TEMP/nia" && ./gradlew --version --console=plain)
+      - name: Scenarios
+        env:
+          NIA: ${{ runner.temp }}/nia
+          REPEAT: ${{ inputs.repeat }}
+        working-directory: labs/task-realization
+        run: |
+          LIB=$(ls -d "$HOME"/.gradle/wrapper/dists/gradle-9.7.1-bin/*/gradle-9.7.1/lib)
+          python3 -I run.py "$NIA" --logs logs --repeat "$REPEAT" --tapi-cp "$RUNNER_TEMP/tapi/gradle-tooling-api-9.7.1.jar:$LIB/slf4j-api-2.0.17.jar"
+      - name: Report
+        if: always()
+        working-directory: labs/task-realization
+        run: |
+          {
+            echo "### Task realization, nowinandroid (CI: x86 Linux runner)"
+            python3 -I compare.py logs --markdown
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: task-realization-logs
+          path: labs/task-realization/logs/
+          retention-days: 30
