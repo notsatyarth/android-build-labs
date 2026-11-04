@@ -80,7 +80,8 @@ def main():
     a = g("all")
     check("E4", "tasks.all { } realizes (almost) every registered task during configuration",
           lambda: cfg(a) >= 0.9 * a["registered"],
-          lambda: "configuration-phase realizations %d of %d registered" % (cfg(a), a["registered"]))
+          lambda: "configuration-phase realizations %d of %d registered; build exit %d %s" % (
+              cfg(a), a["registered"], a["exit"], ("(" + a["what_went_wrong"].replace("\n", " ")[:160] + ")") if a["exit"] else ""))
     bw, cw = g("baseline-warnfail"), g("create-warnfail")
     check("W1", "tasks.create(...) (@Deprecated in the API) adds no run-time deprecation: --warning-mode=fail behaves as baseline",
           lambda: cw["exit"] == bw["exit"] and not (set(cw["deprecation_lines"]) - set(bw["deprecation_lines"]) - {
