@@ -53,6 +53,8 @@ jobs:
             echo "### Task realization, nowinandroid (CI: x86 Linux runner)"
             python3 -I compare.py logs --markdown
           } | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "---- details (evidence behind the verdicts) ----"
+          python3 -I details.py logs
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
