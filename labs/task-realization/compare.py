@@ -125,6 +125,8 @@ def main():
 
     def chains(prefix_re):
         import re as _re
+        if w is None:
+            raise KeyError("who-dryrun")  # scenario not run: MISSING, not DIFFERS
         out = []
         for line in (w or {}).get("realized_by", []):
             path, _, frames = line.partition(" | ")
