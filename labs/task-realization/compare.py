@@ -141,11 +141,16 @@ def main():
           lambda: len(lint) > 0 and sum(any(f.startswith("com.android.") for f in c.split(" < ")) for c in lint) >= 0.9 * len(lint),
           lambda: "%d lint-related realizations traced, %d with a com.android frame" % (
               len(lint), sum(any(f.startswith("com.android.") for f in c.split(" < ")) for c in lint)))
+    nonclean = [c for c in chains(r"(?!clean$|kspKotlin$|kspTestKotlin$|merge\w*Resources$)\w+")]
+    check("R4", "(found after R2, 2026-11-05) the other realized-but-unscheduled tasks are realized by Gradle's dependency resolution reading the names of lazily published variant artifacts (LazyPublishArtifact.getName, DefaultLocalVariantGraphResolveStateBuilder.getVariantArtifacts)",
+          lambda: len(nonclean) > 0 and all("LazyPublishArtifact.getName" in c and "getVariantArtifacts" in c for c in nonclean),
+          lambda: "%d traced, %d via LazyPublishArtifact.getName" % (len(nonclean), sum("LazyPublishArtifact.getName" in c for c in nonclean)))
     ks = chains("kspKotlin|kspTestKotlin")
     check("R3", "(informational) who realizes :core:common:kspKotlin during configuration: a KSP or KGP frame is on the stack",
-          lambda: len(ks) > 0 and any(("com.google.devtools.ksp" in c) or ("org.jetbrains.kotlin" in c) for c in ks),
-          lambda: "%d traced; KSP frame: %s; KGP frame: %s" % (
-              len(ks), any("com.google.devtools.ksp" in c for c in ks), any("org.jetbrains.kotlin" in c for c in ks)))
+          lambda: len(ks) > 0 and all(("com.google.devtools.ksp" in c) or ("org.jetbrains.kotlin" in c) for c in ks),
+          lambda: "%d traced; KSP frame: %s; KGP frame: %s; KGP statistics code (KotlinSourceSetMetrics): %s" % (
+              len(ks), any("com.google.devtools.ksp" in c for c in ks), any("org.jetbrains.kotlin" in c for c in ks),
+              all("KotlinSourceSetMetrics" in c for c in ks)))
     at = g("all-stacktrace")
     check("D1", "(informational) tasks.all { } fails in Dependency Guard; the root cause is printed by details.py",
           lambda: at["exit"] != 0 and any("dropbox" in l.lower() or "dependency" in l.lower() for l in at["caused_by"] + [at["what_went_wrong"]]),
