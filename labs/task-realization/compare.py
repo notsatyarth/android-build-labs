@@ -156,6 +156,30 @@ def main():
           lambda: at["exit"] != 0 and any("dropbox" in l.lower() or "dependency" in l.lower() for l in at["caused_by"] + [at["what_went_wrong"]]),
           lambda: (at["caused_by"][-1] if at["caused_by"] else at["what_went_wrong"])[:220].replace("\n", " "))
 
+    # when does a task read its inputs (bead droidcon-5z1)
+    ve, vl, vr = g("value-eager-help"), g("value-lazy-help"), g("value-lazy-run")
+    v1, v2, vp, vo = g("value-lazy-stale-first"), g("value-lazy-stale-second"), g("value-provider-run"), g("value-order")
+    check("V1", "an eagerly created task that reads a not-yet-generated file in its configuration breaks help, a build that never runs it",
+          lambda: ve["exit"] != 0 and "labUse" in ve["what_went_wrong"],
+          lambda: "exit %d: %s" % (ve["exit"], ve["what_went_wrong"].replace("\n", " ")[:150]))
+    check("V2", "the same read in a registered task does not break help",
+          lambda: vl["exit"] == 0, lambda: "exit %d" % vl["exit"])
+    check("V3", "... but breaks the build that runs it: configuration (and so the read) happens before the producer task executes",
+          lambda: vr["exit"] != 0 and "labUse" in vr["what_went_wrong"],
+          lambda: "exit %d: %s" % (vr["exit"], vr["what_went_wrong"].replace("\n", " ")[:150]))
+    check("V4", "... and with a file left by an earlier build it silently reads the stale value (A) while the producer writes the new one (B)",
+          lambda: v1["exit"] == 0 and v2["exit"] == 0 and v2["lab_values"].get("labUse") == "generated-by-A",
+          lambda: "second build exit %d, labUse saw %s" % (v2["exit"], v2["lab_values"].get("labUse")))
+    check("V5", "wiring the input as a Provider and reading it in the task action works in a clean build and sees the new value",
+          lambda: vp["exit"] == 0 and vp["lab_values"].get("labUse") == "generated-by-B",
+          lambda: "exit %d, labUse saw %s" % (vp["exit"], vp["lab_values"].get("labUse")))
+    check("V6", "a value the build script sets later: eager task sees the default, a registered task and a Property read at execution see the final value",
+          lambda: vo["exit"] == 0 and vo["lab_values"].get("labOrderEager") == "unset"
+          and vo["lab_values"].get("labOrderLazy") == "set-by-build-script"
+          and vo["lab_values"].get("labOrderProvider") == "set-by-build-script",
+          lambda: "eager %s, lazy %s, provider %s" % (vo["lab_values"].get("labOrderEager"), vo["lab_values"].get("labOrderLazy"),
+                                                     vo["lab_values"].get("labOrderProvider")))
+
     # Cross-check with a measured macOS result: samples/nia-variants (nowinandroid 2982e63, Gradle 9.7.1, AGP 9.3.2,
     # Apple M1) counted tasks.names per project: 13135 in all projects (the root build and build-logic both print
     # ":"), 1126 in :app. Same commit and versions, so :app should match exactly; the total may differ by the

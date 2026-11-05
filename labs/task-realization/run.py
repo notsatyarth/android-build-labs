@@ -60,6 +60,15 @@ SCENARIOS = [
     ("matching-all", ["help"], "matching-all.init.gradle.kts", {}, True),
     ("all-stacktrace", ["help", "--stacktrace"], "all.init.gradle.kts", {}, True),
     ("who-dryrun", [DRYRUN, "--dry-run"], "who-realizes.init.gradle.kts", {"lab.who": WHO}, True),
+    # when does a task read its inputs (bead droidcon-5z1, 2026-11-05); build/lab of the target is deleted first,
+    # except for value-lazy-stale-second, which reads what value-lazy-stale-first left behind
+    ("value-eager-help", ["help"], "value-timing.init.gradle.kts", {"lab.target": TARGET, "lab.mode": "eager-read"}, True),
+    ("value-lazy-help", ["help"], "value-timing.init.gradle.kts", {"lab.target": TARGET, "lab.mode": "lazy-read"}, True),
+    ("value-lazy-run", [TARGET + ":labUse"], "value-timing.init.gradle.kts", {"lab.target": TARGET, "lab.mode": "lazy-read", "lab.runid": "B"}, True),
+    ("value-lazy-stale-first", [TARGET + ":labGen"], "value-timing.init.gradle.kts", {"lab.target": TARGET, "lab.mode": "lazy-read", "lab.runid": "A"}, True),
+    ("value-lazy-stale-second", [TARGET + ":labUse"], "value-timing.init.gradle.kts", {"lab.target": TARGET, "lab.mode": "lazy-read", "lab.runid": "B"}, True),
+    ("value-provider-run", [TARGET + ":labUse"], "value-timing.init.gradle.kts", {"lab.target": TARGET, "lab.mode": "provider", "lab.runid": "B"}, True),
+    ("value-order", [TARGET + ":labOrderEager", TARGET + ":labOrderLazy", TARGET + ":labOrderProvider"], "value-timing.init.gradle.kts", {"lab.target": TARGET, "lab.mode": "provider"}, True),
 ]
 TIMED = ["eager-withtype", "lazy-withtype", "all", "help-miss"]  # repeated for configuration time
 
@@ -80,6 +89,7 @@ def checks_from_console(out):
         "deprecation_lines": sorted({l.strip()[:200] for l in out.splitlines()
                                      if re.search(r"deprecated", l, re.I) and not l.startswith("$ ")})[:30],
         "caused_by": [l.strip()[:300] for l in out.splitlines() if l.startswith("Caused by:")][:15],
+        "lab_values": dict(l.split(" ", 2)[1:] for l in out.splitlines() if l.startswith("LAB_VALUE ") and l.count(" ") >= 2),
         "realized_by": [l[len("LAB_REALIZED_BY "):] for l in out.splitlines() if l.startswith("LAB_REALIZED_BY ")],
         "what_went_wrong": (re.search(r"\* What went wrong:\n(.*(?:\n>.*){0,3})", out) or [None, ""])[1].strip(),
     }
@@ -88,6 +98,8 @@ def checks_from_console(out):
 def run_one(nia, logs, name, args, init, props, clear, suffix=""):
     if clear:
         cc_dir_clear(nia)
+    if name.startswith("value-") and name != "value-lazy-stale-second":
+        shutil.rmtree(os.path.join(nia, *TARGET.strip(":").split(":"), "build", "lab"), ignore_errors=True)
     prefix = os.path.join(logs, "trace-" + name + suffix)
     for f in (prefix + "-log.txt",):
         if os.path.exists(f):
