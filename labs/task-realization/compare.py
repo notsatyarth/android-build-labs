@@ -126,7 +126,7 @@ def main():
     def chains(prefix_re):
         import re as _re
         if w is None:
-            raise KeyError("who-dryrun")  # scenario not run: MISSING, not DIFFERS
+            return None  # scenario not run: len(None) raises TypeError in the checks, reported as MISSING
         out = []
         for line in (w or {}).get("realized_by", []):
             path, _, frames = line.partition(" | ")
@@ -143,7 +143,7 @@ def main():
           lambda: len(lint) > 0 and sum(any(f.startswith("com.android.") for f in c.split(" < ")) for c in lint) >= 0.9 * len(lint),
           lambda: "%d lint-related realizations traced, %d with a com.android frame" % (
               len(lint), sum(any(f.startswith("com.android.") for f in c.split(" < ")) for c in lint)))
-    nonclean = [c for c in chains(r"(?!clean$|kspKotlin$|kspTestKotlin$|merge\w*Resources$)\w+")]
+    nonclean = chains(r"(?!clean$|kspKotlin$|kspTestKotlin$|merge\w*Resources$)\w+")
     check("R4", "(found after R2, 2026-11-05) the other realized-but-unscheduled tasks are realized by Gradle's dependency resolution reading the names of lazily published variant artifacts (LazyPublishArtifact.getName, DefaultLocalVariantGraphResolveStateBuilder.getVariantArtifacts)",
           lambda: len(nonclean) > 0 and all("LazyPublishArtifact.getName" in c and "getVariantArtifacts" in c for c in nonclean),
           lambda: "%d traced, %d via LazyPublishArtifact.getName" % (len(nonclean), sum("LazyPublishArtifact.getName" in c for c in nonclean)))
