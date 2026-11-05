@@ -30,6 +30,12 @@ INJ = os.path.join(HERE, "inject")
 TARGET = os.environ.get("LAB_TARGET", ":core:data")  # Android library used for the single-project patterns
 APP = os.environ.get("LAB_APP", ":app")  # the overrides exist only for testing the harness on a small build
 DRYRUN = os.environ.get("LAB_DRYRUN", ":app:assembleDemoDebug")
+# task names whose realization the who-dryrun scenario traces (the kinds realized but not scheduled in a dry run,
+# plus the two KSP tasks realized during configuration)
+WHO = os.environ.get("LAB_WHO", "clean|generate\\w*LintModel|lintAnalyze\\w*|lintVitalAnalyze\\w*|generate\\w*LintVitalModel"
+                     "|prepareLintJarForPublish|bundle\\w*LocalLintAar|write\\w*LintModelMetadata|package\\w*Renderscript"
+                     "|prepare\\w*ArtProfile|bundleLibRuntimeToDir\\w*|export\\w*ConsumerProguardFiles|extract\\w*SupportedLocales"
+                     "|copy\\w*JniLibsProjectOnly|merge\\w*Resources|kspKotlin|kspTestKotlin")
 
 # name, gradle args, init script (or None), extra -D properties, delete CC entry first
 SCENARIOS = [
@@ -50,6 +56,10 @@ SCENARIOS = [
     ("broken-eager-help", ["help"], "broken-eager.init.gradle.kts", {"lab.target": TARGET}, True),
     ("side-effect", [TARGET + ":check", "--dry-run"], "side-effect.init.gradle.kts", {"lab.target": TARGET}, True),
     ("side-effect-plus-all", [TARGET + ":check", "--dry-run"], "side-effect-plus-all.init.gradle.kts", {"lab.target": TARGET}, True),
+    # follow-ups (bead droidcon-led, 2026-11-05)
+    ("matching-all", ["help"], "matching-all.init.gradle.kts", {}, True),
+    ("all-stacktrace", ["help", "--stacktrace"], "all.init.gradle.kts", {}, True),
+    ("who-dryrun", [DRYRUN, "--dry-run"], "who-realizes.init.gradle.kts", {"lab.who": WHO}, True),
 ]
 TIMED = ["eager-withtype", "lazy-withtype", "all", "help-miss"]  # repeated for configuration time
 
@@ -69,6 +79,8 @@ def checks_from_console(out):
         "labBroken_error": "labBroken: configuration failed" in out,
         "deprecation_lines": sorted({l.strip()[:200] for l in out.splitlines()
                                      if re.search(r"deprecated", l, re.I) and not l.startswith("$ ")})[:30],
+        "caused_by": [l.strip()[:300] for l in out.splitlines() if l.startswith("Caused by:")][:15],
+        "realized_by": [l[len("LAB_REALIZED_BY "):] for l in out.splitlines() if l.startswith("LAB_REALIZED_BY ")],
         "what_went_wrong": (re.search(r"\* What went wrong:\n(.*(?:\n>.*){0,3})", out) or [None, ""])[1].strip(),
     }
 

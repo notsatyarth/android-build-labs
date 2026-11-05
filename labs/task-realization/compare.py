@@ -116,6 +116,41 @@ def main():
           lambda: to["by_phase"].get("tooling-model", 0) == 0 and to["model_tasks_listed"] == 0,
           lambda: "realized %d (phases %s), tasks listed %d" % (to["realized"], to["by_phase"], to["model_tasks_listed"]))
 
+    # follow-ups (bead droidcon-led, 2026-11-05)
+    ma = g("matching-all")
+    check("E5", "tasks.matching { name == ... }.all { } (eager consumer) realizes (almost) every task: the docs' warning holds here",
+          lambda: cfg(ma) >= 0.9 * ma["registered"],
+          lambda: "configuration-phase realizations %d of %d registered; build exit %d" % (cfg(ma), ma["registered"], ma["exit"]))
+    w = g("who-dryrun")
+
+    def chains(prefix_re):
+        import re as _re
+        out = []
+        for line in (w or {}).get("realized_by", []):
+            path, _, frames = line.partition(" | ")
+            if _re.fullmatch(prefix_re, path.strip().rsplit(":", 1)[-1]):
+                out.append(frames)
+        return out
+    cl = chains("clean")
+    check("R1", "Gradle core realizes clean in every project: LifecycleBasePlugin registers clean's targets with the build output cleanup registry, resolved when the task graph is finalized",
+          lambda: len(cl) >= 30 and all("DefaultBuildOutputCleanupRegistry.resolveOutputs" in c for c in cl),
+          lambda: "%d clean realizations, %d via DefaultBuildOutputCleanupRegistry.resolveOutputs" % (
+              len(cl), sum("DefaultBuildOutputCleanupRegistry.resolveOutputs" in c for c in cl)))
+    lint = chains(r"(generate\w*LintModel|lintAnalyze\w*|lintVitalAnalyze\w*|generate\w*LintVitalModel|write\w*LintModelMetadata|bundle\w*LocalLintAar|prepareLintJarForPublish)")
+    check("R2", "the lint-related tasks realized but not scheduled are realized from AGP code (first non-Gradle frame is com.android.*)",
+          lambda: len(lint) > 0 and sum(any(f.startswith("com.android.") for f in c.split(" < ")) for c in lint) >= 0.9 * len(lint),
+          lambda: "%d lint-related realizations traced, %d with a com.android frame" % (
+              len(lint), sum(any(f.startswith("com.android.") for f in c.split(" < ")) for c in lint)))
+    ks = chains("kspKotlin|kspTestKotlin")
+    check("R3", "(informational) who realizes :core:common:kspKotlin during configuration: a KSP or KGP frame is on the stack",
+          lambda: len(ks) > 0 and any(("com.google.devtools.ksp" in c) or ("org.jetbrains.kotlin" in c) for c in ks),
+          lambda: "%d traced; KSP frame: %s; KGP frame: %s" % (
+              len(ks), any("com.google.devtools.ksp" in c for c in ks), any("org.jetbrains.kotlin" in c for c in ks)))
+    at = g("all-stacktrace")
+    check("D1", "(informational) tasks.all { } fails in Dependency Guard; the root cause is printed by details.py",
+          lambda: at["exit"] != 0 and any("dropbox" in l.lower() or "dependency" in l.lower() for l in at["caused_by"] + [at["what_went_wrong"]]),
+          lambda: (at["caused_by"][-1] if at["caused_by"] else at["what_went_wrong"])[:220].replace("\n", " "))
+
     # Cross-check with a measured macOS result: samples/nia-variants (nowinandroid 2982e63, Gradle 9.7.1, AGP 9.3.2,
     # Apple M1) counted tasks.names per project: 13135 in all projects (the root build and build-logic both print
     # ":"), 1126 in :app. Same commit and versions, so :app should match exactly; the total may differ by the

@@ -66,3 +66,39 @@ for n in ("all",):
     print("== %s console:" % n)
     for l in console_tail(n, r"What went wrong|^> |Exception|failed|FAILED"):
         print("  ", l[:300])
+
+
+# ---- follow-ups (bead droidcon-led) ----
+def frame_owner(chain):
+    """Owner of a realization: the first stack frame outside Gradle, else Gradle core."""
+    for f in chain:
+        if not f.startswith("org.gradle."):
+            for key, owner in (("com.android.", "AGP"), ("com.google.devtools.ksp", "KSP"), ("org.jetbrains.kotlin", "KGP"),
+                               ("dagger.hilt", "Hilt"), ("com.dropbox", "Dependency Guard")):
+                if f.startswith(key):
+                    return owner + " (" + f + ")"
+            return "other (" + f + ")"
+    return "Gradle core"
+
+
+w = load("who-dryrun")
+if w:
+    print("== who-dryrun: %d traced realizations" % len(w.get("realized_by", [])))
+    by_kind = collections.defaultdict(list)
+    for line in w.get("realized_by", []):
+        path, _, frames = line.partition(" | ")
+        by_kind[kind(path.strip())].append(frames.split(" < "))
+    for k, chains in sorted(by_kind.items(), key=lambda kv: -len(kv[1])):
+        owners = collections.Counter(frame_owner(c).split(" (")[0] for c in chains)
+        top = collections.Counter(" < ".join(c[:5]) for c in chains).most_common(1)[0]
+        print("   %-34s n=%-4d owners=%s" % (k, len(chains), dict(owners)))
+        print("      first owner frame: %s" % frame_owner(chains[0]))
+        print("      most common caller (%d): %s" % (top[1], top[0][:600]))
+
+a = load("all-stacktrace")
+if a:
+    print("== all-stacktrace exit %s" % a.get("exit"))
+    for l in a.get("caused_by", []):
+        print("   ", l)
+    for l in console_tail("all-stacktrace", r"dropbox|dependencyguard|DependencyGuard")[:12]:
+        print("    frame:", l.strip()[:250])
