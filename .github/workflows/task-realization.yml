@@ -13,6 +13,10 @@ on:
         description: "configuration-time repeats per timed scenario"
         required: false
         default: "3"
+      only:
+        description: "comma-separated scenario names to run (empty: all); add 'tapi' and 'timing' to include those"
+        required: false
+        default: ""
 permissions:
   contents: read
 jobs:
@@ -41,10 +45,11 @@ jobs:
         env:
           NIA: ${{ runner.temp }}/nia
           REPEAT: ${{ inputs.repeat }}
+          ONLY: ${{ inputs.only }}
         working-directory: labs/task-realization
         run: |
           LIB=$(ls -d "$HOME"/.gradle/wrapper/dists/gradle-9.7.1-bin/*/gradle-9.7.1/lib)
-          python3 -I run.py "$NIA" --logs logs --repeat "$REPEAT" --tapi-cp "$RUNNER_TEMP/tapi/gradle-tooling-api-9.7.1.jar:$LIB/slf4j-api-2.0.17.jar"
+          python3 -I run.py "$NIA" --logs logs --repeat "$REPEAT" ${ONLY:+--only "$ONLY"} --tapi-cp "$RUNNER_TEMP/tapi/gradle-tooling-api-9.7.1.jar:$LIB/slf4j-api-2.0.17.jar"
       - name: Report
         if: always()
         working-directory: labs/task-realization

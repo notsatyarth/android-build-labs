@@ -94,6 +94,8 @@ if w:
         print("   %-34s n=%-4d owners=%s" % (k, len(chains), dict(owners)))
         print("      first owner frame: %s" % frame_owner(chains[0]))
         print("      most common caller (%d): %s" % (top[1], top[0][:600]))
+        full = collections.Counter(" < ".join(c) for c in chains).most_common(1)[0][0]
+        print("      full chain of one sample: %s" % full[:3500])
 
 a = load("all-stacktrace")
 if a:

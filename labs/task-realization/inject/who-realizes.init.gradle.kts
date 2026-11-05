@@ -21,7 +21,7 @@ gradle.lifecycle.beforeProject {
                             .none { f.startsWith(it) } && !f.contains("\$\$Lambda")
                     }
                     .distinct()
-                    .take(14)
+                    .take(30)
                 println("LAB_REALIZED_BY " + path + " | " + frames.joinToString(" < "))
             }
         }
