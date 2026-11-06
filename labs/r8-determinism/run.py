@@ -105,7 +105,8 @@ def write_android(proj, agp=BASE_AGP, gradle_v=BASE_GRADLE, gson=BASE_GSON, addf
         shutil.rmtree(proj)
     os.makedirs(proj)
     for f in ("gradlew", "gradlew.bat"):
-        shutil.copy(os.path.join(WRAPPER_SRC, f), proj)
+        if os.path.exists(os.path.join(WRAPPER_SRC, f)):
+            shutil.copy(os.path.join(WRAPPER_SRC, f), proj)
     shutil.copytree(os.path.join(WRAPPER_SRC, "gradle"), os.path.join(proj, "gradle"))
     open(os.path.join(proj, "gradle/wrapper/gradle-wrapper.properties"), "w").write(
         f"distributionBase=GRADLE_USER_HOME\ndistributionPath=wrapper/dists\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-{gradle_v}-bin.zip\nzipStoreBase=GRADLE_USER_HOME\nzipStorePath=wrapper/dists\n")
