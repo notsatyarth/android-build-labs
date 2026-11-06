@@ -1,0 +1,29 @@
+# Does `-x <task>` defeat configuration on demand? Runs labs/cod-exclude-task/run.py on a synthetic 8-project Android build.
+name: cod-exclude-task
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Runner info
+        run: bash .github/scripts/runner_info.sh
+      - name: Run
+        working-directory: labs/cod-exclude-task
+        run: |
+          echo "### -x and configuration on demand (CI: x86 Linux runner)" >> "$GITHUB_STEP_SUMMARY"
+          python3 run.py --logs logs --summary "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: cod-exclude-task-logs
+          path: labs/cod-exclude-task/logs/
+          retention-days: 30

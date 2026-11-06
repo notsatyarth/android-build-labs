@@ -1,0 +1,4 @@
+// One line per configured project. With configuration on demand, projects that are not needed are
+// never evaluated, so they print nothing.
+gradle.projectsLoaded { g -> println "LAB_TOTAL ${g.rootProject.allprojects.size()}" }
+gradle.afterProject { p -> println "LAB_CONFIGURED ${p.path}" }
