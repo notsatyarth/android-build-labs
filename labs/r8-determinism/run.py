@@ -179,8 +179,17 @@ def collect(proj, rc, out):
         r["mapping_sha"] = sha(mp)
         r["mapping_path"] = mp
         r["names"] = parse_mapping(mp, {"lab.app.model.Settings", "lab.app.model.SettingsAnnotated"})
-        m = re.search(r"com\.android\.tools:r8:([\w.\-]+)", out)
+        head = open(mp, errors="replace").read(4000)
+        m = re.search(r"^# compiler_version: (\S+)", head, re.M)
         r["r8"] = m.group(1) if m else None
+        # the mapping block of the app's own classes, for the job log (artifacts may not be readable)
+        block, keep_lines = [], False
+        for line in open(mp, errors="replace"):
+            if not line.startswith((" ", "#")):
+                keep_lines = line.startswith("lab.app")
+            if keep_lines and not line.startswith("#"):
+                block.append(line.rstrip("\n"))
+        r["mapping_app_block"] = block[:80]
     return r
 
 
@@ -198,11 +207,14 @@ def run_android(logs, work):
             write_android(proj, **{k: v for k, v in kw.items() if not k.startswith("_")})
         rc, out = gradle(proj, list(build_args), os.path.join(logs, f"android-{name}.log"))
         r = collect(proj, rc, out)
-        r["r8"] = r8_version(proj, logs, name)
         r["params"] = {k: v for k, v in kw.items() if not k.startswith("_")}
         res[name] = r
         print("%-28s exit=%s r8=%s mapping=%s Settings=%s" % (name, rc, r.get("r8"), (r.get("mapping_sha") or "-")[:12],
                                                             (r.get("names") or {}).get("lab.app.model.Settings", {}).get("fields")), flush=True)
+        if name in ("base", "addfield", "agp-" + OTHER_AGP):
+            print("   mapping block of lab.app.* classes:\n      " + "\n      ".join(r.get("mapping_app_block", [])[:60]), flush=True)
+        if rc != 0:
+            print("   error: " + r.get("error", ""), flush=True)
         return r
 
     base_dir = os.path.join(work, "base")
