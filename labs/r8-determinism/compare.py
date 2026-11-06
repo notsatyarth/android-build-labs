@@ -55,6 +55,9 @@ def main():
 
     a = (A or {}).get
     b = a("base")
+    check("A0", "(sample check) R8 keeps the three Settings fields (values come from run time), so their names can be compared",
+          lambda: all(x in names(b, S) for x in FIELDS),
+          lambda: "Settings fields in mapping.txt: %s; SettingsAnnotated: %s" % (names(b, S), names(b, SA)))
     same = lambda x, y: x["dex"] == y["dex"] and x["mapping_sha"] == y["mapping_sha"]
     check("A1", "two clean release builds of the same sources in the same directory give identical dex and mapping.txt",
           lambda: same(b, a("base-again")),

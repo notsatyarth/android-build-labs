@@ -41,7 +41,10 @@ def settings_kt(addfield, annotated):
 
 
 def store_kt(addfield):
-    args = ", ".join(v for _, _, v in ([ADDED] if addfield else []) + FIELDS)
+    # Values arrive at run time (intent extras), as user settings would. With constant arguments R8 can
+    # propagate the values and delete the fields (seen in run 42170999464), which is not the case to test.
+    params = ", ".join("%s: %s" % (n, t) for n, t, _ in ([ADDED] if addfield else []) + FIELDS)
+    args = ", ".join(n for n, _, _ in ([ADDED] if addfield else []) + FIELDS)
     return f'''package lab.app
 import android.content.Context
 import com.google.gson.Gson
@@ -49,7 +52,7 @@ import lab.app.model.Settings
 import lab.app.model.SettingsAnnotated
 object Store {{
     private val gson = Gson()
-    fun save(c: Context) {{
+    fun save(c: Context, {params}) {{
         c.getSharedPreferences("prefs", Context.MODE_PRIVATE).edit()
             .putString("settings", gson.toJson(Settings({args})))
             .putString("settingsAnnotated", gson.toJson(SettingsAnnotated({args})))
@@ -64,6 +67,7 @@ object Store {{
 
 
 def main_kt(addfield, unrelated):
+    acc_arg = 'intent.getStringExtra("acc") ?: "acc-1", ' if addfield else ""
     extra = "        title = title.toString() + lab.app.feature.Extra(\"e\", 1, 2L).describe()\n" if unrelated else ""
     acc = " + s.accountId + a.accountId" if addfield else ""
     return f'''package lab.app
@@ -72,7 +76,7 @@ import android.os.Bundle
 class MainActivity : Activity() {{
     override fun onCreate(b: Bundle?) {{
         super.onCreate(b)
-        Store.save(this)
+        Store.save(this, {acc_arg}intent.getStringExtra("name") ?: "jesse", intent.getIntExtra("theme", 2), intent.getBooleanExtra("notif", true))
         val s = Store.load(this)!!
         val a = Store.loadAnnotated(this)!!
         title = s.userName + s.themeId + s.notificationsOn + a.userName + a.themeId + a.notificationsOn{acc}
@@ -250,7 +254,8 @@ def java_settings(addfield, annotated):
 
 
 def java_main(addfield, unrelated):
-    args = ('"acc-1", ' if addfield else "") + '"jesse", 2, true'
+    # values from the command line (run time), so R8 cannot propagate them as constants
+    args = ('a.length > 5 ? a[5] : "acc-1", ' if addfield else "") + 'a[2], Integer.parseInt(a[3]), Boolean.parseBoolean(a[4])'
     acc = ' + " accountId=" + s.accountId()' if addfield else ""
     extra = '    System.out.println("extra " + new lab.jvm.feature.Extra("e", 1).describe());\n' if unrelated else ""
     return f'''package lab.jvm;
@@ -353,7 +358,7 @@ def run_jvm(logs, work, r8_version):
         _, jar, _, b = built[name]
         if b["r8_exit"] != 0:
             return {"exit": None, "out": "R8 failed"}
-        p = subprocess.run(["java", "-cp", jar, "lab.jvm.Main", mode, path], capture_output=True, text=True)
+        p = subprocess.run(["java", "-cp", jar, "lab.jvm.Main", mode, path, "jesse", "2", "true"], capture_output=True, text=True)
         return {"exit": p.returncode, "out": (p.stdout + p.stderr).strip()[-500:]}
 
     for writer, readers in (("base", ["base", "base-again", "unrelated", "addfield", "addfield-applymapping"]),
