@@ -7,6 +7,10 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        agp: ["7.4.2", "8.5.2", "8.13.2", "9.3.2"]
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -19,11 +23,11 @@ jobs:
       - name: Run
         working-directory: labs/cod-exclude-task
         run: |
-          echo "### -x and configuration on demand (CI: x86 Linux runner)" >> "$GITHUB_STEP_SUMMARY"
-          python3 run.py --logs logs --summary "$GITHUB_STEP_SUMMARY"
+          echo "### -x and configuration on demand, AGP ${{ matrix.agp }} (CI: x86 Linux runner)" >> "$GITHUB_STEP_SUMMARY"
+          python3 run.py --agp "${{ matrix.agp }}" --logs logs --summary "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
-          name: cod-exclude-task-logs
+          name: cod-exclude-task-logs-${{ matrix.agp }}
           path: labs/cod-exclude-task/logs/
           retention-days: 30
