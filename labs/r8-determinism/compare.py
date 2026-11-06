@@ -102,7 +102,15 @@ def main():
     jb = (j("builds") or {}).get
     reads = j("reads") or {}
     ok_line = "LAB_READ userName=jesse themeId=2 notificationsOn=true"
-    rd = lambda k: reads[k]["out"].splitlines()[-1] if reads[k]["out"] else ""
+    def rd(k):
+        """The LAB_READ / LAB_JSON line, else the exception line, else the last line."""
+        lines = reads[k]["out"].splitlines()
+        for pref in ("LAB_READ", "LAB_JSON"):
+            hit = [l for l in lines if l.startswith(pref)]
+            if hit:
+                return hit[-1]
+        exc = [l.strip() for l in lines if "Exception" in l and not l.strip().startswith("at ")]
+        return exc[0][:220] if exc else (lines[-1] if lines else "")
     check("J1", "R8 (classfile output, same R8 as AGP) twice on the same program: identical classes and mapping",
           lambda: jb("base")["classes_sha"] == jb("base-again")["classes_sha"] and jb("base")["mapping_sha"] == jb("base-again")["mapping_sha"],
           lambda: "R8 %s; Settings fields %s" % (j("r8"), jb("base")["names"]["lab.jvm.model.Settings"]["fields"]))

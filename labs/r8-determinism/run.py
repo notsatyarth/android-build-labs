@@ -172,6 +172,49 @@ def parse_mapping(path, classes):
     return res
 
 
+def tool(name):
+    import glob
+    c = sorted(glob.glob(os.path.join(os.environ.get("ANDROID_HOME", ""), "build-tools", "*", name)))
+    return c[-1] if c else None
+
+
+def dex_fields(apk):
+    """{class descriptor: [instance field names]} from dexdump (the real names in the APK)."""
+    dd = tool("dexdump")
+    if not dd:
+        return {}
+    txt = subprocess.run([dd, apk], capture_output=True, text=True).stdout
+    res, cur, inst = {}, None, False
+    for line in txt.splitlines():
+        m = re.match(r"\s+Class descriptor\s+:\s+'L([^;]+);'", line)
+        if m:
+            cur, inst = m.group(1).replace("/", "."), False
+            res[cur] = []
+            continue
+        if re.match(r"\s+Instance fields\s+-", line):
+            inst = True
+            continue
+        if re.match(r"\s+(Direct|Virtual) methods\s+-", line) or re.match(r"\s+Static fields\s+-", line):
+            inst = False
+            continue
+        f = re.match(r"\s+name\s+:\s+'([^']+)'", line)
+        if inst and cur and f:
+            res[cur].append(f.group(1))
+    return res
+
+
+def fill_identity(names, dexf):
+    """R8 leaves members whose name did not change out of mapping.txt; add them back from the dex."""
+    for cls, info in names.items():
+        present = dexf.get(info["obfuscated_class"], [])
+        renamed = set(info["fields"].values())
+        for f in present:
+            if f not in renamed and f not in info["fields"]:
+                info["fields"][f] = f
+        info["dex_fields"] = present
+    return names
+
+
 def collect(proj, rc, out):
     apk = os.path.join(proj, "app/build/outputs/apk/release/app-release-unsigned.apk")
     mp = os.path.join(proj, "app/build/outputs/mapping/release/mapping.txt")
@@ -182,7 +225,7 @@ def collect(proj, rc, out):
         r["apk_sha"] = sha(apk)
         r["mapping_sha"] = sha(mp)
         r["mapping_path"] = mp
-        r["names"] = parse_mapping(mp, {"lab.app.model.Settings", "lab.app.model.SettingsAnnotated"})
+        r["names"] = fill_identity(parse_mapping(mp, {"lab.app.model.Settings", "lab.app.model.SettingsAnnotated"}), dex_fields(apk))
         head = open(mp, errors="replace").read(4000)
         m = re.search(r"^# compiler_version: (\S+)", head, re.M)
         r["r8"] = m.group(1) if m else None
