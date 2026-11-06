@@ -435,7 +435,9 @@ def main():
         if not r8v:
             proj = os.path.join(work, "probe")
             write_android(proj)
-            r8v = r8_version(proj, logs, "probe")
+            rc, out = gradle(proj, [":app:assembleRelease"], os.path.join(logs, "android-probe.log"))
+            r8v = collect(proj, rc, out).get("r8")  # from the compiler_version header of mapping.txt
+            print("R8 version from probe build:", r8v, flush=True)
         rj = run_jvm(logs, work, r8v)
         json.dump(rj, open(os.path.join(logs, "jvm.json"), "w"), indent=1)
     shutil.rmtree(work, ignore_errors=True)
