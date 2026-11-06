@@ -402,7 +402,8 @@ def run_jvm(logs, work, r8_version):
         if b["r8_exit"] != 0:
             return {"exit": None, "out": "R8 failed"}
         p = subprocess.run(["java", "-cp", jar, "lab.jvm.Main", mode, path, "jesse", "2", "true"], capture_output=True, text=True)
-        return {"exit": p.returncode, "out": (p.stdout + p.stderr).strip()[-500:]}
+        o = (p.stdout + p.stderr).strip()
+        return {"exit": p.returncode, "out": o if len(o) <= 1200 else o[:800] + "\n...\n" + o[-400:]}
 
     for writer, readers in (("base", ["base", "base-again", "unrelated", "addfield", "addfield-applymapping"]),
                             ("annotated-base", ["annotated-base", "annotated-addfield"])):
