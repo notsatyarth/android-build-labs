@@ -1,0 +1,39 @@
+# Which build participants start a Kotlin daemon (project Kotlin, AGP's forced KGP, build-logic, buildSrc,
+# kapt, KSP, toolchains), and what makes a second one start? Runs labs/kotlin-daemon-triggers/run.py.
+name: kotlin-daemon-triggers
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "Comma-separated cells (empty = all c01..c12)"
+        required: false
+        default: ""
+permissions:
+  contents: read
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: |
+            21
+            17
+      - name: Runner info
+        run: bash .github/scripts/runner_info.sh
+      - name: Run
+        working-directory: labs/kotlin-daemon-triggers
+        env:
+          ONLY: ${{ inputs.only }}
+        run: |
+          echo "### Kotlin daemon triggers (CI: x86 Linux runner)" >> "$GITHUB_STEP_SUMMARY"
+          python3 run.py ${ONLY:+--only "$ONLY"} --logs logs --summary "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: kotlin-daemon-triggers-logs
+          path: labs/kotlin-daemon-triggers/logs/
+          retention-days: 30
