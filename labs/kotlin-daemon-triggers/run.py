@@ -141,10 +141,11 @@ def daemon_info(args):
             cp = a[i + 1]
     versions = sorted(set(re.findall(r"kotlin-(?:compiler-embeddable|daemon-embeddable|compiler|build-tools-impl)-(\d[\w.\-]*?)\.jar", cp)))
     java = a[0]
-    jdk = re.search(r"(jdk[^/]*|Java_[^/]*/[^/]+|\d+\.\d+\.\d+[^/]*)", java)
+    jdk = re.search(r"(Java_Temurin-Hotspot_jdk/[^/]+|temurin-\d+[^/]*|jdk[^/]*)", java)
     xmx = next((x for x in a if x.startswith("-Xmx")), "")
     gc = next((x for x in a if re.match(r"-XX:\+Use\w+GC", x)), "default GC")
-    return {"kotlin": ",".join(versions) or "?", "java": java, "jdk": jdk.group(1) if jdk else java, "xmx": xmx, "gc": gc}
+    jars = sorted(set(os.path.basename(x) for x in cp.split(":") if "kotlin" in os.path.basename(x)))[:6]
+    return {"kotlin": ",".join(versions) or "?", "java": java, "jars": jars, "jdk": jdk.group(1) if jdk else java, "xmx": xmx, "gc": gc}
 
 
 class Sampler(threading.Thread):
@@ -208,7 +209,7 @@ def main():
         kgp_res = kgp_line.group(1) if kgp_line else "not on root classpath"
         kill_all(proj)
         s = Sampler(); s.start()
-        rc, out = gradle(proj, [":app:assembleDebug"], os.path.join(a.logs, f"{cell}.log"))
+        rc, out = gradle(proj, [":app:assembleDebug", "--info"], os.path.join(a.logs, f"{cell}.log"))
         time.sleep(3); s.poll(); s.stop = True; s.join()
         kill_all(proj)
         tasks = sorted(set(re.findall(r"^> Task (\S*(?:compile\w*Kotlin|kapt\w*|ksp\w*)\S*)", out, re.M)))
@@ -220,7 +221,18 @@ def main():
                      (err.group(1).strip()[:140] if (err and rc) else "")))
         gen = [m for m in ("kaptlib", "ksplib") if os.path.isdir(os.path.join(proj, m))]
         adapters = {m: bool(glob.glob(os.path.join(proj, m, "build", "**", "UserJsonAdapter.*"), recursive=True)) for m in gen}
-        detail.append(f"- {cell}: Kotlin compile/kapt/KSP tasks that ran: {', '.join(tasks) or 'none'}"
+        diag = []
+        for l in out.splitlines():
+            if re.search(r"(?i)(kotlin (compile )?daemon|fallback|execution strategy|compiler execution|in-process|KotlinCompileDaemon|Could not connect|connected to the daemon)", l) and len(diag) < 12:
+                diag.append(l.strip()[:220])
+        for d in daemons:
+            detail.append(f"- {cell}: daemon java `{d['java']}` jars {d['jars']}")
+        if diag:
+            detail.append(f"- {cell}: --info lines about the daemon: " + " | ".join(diag))
+        if rc and err:
+            i = out.index("What went wrong:")
+            detail.append(f"- {cell}: failure: " + " ".join(out[i:i + 1500].split())[:1200])
+        detail.append(f"- {cell}: Kotlin compile/kapt/KSP tasks that ran: {', '.join(t for t in tasks if re.search(r'compile\w*Kotlin|:kapt\w*Kotlin|:ksp\w*Kotlin|kaptGenerateStubs', t)) or 'none'}"
                       + (f"; Moshi adapter generated: {adapters}" if adapters else ""))
     L = [f"Gradle {gradle_v} (embedded Kotlin {embedded}), AGP {AGP} built-in Kotlin, JDK 17 for Gradle, clean build of `:app:assembleDebug` per cell, all daemons stopped between cells.", "",
          "| cell | what changes | exit | KGP on root classpath (buildEnvironment) | expected Kotlin daemons | Kotlin daemons seen | each daemon: compiler version, JDK, JVM args | error |",
