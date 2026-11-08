@@ -15,7 +15,7 @@ Expectations, written before the first run (E = expected Kotlin daemons):
   c04 build-logic included build with kotlin-dsl                      E=2, Gradle-embedded + 2.2.10
   c05 buildSrc with kotlin-dsl                                        E=2, Gradle-embedded + 2.2.10
   c06 build-logic + KGP equal to Gradle-embedded Kotlin               E=1
-  c07 kapt module (com.android.legacy-kapt, Moshi codegen)            E=1, kapt stubs in the same daemon
+  c07 kapt module (com.android.legacy-kapt, Dagger compiler)            E=1, kapt stubs in the same daemon
   c08 KSP module (KSP 2.3.4, Moshi codegen)                           E=1, KSP2 runs in the Gradle daemon
   c09 one module with jvmToolchain(21)                                E=2, same version, other JDK
   c10 c06 + kotlin.daemon.jvmargs in root gradle.properties only      E=2, root args do not reach build-logic
@@ -29,7 +29,7 @@ import argparse, glob, os, re, shutil, subprocess, sys, tempfile, threading, tim
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 WRAPPER_SRC = os.path.join(HERE, "..", "..", "samples", "missing-dimension")  # Gradle 9.7.1 wrapper
-AGP, KSP, MOSHI = "9.3.2", "2.3.4", "1.15.2"
+AGP, KSP, MOSHI, DAGGER = "9.3.2", "2.3.4", "1.15.2", "2.59"
 
 CELLS = {
     "c01": dict(desc="base: :app + :lib, built-in Kotlin, no KGP declared", expect=1),
@@ -47,6 +47,7 @@ CELLS = {
 }
 
 KT = 'package lab.{m}\nclass {C} {{ fun v(): Int = 1 }}\n'
+DAGGER_KT = 'package lab.kaptlib\nimport dagger.Component\nimport javax.inject.Inject\nclass Engine @Inject constructor()\n@Component interface Car { fun engine(): Engine }\n'
 MOSHI_KT = 'package lab.{m}\nimport com.squareup.moshi.JsonClass\n@JsonClass(generateAdapter = true)\ndata class User(val name: String)\n'
 
 
@@ -97,8 +98,8 @@ def write_project(proj, cell, embedded):
     w(proj, "lib/src/main/kotlin/lab/lib/Lib.kt", KT.format(m="lib", C="Lib"))
     if c.get("kapt"):
         w(proj, "kaptlib/build.gradle.kts", android_lib("kaptlib", extra_plugins='; id("com.android.legacy-kapt")',
-          deps=f'implementation("com.squareup.moshi:moshi:{MOSHI}"); kapt("com.squareup.moshi:moshi-kotlin-codegen:{MOSHI}")'))
-        w(proj, "kaptlib/src/main/kotlin/lab/kaptlib/User.kt", MOSHI_KT.format(m="kaptlib"))
+          deps=f'implementation("com.google.dagger:dagger:{DAGGER}"); kapt("com.google.dagger:dagger-compiler:{DAGGER}")'))
+        w(proj, "kaptlib/src/main/kotlin/lab/kaptlib/Car.kt", DAGGER_KT)
     if c.get("ksp"):
         w(proj, "ksplib/build.gradle.kts", android_lib("ksplib", extra_plugins='; id("com.google.devtools.ksp")',
           deps=f'implementation("com.squareup.moshi:moshi:{MOSHI}"); ksp("com.squareup.moshi:moshi-kotlin-codegen:{MOSHI}")'))
@@ -204,13 +205,20 @@ def main():
     for cell in cells:
         proj = os.path.join(work, cell)
         write_project(proj, cell, embedded)
-        _, env_out = gradle(proj, ["buildEnvironment"], os.path.join(a.logs, f"{cell}-buildEnvironment.log"))
-        kgp_line = re.search(r"org\.jetbrains\.kotlin:kotlin-gradle-plugin:(\S+(?: -> \S+)?)", env_out)
-        kgp_res = kgp_line.group(1) if kgp_line else "not on root classpath"
         kill_all(proj)
         s = Sampler(); s.start()
         rc, out = gradle(proj, [":app:assembleDebug", "--info"], os.path.join(a.logs, f"{cell}.log"))
         time.sleep(3); s.poll(); s.stop = True; s.join()
+        gd = subprocess.run(["bash", "-c", "for p in $(pgrep -f GradleDaemon); do tr '\\0' ' ' < /proc/$p/cmdline | cut -d' ' -f1; done | sort -u"], capture_output=True, text=True).stdout.split()
+        detail.append(f"- {cell}: Gradle daemon java {gd}")
+        starts = re.findall(r"starting the daemon as: (\S+) -cp \S*?(kotlin-(?:compiler-embeddable|build-tools-compat)/[\d.]+)", out)
+        detail.append(f"- {cell}: KGP 'starting the daemon' log lines: {len(starts)} {sorted(set(x[1] for x in starts))}")
+        kill_all(proj)
+        # buildEnvironment only after the measured build: it compiles build-logic/buildSrc itself,
+        # which would start (and hide) their Kotlin daemon before sampling begins.
+        _, env_out = gradle(proj, ["buildEnvironment"], os.path.join(a.logs, f"{cell}-buildEnvironment.log"))
+        kgp_line = re.search(r"org\.jetbrains\.kotlin:kotlin-gradle-plugin:(\S+(?: -> \S+)?)", env_out)
+        kgp_res = kgp_line.group(1) if kgp_line else "not on root classpath"
         kill_all(proj)
         tasks = sorted(set(re.findall(r"^> Task (\S*(?:compile\w*Kotlin|kapt\w*|ksp\w*)\S*)", out, re.M)))
         err = re.search(r"What went wrong:\n(.*)", out)
@@ -220,7 +228,7 @@ def main():
                      "; ".join(f"Kotlin {d['kotlin']} on {d['jdk']} {d['xmx']} {d['gc']}" for d in daemons) or "-",
                      (err.group(1).strip()[:140] if (err and rc) else "")))
         gen = [m for m in ("kaptlib", "ksplib") if os.path.isdir(os.path.join(proj, m))]
-        adapters = {m: bool(glob.glob(os.path.join(proj, m, "build", "**", "UserJsonAdapter.*"), recursive=True)) for m in gen}
+        adapters = {m: bool(glob.glob(os.path.join(proj, m, "build", "**", "DaggerCar.*" if m == "kaptlib" else "UserJsonAdapter.*"), recursive=True)) for m in gen}
         diag = []
         for l in out.splitlines():
             if re.search(r"(?i)(kotlin (compile )?daemon|fallback|execution strategy|compiler execution|in-process|KotlinCompileDaemon|Could not connect|connected to the daemon)", l) and len(diag) < 12:
@@ -233,7 +241,7 @@ def main():
             i = out.index("What went wrong:")
             detail.append(f"- {cell}: failure: " + " ".join(out[i:i + 1500].split())[:1200])
         detail.append(f"- {cell}: Kotlin compile/kapt/KSP tasks that ran: {', '.join(t for t in tasks if re.search(r'compile\w*Kotlin|:kapt\w*Kotlin|:ksp\w*Kotlin|kaptGenerateStubs', t)) or 'none'}"
-                      + (f"; Moshi adapter generated: {adapters}" if adapters else ""))
+                      + (f"; processor output generated (kapt: DaggerCar, KSP: UserJsonAdapter): {adapters}" if adapters else ""))
     L = [f"Gradle {gradle_v} (embedded Kotlin {embedded}), AGP {AGP} built-in Kotlin, JDK 17 for Gradle, clean build of `:app:assembleDebug` per cell, all daemons stopped between cells.", "",
          "| cell | what changes | exit | KGP on root classpath (buildEnvironment) | expected Kotlin daemons | Kotlin daemons seen | each daemon: compiler version, JDK, JVM args | error |",
          "|---|---|---|---|---|---|---|---|"]
