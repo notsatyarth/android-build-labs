@@ -1,0 +1,358 @@
+{
+ "schema": 1,
+ "generated": "2026-11-10T18:48:40Z",
+ "project": "android/nowinandroid",
+ "commits": [
+  {
+   "sha": "cf441fbbc69c0aa80d159ae4a26687446abb68e1",
+   "date": "2025-01-06T16:49:03Z",
+   "subject": "Update comment about internal build path",
+   "outcome": "PASS",
+   "pins": {
+    "gradle": "8.11.1",
+    "agp": "8.7.3",
+    "kotlin": "2.1.0",
+    "ksp": "2.1.0-1.0.29"
+   },
+   "duration_s": 427.0,
+   "guard": "OK",
+   "first_error": null,
+   "failed_step": null,
+   "probes": {
+    "configuration_cache": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": null,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    }
+   },
+   "deprecation_details": []
+  },
+  {
+   "sha": "23f602637b0db8c6fab5643fc2bcaae5faa3f805",
+   "date": "2025-01-14T13:42:22-08:00",
+   "subject": "publishing to scans.gradle.com",
+   "outcome": "PASS",
+   "pins": {
+    "gradle": "8.12",
+    "agp": "8.7.3",
+    "kotlin": "2.1.0",
+    "ksp": "2.1.0-1.0.29"
+   },
+   "duration_s": 418.0,
+   "guard": "OK",
+   "first_error": null,
+   "failed_step": null,
+   "probes": {
+    "configuration_cache": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": null,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    }
+   },
+   "deprecation_details": []
+  },
+  {
+   "sha": "689ef92e41427ab70f82e2c9fe59755441deae92",
+   "date": "2025-04-03T14:22:14-07:00",
+   "subject": "Merge pull request #1850 from ogapants/patch-1",
+   "outcome": "PASS",
+   "pins": {
+    "gradle": "8.13",
+    "agp": "8.9.0",
+    "kotlin": "2.1.10",
+    "ksp": "2.1.10-1.0.31"
+   },
+   "duration_s": 421.7,
+   "guard": "OK",
+   "first_error": null,
+   "failed_step": null,
+   "probes": {
+    "configuration_cache": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": null,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    }
+   },
+   "deprecation_details": []
+  },
+  {
+   "sha": "7ff1913855ad1db355875502e964d7e12947241b",
+   "date": "2025-08-08T10:18:00-07:00",
+   "subject": "Fixes host test tasks that were accidentally attemping to run",
+   "outcome": "PASS",
+   "pins": {
+    "gradle": "9.0.0",
+    "agp": "8.9.0",
+    "kotlin": "2.1.10",
+    "ksp": "2.1.10-1.0.31"
+   },
+   "duration_s": 367.8,
+   "guard": "OK",
+   "first_error": null,
+   "failed_step": null,
+   "probes": {
+    "configuration_cache": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": null,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    }
+   },
+   "deprecation_details": []
+  },
+  {
+   "sha": "8af63fc67b937449cd1ba103950f429bc41eff0b",
+   "date": "2025-09-16T12:49:07+01:00",
+   "subject": "RTL Spotless error fixed",
+   "outcome": "PASS",
+   "pins": {
+    "gradle": "9.0.0",
+    "agp": "8.12.2",
+    "kotlin": "2.1.10",
+    "ksp": "2.1.10-1.0.31"
+   },
+   "duration_s": 305.2,
+   "guard": "OK",
+   "first_error": null,
+   "failed_step": null,
+   "probes": {
+    "configuration_cache": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": null,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    }
+   },
+   "deprecation_details": []
+  },
+  {
+   "sha": "3bc6ed6dbbdc64d8233a0594b1ec7f4498a9b3aa",
+   "date": "2025-11-07T21:06:23+01:00",
+   "subject": "9.0.0-alpha14",
+   "outcome": "FAIL",
+   "pins": {
+    "gradle": "9.1.0",
+    "agp": "9.0.0-alpha14",
+    "kotlin": "2.2.20",
+    "ksp": "2.3.1"
+   },
+   "duration_s": 94.3,
+   "guard": "UNVERIFIED",
+   "first_error": "Execution failed for task ':build-logic:convention:compileKotlin'.",
+   "failed_step": "guard-buildEnvironment",
+   "probes": {
+    "configuration_cache": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": null,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "inconclusive",
+     "reason": "no task log for this cell (the build did not reach the tasks)"
+    }
+   },
+   "deprecation_details": []
+  },
+  {
+   "sha": "fb185ed7b2bf27c48343bdaed54e54883d3ee14a",
+   "date": "2025-12-02T15:42:03Z",
+   "subject": "Docs: Add dependency graphs for feature modules",
+   "outcome": "PASS",
+   "pins": {
+    "gradle": "9.1.0",
+    "agp": "8.13.1",
+    "kotlin": "2.2.21",
+    "ksp": "2.3.1"
+   },
+   "duration_s": 376.2,
+   "guard": "OK",
+   "first_error": null,
+   "failed_step": null,
+   "probes": {
+    "configuration_cache": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": null,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "fail",
+     "reason": "3 Gradle deprecation message(s), 3 distinct",
+     "total": 3,
+     "distinct": 3
+    }
+   },
+   "deprecation_details": [
+    {
+     "message": "Declaring dependencies using multi-string notation has been deprecated.",
+     "removal": "Gradle 10",
+     "origin": "com.android.build.gradle.internal.lint.LintFromMaven$Companion",
+     "count": 1
+    },
+    {
+     "message": "Declaring dependencies using multi-string notation has been deprecated.",
+     "removal": "Gradle 10",
+     "origin": "com.android.build.gradle.internal.res.Aapt2FromMaven$Companion",
+     "count": 1
+    },
+    {
+     "message": "Declaring dependencies using multi-string notation has been deprecated.",
+     "removal": "Gradle 10",
+     "origin": "com.google.protobuf.gradle.ToolsLocator",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "sha": "12c265cf55ca21058e11e7393e054f3b7620b1aa",
+   "date": "2025-12-10T10:47:05+01:00",
+   "subject": "9.0.0-beta04",
+   "outcome": "PASS",
+   "pins": {
+    "gradle": "9.1.0",
+    "agp": "9.0.0-beta04",
+    "kotlin": "2.2.21",
+    "ksp": "2.3.1"
+   },
+   "duration_s": 344.6,
+   "guard": "OK",
+   "first_error": null,
+   "failed_step": null,
+   "probes": {
+    "configuration_cache": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": null,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "fail",
+     "reason": "1 Gradle deprecation message(s), 1 distinct",
+     "total": 1,
+     "distinct": 1
+    }
+   },
+   "deprecation_details": [
+    {
+     "message": "Declaring dependencies using multi-string notation has been deprecated.",
+     "removal": "Gradle 10",
+     "origin": "com.google.protobuf.gradle.ToolsLocator",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "sha": "9e984e5be8aeb959382821452880813c7e15167d",
+   "date": "2026-01-18T19:44:17+01:00",
+   "subject": "Fix Hilt error by forcing kotlin-metadata-jvm version to match kotlin version",
+   "outcome": "PASS",
+   "pins": {
+    "gradle": "9.2.1",
+    "agp": "9.0.0",
+    "kotlin": "2.3.0",
+    "ksp": "2.3.4"
+   },
+   "duration_s": 459.7,
+   "guard": "OK",
+   "first_error": null,
+   "failed_step": null,
+   "probes": {
+    "configuration_cache": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": null,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "fail",
+     "reason": "1 Gradle deprecation message(s), 1 distinct",
+     "total": 1,
+     "distinct": 1
+    }
+   },
+   "deprecation_details": [
+    {
+     "message": "Declaring dependencies using multi-string notation has been deprecated.",
+     "removal": "Gradle 10",
+     "origin": "com.google.protobuf.gradle.ToolsLocator",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "sha": "2982e63cb691ad49cd009aab43dc206fee6699c2",
+   "date": "2026-10-20T16:08:43-07:00",
+   "subject": "Merge pull request #2142 from arazosman/nav3DeepLink",
+   "outcome": "PASS",
+   "pins": {
+    "gradle": "9.7.1",
+    "agp": "9.3.2",
+    "kotlin": "2.3.0",
+    "ksp": "2.3.4"
+   },
+   "duration_s": 268.1,
+   "guard": "OK",
+   "first_error": null,
+   "failed_step": null,
+   "probes": {
+    "configuration_cache": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": 0,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    }
+   },
+   "deprecation_details": []
+  }
+ ]
+}

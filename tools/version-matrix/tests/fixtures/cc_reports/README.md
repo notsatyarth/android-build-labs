@@ -17,3 +17,7 @@ and 0 on Gradle 9.7.1.
 (CI run 42869725593). This Gradle version writes no uniqueProblemCount.
 
 `../kt90672_failure.excerpt.log`: the failure section of the real log of the KT-90672 repro (liutikas/kgp-2.5.0-beta2-ksp-fail at 78ee315, Kotlin 2.5.0-Beta2, Gradle 9.8.0, AGP 9.1.0, KSP 2.3.12), CI run 42872434236; stack frames cut to 6 per exception.
+
+`../gradle_9.1.0_help_multi_string_notation.excerpt.log`: `help` with `--warning-mode=all` on nowinandroid fb185ed7 (2025-12-02,
+Gradle 9.1.0), CI run 42876138951; stack frames cut to 8. It uses the wording "This will fail with an error in Gradle 10", which the
+first version of the deprecation probe missed (it reported zero on this commit).

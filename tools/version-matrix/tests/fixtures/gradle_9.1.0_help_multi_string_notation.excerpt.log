@@ -1,0 +1,71 @@
+# cmd: ./gradlew --console=plain --warning-mode=all --stacktrace --no-build-cache help
+# cwd: /home/runner/work/android-build-labs/android-build-labs/out/work/c00-fb185ed7
+# JAVA_HOME=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+Parallel Configuration Cache is an incubating feature.
+Calculating task graph as no cached configuration is available for tasks: help
+Type-safe project accessors is an incubating feature.
+
+> Configure project :build-logic:convention
+Declaring dependencies using multi-string notation has been deprecated. This will fail with an error in Gradle 10. Please use single-string notation instead: "com.android.tools.lint:lint-gradle:31.13.1". Consult the upgrading guide for further information: https://docs.gradle.org/9.1.0/userguide/upgrading_version_9.html#dependency_multi_string_notation
+	at org.gradle.api.internal.notations.DependencyMapNotationConverter.parseMap(DependencyMapNotationConverter.java:72)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.gradle.internal.typeconversion.MapNotationConverter.parseType(MapNotationConverter.java:94)
+	at org.gradle.internal.typeconversion.MapNotationConverter.parseType(MapNotationConverter.java:41)
+	at org.gradle.internal.typeconversion.TypedNotationConverter.convert(TypedNotationConverter.java:43)
+	at org.gradle.internal.typeconversion.CompositeNotationConverter.convert(CompositeNotationConverter.java:34)
+	at org.gradle.internal.typeconversion.NotationConverterToNotationParserAdapter.parseNotation(NotationConverterToNotationParserAdapter.java:31)
+	at org.gradle.internal.typeconversion.ErrorHandlingNotationParser.parseNotation(ErrorHandlingNotationParser.java:48)
+
+> Task :build-logic:convention:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :build-logic:convention:compileKotlin UP-TO-DATE
+> Task :build-logic:convention:compileJava NO-SOURCE
+> Task :build-logic:convention:pluginDescriptors UP-TO-DATE
+> Task :build-logic:convention:processResources UP-TO-DATE
+> Task :build-logic:convention:classes UP-TO-DATE
+> Task :build-logic:convention:jar UP-TO-DATE
+
+> Configure project :app
+Declaring dependencies using multi-string notation has been deprecated. This will fail with an error in Gradle 10. Please use single-string notation instead: "com.android.tools.build:aapt2:8.13.1-13719691:linux". Consult the upgrading guide for further information: https://docs.gradle.org/9.1.0/userguide/upgrading_version_9.html#dependency_multi_string_notation
+	at org.gradle.api.internal.notations.DependencyMapNotationConverter.parseMap(DependencyMapNotationConverter.java:72)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.gradle.internal.typeconversion.MapNotationConverter.parseType(MapNotationConverter.java:94)
+	at org.gradle.internal.typeconversion.MapNotationConverter.parseType(MapNotationConverter.java:41)
+	at org.gradle.internal.typeconversion.TypedNotationConverter.convert(TypedNotationConverter.java:43)
+	at org.gradle.internal.typeconversion.CompositeNotationConverter.convert(CompositeNotationConverter.java:34)
+	at org.gradle.internal.typeconversion.NotationConverterToNotationParserAdapter.parseNotation(NotationConverterToNotationParserAdapter.java:31)
+	at org.gradle.internal.typeconversion.ErrorHandlingNotationParser.parseNotation(ErrorHandlingNotationParser.java:48)
+
+> Configure project :core:datastore-proto
+Declaring dependencies using multi-string notation has been deprecated. This will fail with an error in Gradle 10. Please use single-string notation instead: "com.google.protobuf:protoc:4.29.2:linux-x86_64@exe". Consult the upgrading guide for further information: https://docs.gradle.org/9.1.0/userguide/upgrading_version_9.html#dependency_multi_string_notation
+	at org.gradle.api.internal.notations.DependencyMapNotationConverter.parseMap(DependencyMapNotationConverter.java:72)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.gradle.internal.typeconversion.MapNotationConverter.parseType(MapNotationConverter.java:94)
+	at org.gradle.internal.typeconversion.MapNotationConverter.parseType(MapNotationConverter.java:41)
+	at org.gradle.internal.typeconversion.TypedNotationConverter.convert(TypedNotationConverter.java:43)
+	at org.gradle.internal.typeconversion.CompositeNotationConverter.convert(CompositeNotationConverter.java:34)
+	at org.gradle.internal.typeconversion.NotationConverterToNotationParserAdapter.parseNotation(NotationConverterToNotationParserAdapter.java:31)
+	at org.gradle.internal.typeconversion.ErrorHandlingNotationParser.parseNotation(ErrorHandlingNotationParser.java:48)
+
+> Task :help
+
+Welcome to Gradle 9.1.0.
+
+To run a build, run gradlew <task> ...
+
+To see a list of available tasks, run gradlew tasks
+
+To see more detail about a task, run gradlew help --task <task>
+
+To see a list of command-line options, run gradlew --help
+
+For more detail on using Gradle, see https://docs.gradle.org/9.1.0/userguide/command_line_interface.html
+
+For troubleshooting, visit https://help.gradle.org
+
+[Incubating] Problems report is available at: file:///home/runner/work/android-build-labs/android-build-labs/out/work/c00-fb185ed7/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 3s
+5 actionable tasks: 1 executed, 4 up-to-date
+Configuration cache entry stored.
+
+# exit=0

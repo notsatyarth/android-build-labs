@@ -108,6 +108,21 @@ class DeprecationProbe(unittest.TestCase):
         self.assertEqual(d["origin"]["at"], "BasePlugin.kt:376")
         self.assertGreaterEqual(r["total"], 1)
 
+    def test_multi_string_notation_wording_is_found(self):
+        from probes import deprecations as dp
+        r = dp.parse(self.fx("gradle_9.1.0_help_multi_string_notation.excerpt.log"))
+        self.assertEqual(r["state"], "fail")
+        self.assertTrue(any("multi-string notation" in d["message"] and d["removal"] == "Gradle 10"
+                            and d["stated"] == "will fail with an error" for d in r["deprecations"]))
+
+    def test_unknown_wording_is_inconclusive_not_zero(self):
+        from probes import deprecations as dp
+        log = ("The Foo.bar() method is deprecated and will go away. Consult the upgrading guide for further information: "
+               "https://docs.gradle.org/x\nBUILD SUCCESSFUL in 1s\n")
+        r = dp.parse(log)
+        self.assertEqual(r["state"], "inconclusive")
+        self.assertEqual(r["unrecognised"], 1)
+
     def test_log_without_gradle_deprecations_is_pass(self):
         from probes import deprecations as dp
         # Kotlin "is deprecated" lines are not Gradle deprecations (no removal version)

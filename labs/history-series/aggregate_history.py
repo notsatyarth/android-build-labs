@@ -12,7 +12,7 @@ import sys
 import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "tools", "version-matrix"))
-from probes import result  # noqa: E402
+from probes import cell as cell_probes, result  # noqa: E402
 
 
 def row(meta, rep):
@@ -39,6 +39,20 @@ def row(meta, rep):
                                              ("total", "distinct"))})
 
 
+def reprobe(part_dir):
+    """Run the probes again on the raw files in a commit's artifact (logs and reports), so a parser fix needs no new build.
+    Returns None when the cell directory is missing."""
+    cj = sorted(glob.glob(os.path.join(part_dir, "*", "cell.json")))
+    if not cj:
+        return None
+    c = json.load(open(cj[0]))
+    d = os.path.dirname(cj[0])
+    c["dir"] = d
+    for st in c.get("steps", []):
+        st["log"] = os.path.join(d, os.path.basename(st["log"]))
+    return cell_probes.run(c)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("parts")
@@ -63,7 +77,16 @@ def main():
                 r["probes"] = {k: result("inconclusive", why) for k in ("configuration_cache", "deprecations")}
                 rows.append(r)
                 continue
-        rows.append(row(meta, rep))
+        r = row(meta, rep)
+        fresh = reprobe(d)
+        if fresh and rep is not None:
+            def keep(x, keys):
+                return {k: x[k] for k in ("state", "reason") + keys if k in x}
+            r["probes"] = {"configuration_cache": keep(fresh["configuration_cache"], ("total_problems", "unique_problems", "cache_action")),
+                           "deprecations": keep(fresh["deprecations"], ("total", "distinct", "unrecognised"))}
+            r["deprecation_details"] = [{"message": x["message"], "removal": x["removal"], "origin": (x["origin"] or {}).get("class"),
+                                         "count": x["count"]} for x in (fresh["deprecations"].get("deprecations") or [])]
+        rows.append(r)
     rows.sort(key=lambda r: r.get("date") or "")
     out = {"schema": 1, "generated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "project": a.project,
            "commits": rows}
