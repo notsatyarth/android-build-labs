@@ -16,5 +16,4 @@ and 0 on Gradle 9.7.1.
 `nia_cf441fbb_gradle_8.11.1_no_problems.html`: nowinandroid cf441fbb (2025-01-06), Gradle 8.11.1, same trimming as above
 (CI run 42869725593). This Gradle version writes no uniqueProblemCount.
 
-`../kt90672_failure.excerpt.log`: the failure text as printed in the KT-90672 issue description (transcribed from the
-tracker, not captured by our CI); replaced by the CI capture once the known-issue workflow has produced one.
+`../kt90672_failure.excerpt.log`: the failure section of the real log of the KT-90672 repro (liutikas/kgp-2.5.0-beta2-ksp-fail at 78ee315, Kotlin 2.5.0-Beta2, Gradle 9.8.0, AGP 9.1.0, KSP 2.3.12), CI run 42872434236; stack frames cut to 6 per exception.

@@ -8,4 +8,65 @@ A problem occurred configuring project ':second'.
          > Could not create an instance of type org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider.
             > DefaultTaskCollection#configureEach(Action) on task set cannot be executed in the current context.
 
-BUILD FAILED in 9s
+* Try:
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+* Exception is:
+org.gradle.api.ProjectConfigurationException: A problem occurred configuring project ':second'.
+	at org.gradle.execution.TaskNameResolver.getExistingTask(TaskNameResolver.java:118)
+	at org.gradle.execution.TaskNameResolver.access$000(TaskNameResolver.java:32)
+	at org.gradle.execution.TaskNameResolver$1.collectTasks(TaskNameResolver.java:70)
+	at org.gradle.execution.TaskSelection.getTasks(TaskSelection.java:45)
+	at org.gradle.execution.commandline.CommandLineTaskParser.parseTasks(CommandLineTaskParser.java:50)
+	at org.gradle.execution.TaskNameResolvingBuildTaskScheduler.scheduleRequestedTasks(TaskNameResolvingBuildTaskScheduler.java:65)
+Caused by: org.gradle.api.internal.tasks.DefaultTaskContainer$TaskCreationException: Could not create task ':second:kspDebugKotlin'.
+	at org.gradle.api.internal.tasks.DefaultTaskContainer.taskCreationException(DefaultTaskContainer.java:778)
+	at org.gradle.api.internal.tasks.DefaultTaskContainer.access$600(DefaultTaskContainer.java:77)
+	at org.gradle.api.internal.tasks.DefaultTaskContainer$TaskCreatingProvider.domainObjectCreationException(DefaultTaskContainer.java:770)
+	at org.gradle.api.internal.DefaultNamedDomainObjectCollection$AbstractDomainObjectCreatingProvider.tryCreate(DefaultNamedDomainObjectCollection.java:1018)
+	at org.gradle.api.internal.tasks.DefaultTaskContainer$TaskCreatingProvider.access$1401(DefaultTaskContainer.java:717)
+	at org.gradle.api.internal.tasks.DefaultTaskContainer$TaskCreatingProvider$1.run(DefaultTaskContainer.java:743)
+	... 154 more
+Caused by: org.gradle.api.internal.tasks.DefaultTaskContainer$TaskCreationException: Could not create task ':second:compileDebugKotlin'.
+	at org.gradle.api.internal.tasks.DefaultTaskContainer.taskCreationException(DefaultTaskContainer.java:778)
+	at org.gradle.api.internal.tasks.DefaultTaskContainer.access$600(DefaultTaskContainer.java:77)
+	at org.gradle.api.internal.tasks.DefaultTaskContainer$TaskCreatingProvider.domainObjectCreationException(DefaultTaskContainer.java:770)
+	at org.gradle.api.internal.DefaultNamedDomainObjectCollection$AbstractDomainObjectCreatingProvider.tryCreate(DefaultNamedDomainObjectCollection.java:1018)
+	at org.gradle.api.internal.tasks.DefaultTaskContainer$TaskCreatingProvider.access$1401(DefaultTaskContainer.java:717)
+	at org.gradle.api.internal.tasks.DefaultTaskContainer$TaskCreatingProvider$1.run(DefaultTaskContainer.java:743)
+	... 172 more
+Caused by: org.gradle.api.tasks.TaskInstantiationException: Could not create task of type 'KotlinCompile'.
+	at org.gradle.api.internal.project.taskfactory.TaskFactory$1.call(TaskFactory.java:95)
+	at org.gradle.api.internal.project.taskfactory.TaskFactory$1.call(TaskFactory.java:82)
+	at org.gradle.internal.UncheckedException.uncheckedCall(UncheckedException.java:103)
+	at org.gradle.api.internal.AbstractTask.injectIntoNewInstance(AbstractTask.java:224)
+	at org.gradle.api.internal.project.taskfactory.TaskFactory.create(TaskFactory.java:82)
+	at org.gradle.api.internal.project.taskfactory.AnnotationProcessingTaskFactory.create(AnnotationProcessingTaskFactory.java:47)
+	... 204 more
+Caused by: org.gradle.api.reflect.ObjectInstantiationException: Could not create an instance of type org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider.
+	at org.gradle.internal.instantiation.generator.DependencyInjectingInstantiator.doCreate(DependencyInjectingInstantiator.java:67)
+	at org.gradle.internal.instantiation.generator.DependencyInjectingInstantiator.newInstance(DependencyInjectingInstantiator.java:53)
+	at org.gradle.api.internal.model.DefaultObjectFactory.newInstance(DefaultObjectFactory.java:87)
+	at org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile.<init>(AbstractKotlinCompile.kt:370)
+	at org.jetbrains.kotlin.gradle.tasks.KotlinCompile.<init>(KotlinCompile.kt:52)
+	at org.jetbrains.kotlin.gradle.tasks.KotlinCompile_Decorated.<init>(Unknown Source)
+	... 214 more
+Caused by: org.gradle.api.internal.DefaultMutationGuard$IllegalMutationException: DefaultTaskCollection#configureEach(Action) on task set cannot be executed in the current context.
+	at org.gradle.api.internal.DefaultMutationGuard.createIllegalStateException(DefaultMutationGuard.java:102)
+	at org.gradle.api.internal.DefaultMutationGuard.assertEagerContext(DefaultMutationGuard.java:48)
+	at org.gradle.api.internal.DefaultDomainObjectCollection.assertEagerContext(DefaultDomainObjectCollection.java:484)
+	at org.gradle.api.internal.DefaultDomainObjectCollection.configureEach(DefaultDomainObjectCollection.java:196)
+	at org.gradle.api.internal.DelegatingDomainObjectSet.configureEach(DelegatingDomainObjectSet.java:80)
+	at org.jetbrains.kotlin.gradle.plugin.VariantImplementationFactories$Companion.getProvider$lambda$0$0(VariantImplementationFactories.kt:107)
+	... 224 more
+
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.8.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 14s
