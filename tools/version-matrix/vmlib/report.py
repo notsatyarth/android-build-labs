@@ -2,6 +2,7 @@
 import os
 
 from . import __version__, classify, collect, util
+from probes import cell as cell_probes
 
 KIND_ORDER = {"failure": 0, "error": 1, "deprecation": 2, "problem": 3, "warning": 4}
 OWNERS_ORDER = ["Gradle", "AGP", "KGP/Kotlin", "KSP", "Other plugin", "Project", "Unknown"]
@@ -61,6 +62,7 @@ def analyze_cell(res, ruleset):
     res["first_error"] = next((r for r in recs if r["kind"] == "failure"), None)
     res["configuration_cache"] = next((m["configuration_cache"] for m in reversed(metas) if m["configuration_cache"]), None)
     res["analysis_notes"] = notes
+    res["probes"] = cell_probes.run(res)
     return res
 
 

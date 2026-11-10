@@ -117,3 +117,26 @@ class DeprecationProbe(unittest.TestCase):
         self.assertIn("details are not printed", dp.parse(s)["reason"])
         s2 = "Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.\nBUILD SUCCESSFUL in 1s\n"
         self.assertEqual(dp.parse(s2)["state"], "inconclusive")
+
+
+class CellProbes(unittest.TestCase):
+    def test_cell_without_files_is_inconclusive(self):
+        import tempfile
+        from probes import cell
+        with tempfile.TemporaryDirectory() as d:
+            r = cell.run({"dir": d, "steps": []})
+        self.assertEqual(r["configuration_cache"]["state"], "inconclusive")
+        self.assertEqual(r["deprecations"]["state"], "inconclusive")
+
+    def test_cell_with_real_files(self):
+        import shutil
+        import tempfile
+        from probes import cell
+        with tempfile.TemporaryDirectory() as d:
+            shutil.copy(os.path.join(FIX, "syn_task_project_at_execution.html"),
+                        os.path.join(d, "configuration-cache-report.html"))
+            log = os.path.join(d, "01-help.log")
+            shutil.copy(os.path.join(helpers.FIX, "gradle_9.9.0-rc-1_help_warning_mode_all.excerpt.log"), log)
+            r = cell.run({"dir": d, "steps": [{"role": "task", "name": "01-help", "log": log}]})
+        self.assertEqual(r["configuration_cache"]["state"], "fail")
+        self.assertEqual(r["deprecations"]["state"], "fail")

@@ -1,4 +1,5 @@
 """Run cells one at a time: prepare workspace, version guard, tasks, cleanup, logs."""
+import glob
 import os
 import re
 import shutil
@@ -171,6 +172,11 @@ def run_cell(cfg, cell, out_dir, workspace, log=print, keep=False):
         pr = os.path.join(ws, cfg["problems_report"])
         if os.path.isfile(pr):
             shutil.copy2(pr, os.path.join(cdir, "problems-report.html"))
+        # keep the newest configuration cache report (read by probes/configuration_cache.py)
+        ccs = glob.glob(os.path.join(ws, "build", "reports", "configuration-cache", "*", "*",
+                                     "configuration-cache-report.html"))
+        if ccs:
+            shutil.copy2(max(ccs, key=os.path.getmtime), os.path.join(cdir, "configuration-cache-report.html"))
         cleanup_daemons(cfg, ws, env, before, log)
     except (project.ProjectError, OSError) as e:
         res["outcome"] = "ERROR"
