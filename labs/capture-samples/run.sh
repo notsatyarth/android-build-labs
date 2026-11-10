@@ -10,6 +10,7 @@ run_cell() {  # name, then gradle args
   local name=$1; shift
   mkdir -p "$OUT/$name"
   echo "== $name: ./gradlew $*"
+  rm -rf ./.gradle/configuration-cache   # each cell starts without a stored entry (the ip cell reused the cc entry)
   ./gradlew --console=plain --stacktrace "$@" > "$OUT/$name/build.log" 2>&1
   echo $? > "$OUT/$name/exit_code"
   # keep every report this cell produced, with its path relative to the project
