@@ -1,0 +1,1287 @@
+{
+ "tool": "agp",
+ "flags": [
+  {
+   "flag": "android.builtInKotlin",
+   "tool": "agp",
+   "stage": "SoftlyEnforced for AGP 10"
+  },
+  {
+   "flag": "android.newDsl",
+   "tool": "agp",
+   "stage": "SoftlyEnforced for AGP 10"
+  },
+  {
+   "flag": "android.enableR8.fullMode",
+   "tool": "agp",
+   "stage": "SoftlyEnforced for AGP 10"
+  },
+  {
+   "flag": "android.proguard.failOnMissingFiles",
+   "tool": "agp",
+   "stage": "SoftlyEnforced for AGP 10"
+  },
+  {
+   "flag": "android.enableAppCompileTimeRClass",
+   "tool": "agp",
+   "stage": "SoftlyEnforced for AGP 10"
+  },
+  {
+   "flag": "android.usesSdkInManifest.disallowed",
+   "tool": "agp",
+   "stage": "SoftlyEnforced for AGP 10"
+  },
+  {
+   "flag": "android.sourceset.disallowProvider",
+   "tool": "agp",
+   "stage": "SoftlyEnforced for AGP 10"
+  },
+  {
+   "flag": "android.r8.proguardAndroidTxt.disallowed",
+   "tool": "agp",
+   "stage": "SoftlyEnforced for AGP 10"
+  },
+  {
+   "flag": "android.r8.optimizedResourceShrinking",
+   "tool": "agp",
+   "stage": "SoftlyEnforced for AGP 10"
+  },
+  {
+   "flag": "android.r8.globalOptionsInConsumerRules.disallowed",
+   "tool": "agp",
+   "stage": "SoftlyEnforced for AGP 10"
+  },
+  {
+   "flag": "android.sdk.defaultTargetSdkToCompileSdkIfUnset",
+   "tool": "agp",
+   "stage": "SoftlyEnforced for AGP 10"
+  },
+  {
+   "flag": "android.aar.metadata.defaultMinCompileSdkToCompileSdk",
+   "tool": "agp",
+   "stage": "SoftlyEnforced for AGP 10"
+  },
+  {
+   "flag": "android.compatibility.enableLegacyApi",
+   "tool": "agp",
+   "stage": "Deprecated for AGP 10"
+  },
+  {
+   "flag": "android.experimental.newDslInterfaces",
+   "tool": "agp",
+   "stage": "Deprecated for AGP 10"
+  },
+  {
+   "flag": "android.disallowKotlinSourceSets",
+   "tool": "agp",
+   "stage": "planned Enforced in AGP 10 (Experimental now)"
+  },
+  {
+   "flag": "android.enforceDynamicFeatureVariantMatching",
+   "tool": "agp",
+   "stage": "planned Enforced in AGP 10 (Experimental now)"
+  },
+  {
+   "flag": "android.simulateAgpVersionBehavior",
+   "tool": "agp",
+   "stage": "experimental, undocumented; makes flags with a future stage take that stage's default"
+  }
+ ],
+ "versions": {
+  "8.5.2": {
+   "android.builtInKotlin": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.newDsl": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.enableR8.fullMode": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.proguard.failOnMissingFiles": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.enableAppCompileTimeRClass": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.usesSdkInManifest.disallowed": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.sourceset.disallowProvider": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.r8.proguardAndroidTxt.disallowed": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.r8.optimizedResourceShrinking": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.r8.globalOptionsInConsumerRules.disallowed": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.sdk.defaultTargetSdkToCompileSdkIfUnset": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.aar.metadata.defaultMinCompileSdkToCompileSdk": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.compatibility.enableLegacyApi": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.experimental.newDslInterfaces": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.disallowKotlinSourceSets": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.enforceDynamicFeatureVariantMatching": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.simulateAgpVersionBehavior": {
+    "status": "absent",
+    "classes": []
+   }
+  },
+  "8.7.3": {
+   "android.builtInKotlin": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.newDsl": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.enableR8.fullMode": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.proguard.failOnMissingFiles": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.enableAppCompileTimeRClass": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.usesSdkInManifest.disallowed": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.sourceset.disallowProvider": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.r8.proguardAndroidTxt.disallowed": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.r8.optimizedResourceShrinking": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.r8.globalOptionsInConsumerRules.disallowed": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.sdk.defaultTargetSdkToCompileSdkIfUnset": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.aar.metadata.defaultMinCompileSdkToCompileSdk": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.compatibility.enableLegacyApi": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.experimental.newDslInterfaces": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.disallowKotlinSourceSets": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.enforceDynamicFeatureVariantMatching": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.simulateAgpVersionBehavior": {
+    "status": "absent",
+    "classes": []
+   }
+  },
+  "8.9.3": {
+   "android.builtInKotlin": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.newDsl": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.enableR8.fullMode": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.proguard.failOnMissingFiles": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.enableAppCompileTimeRClass": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.usesSdkInManifest.disallowed": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.sourceset.disallowProvider": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.r8.proguardAndroidTxt.disallowed": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.r8.optimizedResourceShrinking": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.r8.globalOptionsInConsumerRules.disallowed": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.sdk.defaultTargetSdkToCompileSdkIfUnset": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.aar.metadata.defaultMinCompileSdkToCompileSdk": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.compatibility.enableLegacyApi": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.experimental.newDslInterfaces": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.disallowKotlinSourceSets": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.enforceDynamicFeatureVariantMatching": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.simulateAgpVersionBehavior": {
+    "status": "absent",
+    "classes": []
+   }
+  },
+  "8.11.1": {
+   "android.builtInKotlin": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.newDsl": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.enableR8.fullMode": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.proguard.failOnMissingFiles": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enableAppCompileTimeRClass": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.usesSdkInManifest.disallowed": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.sourceset.disallowProvider": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.r8.proguardAndroidTxt.disallowed": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.r8.optimizedResourceShrinking": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.r8.globalOptionsInConsumerRules.disallowed": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.sdk.defaultTargetSdkToCompileSdkIfUnset": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.aar.metadata.defaultMinCompileSdkToCompileSdk": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.compatibility.enableLegacyApi": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.experimental.newDslInterfaces": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.disallowKotlinSourceSets": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.enforceDynamicFeatureVariantMatching": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.simulateAgpVersionBehavior": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/StringOption.class"
+    ]
+   }
+  },
+  "8.13.0": {
+   "android.builtInKotlin": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.newDsl": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.enableR8.fullMode": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.proguard.failOnMissingFiles": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enableAppCompileTimeRClass": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.usesSdkInManifest.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.sourceset.disallowProvider": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.r8.proguardAndroidTxt.disallowed": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.r8.optimizedResourceShrinking": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.globalOptionsInConsumerRules.disallowed": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.sdk.defaultTargetSdkToCompileSdkIfUnset": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.aar.metadata.defaultMinCompileSdkToCompileSdk": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.compatibility.enableLegacyApi": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.experimental.newDslInterfaces": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.disallowKotlinSourceSets": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.enforceDynamicFeatureVariantMatching": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.simulateAgpVersionBehavior": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/StringOption.class"
+    ]
+   }
+  },
+  "9.0.0": {
+   "android.builtInKotlin": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.newDsl": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enableR8.fullMode": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.proguard.failOnMissingFiles": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enableAppCompileTimeRClass": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.usesSdkInManifest.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.sourceset.disallowProvider": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.proguardAndroidTxt.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.optimizedResourceShrinking": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.globalOptionsInConsumerRules.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.sdk.defaultTargetSdkToCompileSdkIfUnset": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.aar.metadata.defaultMinCompileSdkToCompileSdk": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.compatibility.enableLegacyApi": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.experimental.newDslInterfaces": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.disallowKotlinSourceSets": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enforceDynamicFeatureVariantMatching": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.simulateAgpVersionBehavior": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/StringOption.class"
+    ]
+   }
+  },
+  "9.1.0": {
+   "android.builtInKotlin": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.newDsl": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enableR8.fullMode": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.proguard.failOnMissingFiles": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enableAppCompileTimeRClass": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.usesSdkInManifest.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.sourceset.disallowProvider": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.proguardAndroidTxt.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.optimizedResourceShrinking": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.globalOptionsInConsumerRules.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.sdk.defaultTargetSdkToCompileSdkIfUnset": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.aar.metadata.defaultMinCompileSdkToCompileSdk": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.compatibility.enableLegacyApi": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.experimental.newDslInterfaces": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.disallowKotlinSourceSets": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enforceDynamicFeatureVariantMatching": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.simulateAgpVersionBehavior": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/StringOption.class"
+    ]
+   }
+  },
+  "9.2.0": {
+   "android.builtInKotlin": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.newDsl": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enableR8.fullMode": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.proguard.failOnMissingFiles": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enableAppCompileTimeRClass": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.usesSdkInManifest.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.sourceset.disallowProvider": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.proguardAndroidTxt.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.optimizedResourceShrinking": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.globalOptionsInConsumerRules.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.sdk.defaultTargetSdkToCompileSdkIfUnset": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.aar.metadata.defaultMinCompileSdkToCompileSdk": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.compatibility.enableLegacyApi": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.experimental.newDslInterfaces": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.disallowKotlinSourceSets": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enforceDynamicFeatureVariantMatching": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.simulateAgpVersionBehavior": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/StringOption.class"
+    ]
+   }
+  },
+  "9.3.2": {
+   "android.builtInKotlin": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.newDsl": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enableR8.fullMode": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.proguard.failOnMissingFiles": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enableAppCompileTimeRClass": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.usesSdkInManifest.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.sourceset.disallowProvider": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.proguardAndroidTxt.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.optimizedResourceShrinking": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.globalOptionsInConsumerRules.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.sdk.defaultTargetSdkToCompileSdkIfUnset": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.aar.metadata.defaultMinCompileSdkToCompileSdk": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.compatibility.enableLegacyApi": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.experimental.newDslInterfaces": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.disallowKotlinSourceSets": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enforceDynamicFeatureVariantMatching": {
+    "status": "absent",
+    "classes": []
+   },
+   "android.simulateAgpVersionBehavior": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/StringOption.class"
+    ]
+   }
+  },
+  "9.4.1": {
+   "android.builtInKotlin": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.newDsl": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class",
+     "com/android/build/gradle/options/StringOption.class"
+    ]
+   },
+   "android.enableR8.fullMode": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.proguard.failOnMissingFiles": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enableAppCompileTimeRClass": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.usesSdkInManifest.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.sourceset.disallowProvider": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.proguardAndroidTxt.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.optimizedResourceShrinking": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.globalOptionsInConsumerRules.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.sdk.defaultTargetSdkToCompileSdkIfUnset": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.aar.metadata.defaultMinCompileSdkToCompileSdk": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.compatibility.enableLegacyApi": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.experimental.newDslInterfaces": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.disallowKotlinSourceSets": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enforceDynamicFeatureVariantMatching": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.simulateAgpVersionBehavior": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/StringOption.class"
+    ]
+   }
+  },
+  "9.5.1": {
+   "android.builtInKotlin": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.newDsl": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class",
+     "com/android/build/gradle/options/StringOption.class"
+    ]
+   },
+   "android.enableR8.fullMode": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.proguard.failOnMissingFiles": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enableAppCompileTimeRClass": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.usesSdkInManifest.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.sourceset.disallowProvider": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.proguardAndroidTxt.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.optimizedResourceShrinking": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.globalOptionsInConsumerRules.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.sdk.defaultTargetSdkToCompileSdkIfUnset": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.aar.metadata.defaultMinCompileSdkToCompileSdk": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.compatibility.enableLegacyApi": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.experimental.newDslInterfaces": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.disallowKotlinSourceSets": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enforceDynamicFeatureVariantMatching": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.simulateAgpVersionBehavior": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/StringOption.class"
+    ]
+   }
+  },
+  "9.6.0-alpha03": {
+   "android.builtInKotlin": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.newDsl": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class",
+     "com/android/build/gradle/options/StringOption.class"
+    ]
+   },
+   "android.enableR8.fullMode": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.proguard.failOnMissingFiles": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enableAppCompileTimeRClass": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.usesSdkInManifest.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.sourceset.disallowProvider": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.proguardAndroidTxt.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.optimizedResourceShrinking": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.r8.globalOptionsInConsumerRules.disallowed": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.sdk.defaultTargetSdkToCompileSdkIfUnset": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.aar.metadata.defaultMinCompileSdkToCompileSdk": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.compatibility.enableLegacyApi": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.experimental.newDslInterfaces": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.disallowKotlinSourceSets": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.enforceDynamicFeatureVariantMatching": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/BooleanOption.class"
+    ]
+   },
+   "android.simulateAgpVersionBehavior": {
+    "status": "declared",
+    "classes": [
+     "com/android/build/gradle/options/StringOption.class"
+    ]
+   }
+  }
+ },
+ "summary": {
+  "state": "pass",
+  "reason": null,
+  "counts": {
+   "8.5.2": {
+    "declared": 4,
+    "mentioned": 0,
+    "absent": 13
+   },
+   "8.7.3": {
+    "declared": 4,
+    "mentioned": 0,
+    "absent": 13
+   },
+   "8.9.3": {
+    "declared": 4,
+    "mentioned": 0,
+    "absent": 13
+   },
+   "8.11.1": {
+    "declared": 6,
+    "mentioned": 0,
+    "absent": 11
+   },
+   "8.13.0": {
+    "declared": 10,
+    "mentioned": 0,
+    "absent": 7
+   },
+   "9.0.0": {
+    "declared": 16,
+    "mentioned": 0,
+    "absent": 1
+   },
+   "9.1.0": {
+    "declared": 16,
+    "mentioned": 0,
+    "absent": 1
+   },
+   "9.2.0": {
+    "declared": 16,
+    "mentioned": 0,
+    "absent": 1
+   },
+   "9.3.2": {
+    "declared": 16,
+    "mentioned": 0,
+    "absent": 1
+   },
+   "9.4.1": {
+    "declared": 17,
+    "mentioned": 0,
+    "absent": 0
+   },
+   "9.5.1": {
+    "declared": 17,
+    "mentioned": 0,
+    "absent": 0
+   },
+   "9.6.0-alpha03": {
+    "declared": 17,
+    "mentioned": 0,
+    "absent": 0
+   }
+  }
+ }
+}

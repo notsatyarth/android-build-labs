@@ -1,0 +1,391 @@
+{
+ "tool": "kgp",
+ "flags": [
+  {
+   "flag": "kotlin.experimental.tryNext",
+   "tool": "kgp",
+   "stage": "experimental; moves the language version to the next one"
+  },
+  {
+   "flag": "kotlin.pluginLoadedInMultipleProjects.ignore",
+   "tool": "kgp",
+   "stage": "opt-out of PluginLoadedInMultipleProjectsError"
+  },
+  {
+   "flag": "kotlin.compiler.runViaBuildToolsApi",
+   "tool": "kgp",
+   "stage": "deprecated property"
+  },
+  {
+   "flag": "kotlin.kmp.isolated-projects.support",
+   "tool": "kgp",
+   "stage": "deprecated property"
+  },
+  {
+   "flag": "kotlin.incremental.useClasspathSnapshot",
+   "tool": "kgp",
+   "stage": "deprecated property"
+  },
+  {
+   "flag": "kotlin.compiler.keepIncrementalCompilationCachesInMemory",
+   "tool": "kgp",
+   "stage": "deprecated property"
+  },
+  {
+   "flag": "kotlin.mpp.androidSourceSetLayoutVersion",
+   "tool": "kgp",
+   "stage": "deprecated property"
+  }
+ ],
+ "versions": {
+  "2.0.21": {
+   "kotlin.experimental.tryNext": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.pluginLoadedInMultipleProjects.ignore": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider.class"
+    ]
+   },
+   "kotlin.compiler.runViaBuildToolsApi": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.kmp.isolated-projects.support": {
+    "status": "absent",
+    "classes": []
+   },
+   "kotlin.incremental.useClasspathSnapshot": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.compiler.keepIncrementalCompilationCachesInMemory": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.mpp.androidSourceSetLayoutVersion": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   }
+  },
+  "2.1.0": {
+   "kotlin.experimental.tryNext": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.pluginLoadedInMultipleProjects.ignore": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider.class"
+    ]
+   },
+   "kotlin.compiler.runViaBuildToolsApi": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.kmp.isolated-projects.support": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.incremental.useClasspathSnapshot": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.compiler.keepIncrementalCompilationCachesInMemory": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.mpp.androidSourceSetLayoutVersion": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   }
+  },
+  "2.2.20": {
+   "kotlin.experimental.tryNext": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.pluginLoadedInMultipleProjects.ignore": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider.class"
+    ]
+   },
+   "kotlin.compiler.runViaBuildToolsApi": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.kmp.isolated-projects.support": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.incremental.useClasspathSnapshot": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/diagnostics/checkers/GradleDeprecatedPropertyChecker.class"
+    ]
+   },
+   "kotlin.compiler.keepIncrementalCompilationCachesInMemory": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.mpp.androidSourceSetLayoutVersion": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   }
+  },
+  "2.3.0": {
+   "kotlin.experimental.tryNext": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.pluginLoadedInMultipleProjects.ignore": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider.class"
+    ]
+   },
+   "kotlin.compiler.runViaBuildToolsApi": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.kmp.isolated-projects.support": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.incremental.useClasspathSnapshot": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/diagnostics/checkers/GradleDeprecatedPropertyChecker.class"
+    ]
+   },
+   "kotlin.compiler.keepIncrementalCompilationCachesInMemory": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/diagnostics/checkers/GradleDeprecatedPropertyChecker.class"
+    ]
+   },
+   "kotlin.mpp.androidSourceSetLayoutVersion": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   }
+  },
+  "2.3.21": {
+   "kotlin.experimental.tryNext": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.pluginLoadedInMultipleProjects.ignore": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider.class"
+    ]
+   },
+   "kotlin.compiler.runViaBuildToolsApi": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.kmp.isolated-projects.support": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.incremental.useClasspathSnapshot": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/diagnostics/checkers/GradleDeprecatedPropertyChecker.class"
+    ]
+   },
+   "kotlin.compiler.keepIncrementalCompilationCachesInMemory": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/diagnostics/checkers/GradleDeprecatedPropertyChecker.class"
+    ]
+   },
+   "kotlin.mpp.androidSourceSetLayoutVersion": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   }
+  },
+  "2.4.21": {
+   "kotlin.experimental.tryNext": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.pluginLoadedInMultipleProjects.ignore": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider.class"
+    ]
+   },
+   "kotlin.compiler.runViaBuildToolsApi": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class",
+     "org/jetbrains/kotlin/gradle/plugin/diagnostics/checkers/GradleDeprecatedPropertyChecker.class"
+    ]
+   },
+   "kotlin.kmp.isolated-projects.support": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/diagnostics/checkers/GradleDeprecatedPropertyChecker.class"
+    ]
+   },
+   "kotlin.incremental.useClasspathSnapshot": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/diagnostics/checkers/GradleDeprecatedPropertyChecker.class"
+    ]
+   },
+   "kotlin.compiler.keepIncrementalCompilationCachesInMemory": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/diagnostics/checkers/GradleDeprecatedPropertyChecker.class"
+    ]
+   },
+   "kotlin.mpp.androidSourceSetLayoutVersion": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/diagnostics/checkers/GradleDeprecatedPropertyChecker.class"
+    ]
+   }
+  },
+  "2.5.0-Beta2": {
+   "kotlin.experimental.tryNext": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider$PropertyNames.class"
+    ]
+   },
+   "kotlin.pluginLoadedInMultipleProjects.ignore": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/PropertiesProvider.class",
+     "org/jetbrains/kotlin/gradle/plugin/diagnostics/checkers/GradleDeprecatedPropertyChecker.class"
+    ]
+   },
+   "kotlin.compiler.runViaBuildToolsApi": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/diagnostics/checkers/GradleDeprecatedPropertyChecker.class"
+    ]
+   },
+   "kotlin.kmp.isolated-projects.support": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/diagnostics/checkers/GradleDeprecatedPropertyChecker.class"
+    ]
+   },
+   "kotlin.incremental.useClasspathSnapshot": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/diagnostics/checkers/GradleDeprecatedPropertyChecker.class"
+    ]
+   },
+   "kotlin.compiler.keepIncrementalCompilationCachesInMemory": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/diagnostics/checkers/GradleDeprecatedPropertyChecker.class"
+    ]
+   },
+   "kotlin.mpp.androidSourceSetLayoutVersion": {
+    "status": "declared",
+    "classes": [
+     "org/jetbrains/kotlin/gradle/plugin/diagnostics/checkers/GradleDeprecatedPropertyChecker.class"
+    ]
+   }
+  }
+ },
+ "summary": {
+  "state": "pass",
+  "reason": null,
+  "counts": {
+   "2.0.21": {
+    "declared": 6,
+    "mentioned": 0,
+    "absent": 1
+   },
+   "2.1.0": {
+    "declared": 7,
+    "mentioned": 0,
+    "absent": 0
+   },
+   "2.2.20": {
+    "declared": 7,
+    "mentioned": 0,
+    "absent": 0
+   },
+   "2.3.0": {
+    "declared": 7,
+    "mentioned": 0,
+    "absent": 0
+   },
+   "2.3.21": {
+    "declared": 7,
+    "mentioned": 0,
+    "absent": 0
+   },
+   "2.4.21": {
+    "declared": 7,
+    "mentioned": 0,
+    "absent": 0
+   },
+   "2.5.0-Beta2": {
+    "declared": 7,
+    "mentioned": 0,
+    "absent": 0
+   }
+  }
+ }
+}

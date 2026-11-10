@@ -47,3 +47,40 @@ class ConfigurationCacheProbe(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FlagAvailabilityProbe(unittest.TestCase):
+    def setUp(self):
+        import tempfile
+        import zipfile
+        self.tmp = tempfile.TemporaryDirectory()
+        self.jar = os.path.join(self.tmp.name, "agp.jar")
+        with zipfile.ZipFile(self.jar, "w") as z:
+            z.writestr("com/android/build/gradle/options/BooleanOption.class", b"xx android.builtInKotlin yy")
+            z.writestr("com/android/build/gradle/Other.class", b"msg android.newDsl and android.builtInKotlin")
+            z.writestr("README.txt", b"android.neverCounted")
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_declared_mentioned_absent(self):
+        from probes import flag_availability as fa
+        r = fa.scan_jar(self.jar, "agp", ["android.builtInKotlin", "android.newDsl", "android.neverCounted", "android.gone"])
+        self.assertEqual(r["android.builtInKotlin"]["status"], "declared")
+        self.assertEqual(r["android.newDsl"]["status"], "mentioned")
+        self.assertEqual(r["android.neverCounted"]["status"], "absent")   # only class files count
+        self.assertEqual(r["android.gone"]["status"], "absent")
+
+    def test_missing_version_is_not_absent(self):
+        from probes import flag_availability as fa
+
+        def fetch(tool, v, cache):
+            if v == "1.0":
+                return self.jar
+            raise FileNotFoundError(v)
+        d = fa.probe("agp", ["1.0", "9.9"], self.tmp.name, flags=[{"flag": "android.builtInKotlin", "tool": "agp"}], fetch=fetch)
+        self.assertEqual(d["1.0"]["android.builtInKotlin"]["status"], "declared")
+        self.assertEqual(d["9.9"], {"_error": "version_not_found"})
+        s = fa.summarize(d)
+        self.assertEqual(s["state"], "inconclusive")
+        self.assertIn("9.9", s["reason"])

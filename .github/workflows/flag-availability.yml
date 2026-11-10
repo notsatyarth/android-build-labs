@@ -1,0 +1,37 @@
+# Re-run the flag availability probe (reads plugin jars from Maven, no Android build) and compare with the committed data.
+name: flag-availability
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Probe tests
+        run: python3 -I -m unittest discover tools/version-matrix/tests
+      - name: Run the probe for the committed version lists
+        working-directory: tools/version-matrix
+        run: |
+          set -eu
+          for t in agp kgp; do
+            v=$(python3 -c "import json;print(json.load(open('../../data/flag-availability/versions.json'))['$t'])")
+            python3 -m probes.flag_availability --tool "$t" --versions "$v" --cache "$RUNNER_TEMP/jars" --out "$RUNNER_TEMP/$t.json"
+          done
+      - name: Compare with the committed data
+        run: |
+          python3 - <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
+          import json, os, sys
+          tmp = os.environ["RUNNER_TEMP"]
+          bad = 0
+          for t in ("agp", "kgp"):
+              new = json.load(open("%s/%s.json" % (tmp, t)))["versions"]
+              old = json.load(open("data/flag-availability/%s.json" % t))["versions"]
+              st = lambda d: {v: {f: r["status"] for f, r in x.items()} if "_error" not in x else x for v, x in d.items()}
+              diff = [v for v in old if st(new).get(v) != st(old)[v]]
+              print("%s: %d versions, %s" % (t, len(old), "match the committed data" if not diff else "DIFFER: " + ", ".join(diff)))
+              bad += bool(diff)
+          sys.exit(1 if bad else 0)
+          PY

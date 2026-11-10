@@ -1,0 +1,29 @@
+{
+  "_comment": "Known flags to track per tool version. Stage and sources come from the vault note Cross-cutting/Source Reading Findings 2026-10-25 (read from AGP and KGP source; internal, not public API). value_to_test is set when the tier 2 build probe is written.",
+  "flags": [
+    {"flag": "android.builtInKotlin", "tool": "agp", "stage": "SoftlyEnforced for AGP 10"},
+    {"flag": "android.newDsl", "tool": "agp", "stage": "SoftlyEnforced for AGP 10"},
+    {"flag": "android.enableR8.fullMode", "tool": "agp", "stage": "SoftlyEnforced for AGP 10"},
+    {"flag": "android.proguard.failOnMissingFiles", "tool": "agp", "stage": "SoftlyEnforced for AGP 10"},
+    {"flag": "android.enableAppCompileTimeRClass", "tool": "agp", "stage": "SoftlyEnforced for AGP 10"},
+    {"flag": "android.usesSdkInManifest.disallowed", "tool": "agp", "stage": "SoftlyEnforced for AGP 10"},
+    {"flag": "android.sourceset.disallowProvider", "tool": "agp", "stage": "SoftlyEnforced for AGP 10"},
+    {"flag": "android.r8.proguardAndroidTxt.disallowed", "tool": "agp", "stage": "SoftlyEnforced for AGP 10"},
+    {"flag": "android.r8.optimizedResourceShrinking", "tool": "agp", "stage": "SoftlyEnforced for AGP 10"},
+    {"flag": "android.r8.globalOptionsInConsumerRules.disallowed", "tool": "agp", "stage": "SoftlyEnforced for AGP 10"},
+    {"flag": "android.sdk.defaultTargetSdkToCompileSdkIfUnset", "tool": "agp", "stage": "SoftlyEnforced for AGP 10"},
+    {"flag": "android.aar.metadata.defaultMinCompileSdkToCompileSdk", "tool": "agp", "stage": "SoftlyEnforced for AGP 10"},
+    {"flag": "android.compatibility.enableLegacyApi", "tool": "agp", "stage": "Deprecated for AGP 10"},
+    {"flag": "android.experimental.newDslInterfaces", "tool": "agp", "stage": "Deprecated for AGP 10"},
+    {"flag": "android.disallowKotlinSourceSets", "tool": "agp", "stage": "planned Enforced in AGP 10 (Experimental now)"},
+    {"flag": "android.enforceDynamicFeatureVariantMatching", "tool": "agp", "stage": "planned Enforced in AGP 10 (Experimental now)"},
+    {"flag": "android.simulateAgpVersionBehavior", "tool": "agp", "stage": "experimental, undocumented; makes flags with a future stage take that stage's default"},
+    {"flag": "kotlin.experimental.tryNext", "tool": "kgp", "stage": "experimental; moves the language version to the next one"},
+    {"flag": "kotlin.pluginLoadedInMultipleProjects.ignore", "tool": "kgp", "stage": "opt-out of PluginLoadedInMultipleProjectsError"},
+    {"flag": "kotlin.compiler.runViaBuildToolsApi", "tool": "kgp", "stage": "deprecated property"},
+    {"flag": "kotlin.kmp.isolated-projects.support", "tool": "kgp", "stage": "deprecated property"},
+    {"flag": "kotlin.incremental.useClasspathSnapshot", "tool": "kgp", "stage": "deprecated property"},
+    {"flag": "kotlin.compiler.keepIncrementalCompilationCachesInMemory", "tool": "kgp", "stage": "deprecated property"},
+    {"flag": "kotlin.mpp.androidSourceSetLayoutVersion", "tool": "kgp", "stage": "deprecated property"}
+  ]
+}
