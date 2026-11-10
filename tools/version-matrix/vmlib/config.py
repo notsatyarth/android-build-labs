@@ -2,6 +2,8 @@
 import json
 import os
 import shlex
+import shutil
+import tempfile
 
 from . import project, util
 
@@ -89,56 +91,81 @@ def resolve(cfg, discovery=None):
     catalogs = project.find_catalogs(root, cfg.get("catalog_files"))
     pins = project.read_pins(root, cfg["catalog_keys"], catalogs)
     cells = []
-    for c in cfg["cells"]:
-        axes_in = dict(c.get("axes") or {})
-        for a in axes_in:
-            if a not in AXES:
-                raise ConfigError("cell %s: unknown axis %r (known: %s)" % (c["name"], a, ", ".join(AXES)))
-        axes, skip, gradle_url, notes = {}, None, None, []
-        for a, v in axes_in.items():
-            if isinstance(v, str) and v.startswith("@"):
-                if discovery is None:
-                    skip = skip or "channel %s needs discovery" % v
-                    continue
-                ent = discovery.pick(a, v[1:])
-                if not ent:
-                    skip = skip or "no %s version in channel %s newer than stable" % (a, v[1:])
-                    continue
-                v = ent["version"]
-                if a == "gradle" and ent.get("url") and ent["channel"] in ("nightly", "release-nightly", "dev"):
-                    gradle_url = ent["url"]
-                notes.append("%s %s -> %s" % (a, axes_in[a], v))
-            axes[a] = v
-        if not skip and axes and all(pins.get(a) == v for a, v in axes.items()) and not c.get("flags") \
-                and not c.get("gradle_args"):
-            skip = "identical to the project's current pins (same as baseline)"
-        requested = dict(pins)
-        requested.update(axes)
-        for a in list(requested):
-            if a not in pins and a not in axes:
-                requested.pop(a)
-        cell = {
-            "name": c["name"],
-            "axes": axes,
-            "requested": requested,
-            "flags": dict(c.get("flags") or {}),
-            "gradle_args": list(c.get("gradle_args") or []),
-            "tasks": _norm_tasks(c["tasks"]) if c.get("tasks") else cfg["tasks"],
-            "java_home": c.get("java_home") or cfg.get("java_home"),
-            "env": dict(c.get("env") or {}),
-            "timeout_sec": c.get("timeout_sec") or cfg["timeout_sec"],
-            "gradle_url": gradle_url,
-            "channel_notes": notes,
-            "skip": skip,
-            "baseline": bool(c.get("baseline")) or (not axes_in and not c.get("flags") and not c.get("gradle_args")),
-        }
-        if not skip:
-            try:
-                cell["edits"] = project.plan_edits(root, axes, cfg["catalog_keys"], catalogs, gradle_url)
-            except project.ProjectError as e:
-                cell["skip"] = "cannot apply: %s" % e
-                cell["edits"] = []
-        else:
-            cell["edits"] = []
-        cells.append(cell)
+    views = tempfile.mkdtemp(prefix="vmatrix-refview-")
+    try:
+        for i, c in enumerate(cfg["cells"]):
+            cells.append(_resolve_cell(cfg, c, discovery, root, catalogs, pins, os.path.join(views, str(i))))
+    finally:
+        shutil.rmtree(views, ignore_errors=True)
     return {"project": project.project_info(root), "pins": pins, "catalogs": catalogs, "cells": cells}
+
+
+def _resolve_cell(cfg, c, discovery, head_root, head_catalogs, head_pins, view_dir):
+    """One cell. A cell with its own "ref" reads pins and edits from that commit (per-cell ref)."""
+    root, catalogs, pins = head_root, head_catalogs, head_pins
+    ref, commit, ref_error = c.get("ref"), None, None
+    if ref:
+        try:
+            commit = project.ref_view(head_root, ref, view_dir)
+            root = view_dir
+            catalogs = project.find_catalogs(root, cfg.get("catalog_files"))
+            pins = project.read_pins(root, cfg["catalog_keys"], catalogs)
+        except project.ProjectError as e:
+            ref_error = "cannot read ref %s: %s" % (ref, e)
+    axes_in = dict(c.get("axes") or {})
+    for a in axes_in:
+        if a not in AXES:
+            raise ConfigError("cell %s: unknown axis %r (known: %s)" % (c["name"], a, ", ".join(AXES)))
+    axes, skip, gradle_url, notes = {}, None, None, []
+    for a, v in axes_in.items():
+        if isinstance(v, str) and v.startswith("@"):
+            if discovery is None:
+                skip = skip or "channel %s needs discovery" % v
+                continue
+            ent = discovery.pick(a, v[1:])
+            if not ent:
+                skip = skip or "no %s version in channel %s newer than stable" % (a, v[1:])
+                continue
+            v = ent["version"]
+            if a == "gradle" and ent.get("url") and ent["channel"] in ("nightly", "release-nightly", "dev"):
+                gradle_url = ent["url"]
+            notes.append("%s %s -> %s" % (a, axes_in[a], v))
+        axes[a] = v
+    if not skip and axes and all(pins.get(a) == v for a, v in axes.items()) and not c.get("flags") \
+            and not c.get("gradle_args"):
+        skip = "identical to the project's current pins (same as baseline)"
+    requested = dict(pins)
+    requested.update(axes)
+    for a in list(requested):
+        if a not in pins and a not in axes:
+            requested.pop(a)
+    cell = {
+        "name": c["name"],
+        "axes": axes,
+        "requested": requested,
+        "flags": dict(c.get("flags") or {}),
+        "gradle_args": list(c.get("gradle_args") or []),
+        "tasks": _norm_tasks(c["tasks"]) if c.get("tasks") else cfg["tasks"],
+        "java_home": c.get("java_home") or cfg.get("java_home"),
+        "env": dict(c.get("env") or {}),
+        "timeout_sec": c.get("timeout_sec") or cfg["timeout_sec"],
+        "gradle_url": gradle_url,
+        "channel_notes": notes,
+        "skip": skip,
+        "baseline": bool(c.get("baseline")) or (not axes_in and not c.get("flags") and not c.get("gradle_args")),
+    }
+    if not skip:
+        try:
+            cell["edits"] = project.plan_edits(root, axes, cfg["catalog_keys"], catalogs, gradle_url)
+        except project.ProjectError as e:
+            cell["skip"] = "cannot apply: %s" % e
+            cell["edits"] = []
+    else:
+        cell["edits"] = []
+    cell["pins"] = pins
+    cell["ref"] = ref
+    cell["commit"] = commit
+    if ref_error:
+        cell["skip"] = cell["skip"] or ref_error
+        cell["edits"] = []
+    return cell

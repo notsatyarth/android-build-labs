@@ -137,13 +137,15 @@ def run_cell(cfg, cell, out_dir, workspace, log=print, keep=False):
     ws = os.path.join(workspace, util.slug(cell["name"]))
     res = {"name": cell["name"], "axes": cell["axes"], "requested": cell["requested"], "flags": cell["flags"],
            "gradle_args": cell["gradle_args"], "java_home": cell.get("java_home"), "baseline": cell["baseline"],
-           "edits": cell["edits"], "steps": [], "outcome": None, "guard": None, "warnings": [],
+           "edits": cell["edits"], "ref": cell.get("ref"), "commit": cell.get("commit"), "pins": cell.get("pins"),
+           "steps": [], "outcome": None, "guard": None, "warnings": [],
            "started": util.now_iso(), "dir": cdir}
     t0 = time.time()
     before = snapshot_procs() if cfg["daemon_cleanup"] == "stop+kill" else {}
     mode = None
     try:
-        info = project.prepare_workspace(root, ws, cfg["mode"], cfg["ref"], cfg["copy_files"])
+        info = project.prepare_workspace(root, ws, cfg["mode"], cell.get("commit") or cell.get("ref") or cfg["ref"],
+                                         cfg["copy_files"])
         mode = info["mode"]
         res["workspace"] = ws
         res["warnings"] += info["warnings"]

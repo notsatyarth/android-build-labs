@@ -180,6 +180,29 @@ def apply_edits(ws, edits):
             _write(p, new)
 
 
+# ---------- per-cell ref ----------
+
+def rev_parse(root, ref):
+    """Full commit sha of ref, or raise ProjectError."""
+    return _git(["rev-parse", "--verify", ref + "^{commit}"], root).stdout.strip()
+
+
+def ref_view(root, ref, dest):
+    """Write the files the harness reads for pins and edits (catalogs, wrapper properties) as they are at ref.
+
+    Returns the commit sha. Lets a cell name an old commit without checking it out: pins and planned edits
+    come from that commit, not from the working tree."""
+    sha = rev_parse(root, ref)
+    names = _git(["ls-tree", "-r", "--name-only", sha], root).stdout.splitlines()
+    for n in names:
+        if n.endswith(".versions.toml") or n == WRAPPER.replace(os.sep, "/"):
+            blob = _git(["show", "%s:%s" % (sha, n)], root).stdout
+            path = os.path.join(dest, n)
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            _write(path, blob)
+    return sha
+
+
 # ---------- workspace ----------
 
 def _git(args, cwd, check=True):

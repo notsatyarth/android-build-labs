@@ -30,6 +30,8 @@ python3 -m unittest discover tests                # from tools/version-matrix, o
 
 Common flags: `--project`, `--cells a,b`, `--json`, `--offline`, `--refresh`, `--cache FILE`, `--java-home`, `--gradle-user-home`. `run` also: `--resume` (keep finished cells), `--keep-workdirs`, `--workspace`, `--mode auto|worktree|copy`, `--ref`, `--timeout SEC`, `--daemon-cleanup none|stop|stop+kill`, `--rules FILE`, `--fail-on never|invalid|any`.
 
+**Per-cell `ref`.** A cell may set `"ref": "<commit, tag or branch>"` in the config. The harness then reads the pins (wrapper, version catalogs) and plans the edits from that commit, builds a worktree at it, and the version guard checks against that commit's pins. The working tree is not touched. A ref that does not resolve skips the cell with a reason. Without `ref` a cell uses `--ref` (default HEAD) as before. Each `cell.json` records `ref`, `commit` and `pins`.
+
 Exit codes: `0` ok; `1` a cell FAILED, TIMEOUT or ERROR (`--fail-on any`, default); `2` usage, config or discovery error; `3` a cell is INVALID (always, unless `--fail-on never`). `--fail-on invalid` makes breakage of a next version a normal result and only a harness or guard problem red.
 
 ## How a cell runs

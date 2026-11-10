@@ -272,3 +272,53 @@ class CellArgsTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PerCellRefTests(unittest.TestCase):
+    """A cell can name its own commit; pins and planned edits then come from that commit, not from HEAD."""
+
+    def setUp(self):
+        import subprocess
+        from vmlib import config
+        self.config = config
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = helpers.make_project(os.path.join(self.tmp.name, "p"), git=True)
+        self.env = dict(os.environ, GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t",
+                        GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@t")
+        self.git = lambda *a: subprocess.run(["git"] + list(a), cwd=self.root, env=self.env, check=True,
+                                             stdout=subprocess.PIPE, universal_newlines=True).stdout.strip()
+        self.old = self.git("rev-parse", "HEAD")
+        cat = os.path.join(self.root, "gradle", "libs.versions.toml")
+        helpers.wr(cat, helpers.rd(cat).replace('"9.3.2"', '"9.4.0"'))
+        self.git("commit", "-qam", "bump agp")
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def _plan(self, cells):
+        cfg = self.config.load(None, {"project": self.root})
+        cfg["cells"] = cells
+        return self.config.resolve(cfg)
+
+    def test_cell_reads_pins_from_its_own_ref(self):
+        plan = self._plan([{"name": "head"}, {"name": "old", "ref": self.old}])
+        head, old = plan["cells"]
+        self.assertEqual(head["pins"]["agp"], "9.4.0")
+        self.assertEqual(old["pins"]["agp"], "9.3.2")
+        self.assertEqual(old["requested"]["agp"], "9.3.2")
+        self.assertEqual(old["commit"], self.old)
+        self.assertIsNone(head["commit"])
+
+    def test_edits_are_planned_against_the_ref(self):
+        plan = self._plan([{"name": "old-kotlin", "ref": self.old, "axes": {"agp": "9.5.0"}}])
+        edit = plan["cells"][0]["edits"][0]
+        self.assertEqual((edit["old"], edit["new"]), ("9.3.2", "9.5.0"))
+
+    def test_unknown_ref_skips_the_cell_with_a_reason(self):
+        plan = self._plan([{"name": "bad", "ref": "no-such-ref"}])
+        self.assertIn("cannot read ref", plan["cells"][0]["skip"])
+
+    def test_working_tree_is_untouched(self):
+        self._plan([{"name": "old", "ref": self.old}])
+        self.assertEqual(self.git("status", "--porcelain"), "")
+        self.assertIn("9.4.0", helpers.rd(os.path.join(self.root, "gradle", "libs.versions.toml")))
