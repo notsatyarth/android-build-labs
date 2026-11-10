@@ -90,6 +90,7 @@ jobs:
           KOTLIN: ${{ inputs.kotlin_version }}
           REF: ${{ inputs.nia_ref }}
         run: |
+          set -eo pipefail
           mkdir -p out
           python3 labs/flag-builds/aggregate.py parts parts/skipped/skipped.json out/flag_builds.json --agp "$AGP" --kotlin "$KOTLIN" --ref "$REF" | tee -a "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

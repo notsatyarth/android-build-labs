@@ -1,0 +1,434 @@
+{
+ "schema": 1,
+ "generated": "2026-11-10T17:34:58Z",
+ "agp": "9.3.2",
+ "kotlin": "2.3.0",
+ "project_ref": "2982e63cb691ad49cd009aab43dc206fee6699c2",
+ "counts": {
+  "pass": 15,
+  "fail": 2,
+  "not_applicable": 1,
+  "not_run": 6
+ },
+ "results": [
+  {
+   "state": "pass",
+   "reason": null,
+   "flag": "android.aar.metadata.defaultMinCompileSdkToCompileSdk",
+   "value": "true",
+   "duration_s": 316.2,
+   "outcome": "PASS",
+   "failed_step": null,
+   "first_error": null,
+   "by_owner": {
+    "AGP": {
+     "warning": 1
+    },
+    "KGP/Kotlin": {
+     "warning": 1
+    },
+    "Project": {
+     "warning": 17
+    }
+   },
+   "guard": "OK"
+  },
+  {
+   "state": "pass",
+   "reason": null,
+   "flag": "android.builtInKotlin",
+   "value": "true",
+   "duration_s": 343.0,
+   "outcome": "PASS",
+   "failed_step": null,
+   "first_error": null,
+   "by_owner": {
+    "AGP": {
+     "warning": 1
+    },
+    "KGP/Kotlin": {
+     "warning": 1
+    },
+    "Project": {
+     "warning": 17
+    }
+   },
+   "guard": "OK"
+  },
+  {
+   "state": "pass",
+   "reason": null,
+   "flag": "android.compatibility.enableLegacyApi",
+   "value": "false",
+   "duration_s": 306.3,
+   "outcome": "PASS",
+   "failed_step": null,
+   "first_error": null,
+   "by_owner": {
+    "AGP": {
+     "deprecation": 1,
+     "warning": 1
+    },
+    "KGP/Kotlin": {
+     "warning": 1
+    },
+    "Project": {
+     "warning": 17
+    }
+   },
+   "guard": "OK"
+  },
+  {
+   "state": "pass",
+   "reason": null,
+   "flag": "android.disallowKotlinSourceSets",
+   "value": "true",
+   "duration_s": 303.7,
+   "outcome": "PASS",
+   "failed_step": null,
+   "first_error": null,
+   "by_owner": {
+    "AGP": {
+     "warning": 1
+    },
+    "KGP/Kotlin": {
+     "warning": 1
+    },
+    "Project": {
+     "warning": 17
+    }
+   },
+   "guard": "OK"
+  },
+  {
+   "state": "pass",
+   "reason": null,
+   "flag": "android.enableAppCompileTimeRClass",
+   "value": "true",
+   "duration_s": 414.5,
+   "outcome": "PASS",
+   "failed_step": null,
+   "first_error": null,
+   "by_owner": {
+    "AGP": {
+     "warning": 1
+    },
+    "KGP/Kotlin": {
+     "warning": 1
+    },
+    "Project": {
+     "warning": 17
+    }
+   },
+   "guard": "OK"
+  },
+  {
+   "state": "pass",
+   "reason": null,
+   "flag": "android.enableR8.fullMode",
+   "value": "true",
+   "duration_s": 424.6,
+   "outcome": "PASS",
+   "failed_step": null,
+   "first_error": null,
+   "by_owner": {
+    "AGP": {
+     "warning": 1
+    },
+    "KGP/Kotlin": {
+     "warning": 1
+    },
+    "Project": {
+     "warning": 17
+    }
+   },
+   "guard": "OK"
+  },
+  {
+   "state": "pass",
+   "reason": null,
+   "flag": "android.experimental.newDslInterfaces",
+   "value": "false",
+   "duration_s": 365.1,
+   "outcome": "PASS",
+   "failed_step": null,
+   "first_error": null,
+   "by_owner": {
+    "AGP": {
+     "warning": 1
+    },
+    "KGP/Kotlin": {
+     "warning": 1
+    },
+    "Project": {
+     "warning": 17
+    }
+   },
+   "guard": "OK"
+  },
+  {
+   "state": "pass",
+   "reason": null,
+   "flag": "android.newDsl",
+   "value": "true",
+   "duration_s": 395.1,
+   "outcome": "PASS",
+   "failed_step": null,
+   "first_error": null,
+   "by_owner": {
+    "AGP": {
+     "warning": 1
+    },
+    "KGP/Kotlin": {
+     "warning": 1
+    },
+    "Project": {
+     "warning": 17
+    }
+   },
+   "guard": "OK"
+  },
+  {
+   "state": "pass",
+   "reason": null,
+   "flag": "android.proguard.failOnMissingFiles",
+   "value": "true",
+   "duration_s": 304.1,
+   "outcome": "PASS",
+   "failed_step": null,
+   "first_error": null,
+   "by_owner": {
+    "AGP": {
+     "warning": 1
+    },
+    "KGP/Kotlin": {
+     "warning": 1
+    },
+    "Project": {
+     "warning": 17
+    }
+   },
+   "guard": "OK"
+  },
+  {
+   "state": "pass",
+   "reason": null,
+   "flag": "android.r8.globalOptionsInConsumerRules.disallowed",
+   "value": "true",
+   "duration_s": 280.0,
+   "outcome": "PASS",
+   "failed_step": null,
+   "first_error": null,
+   "by_owner": {
+    "AGP": {
+     "warning": 1
+    },
+    "KGP/Kotlin": {
+     "warning": 1
+    },
+    "Project": {
+     "warning": 17
+    }
+   },
+   "guard": "OK"
+  },
+  {
+   "state": "pass",
+   "reason": null,
+   "flag": "android.r8.optimizedResourceShrinking",
+   "value": "true",
+   "duration_s": 315.8,
+   "outcome": "PASS",
+   "failed_step": null,
+   "first_error": null,
+   "by_owner": {
+    "AGP": {
+     "warning": 1
+    },
+    "KGP/Kotlin": {
+     "warning": 1
+    },
+    "Project": {
+     "warning": 17
+    }
+   },
+   "guard": "OK"
+  },
+  {
+   "state": "pass",
+   "reason": null,
+   "flag": "android.r8.proguardAndroidTxt.disallowed",
+   "value": "true",
+   "duration_s": 331.4,
+   "outcome": "PASS",
+   "failed_step": null,
+   "first_error": null,
+   "by_owner": {
+    "AGP": {
+     "warning": 1
+    },
+    "KGP/Kotlin": {
+     "warning": 1
+    },
+    "Project": {
+     "warning": 17
+    }
+   },
+   "guard": "OK"
+  },
+  {
+   "state": "pass",
+   "reason": null,
+   "flag": "android.sdk.defaultTargetSdkToCompileSdkIfUnset",
+   "value": "true",
+   "duration_s": 314.2,
+   "outcome": "PASS",
+   "failed_step": null,
+   "first_error": null,
+   "by_owner": {
+    "AGP": {
+     "warning": 1
+    },
+    "KGP/Kotlin": {
+     "warning": 1
+    },
+    "Project": {
+     "warning": 17
+    }
+   },
+   "guard": "OK"
+  },
+  {
+   "state": "fail",
+   "reason": "failed with android.simulateAgpVersionBehavior=10.0.0 at step guard-buildEnvironment",
+   "flag": "android.simulateAgpVersionBehavior",
+   "value": "10.0.0",
+   "duration_s": 105.4,
+   "outcome": "FAIL",
+   "failed_step": "guard-buildEnvironment",
+   "first_error": "An exception occurred applying plugin request [id: 'nowinandroid.android.application']",
+   "by_owner": {
+    "AGP": {
+     "failure": 1,
+     "deprecation": 1,
+     "warning": 2
+    },
+    "Project": {
+     "warning": 2
+    }
+   },
+   "guard": "UNVERIFIED"
+  },
+  {
+   "state": "pass",
+   "reason": null,
+   "flag": "android.sourceset.disallowProvider",
+   "value": "true",
+   "duration_s": 309.8,
+   "outcome": "PASS",
+   "failed_step": null,
+   "first_error": null,
+   "by_owner": {
+    "AGP": {
+     "warning": 1
+    },
+    "KGP/Kotlin": {
+     "warning": 1
+    },
+    "Project": {
+     "warning": 17
+    }
+   },
+   "guard": "OK"
+  },
+  {
+   "state": "pass",
+   "reason": null,
+   "flag": "android.usesSdkInManifest.disallowed",
+   "value": "true",
+   "duration_s": 422.7,
+   "outcome": "PASS",
+   "failed_step": null,
+   "first_error": null,
+   "by_owner": {
+    "AGP": {
+     "warning": 1
+    },
+    "KGP/Kotlin": {
+     "warning": 1
+    },
+    "Project": {
+     "warning": 17
+    }
+   },
+   "guard": "OK"
+  },
+  {
+   "state": "fail",
+   "reason": "failed with kotlin.experimental.tryNext=true at step 01-app_assembleDemoDebug",
+   "flag": "kotlin.experimental.tryNext",
+   "value": "true",
+   "duration_s": 196.9,
+   "outcome": "FAIL",
+   "failed_step": "01-app_assembleDemoDebug",
+   "first_error": "Execution failed for task ':core:notifications:compileDemoDebugKotlin' (registered by plugin 'com.android.internal.library').",
+   "by_owner": {
+    "AGP": {
+     "failure": 1,
+     "warning": 1
+    },
+    "Project": {
+     "error": 1,
+     "warning": 5
+    },
+    "KGP/Kotlin": {
+     "problem": 3,
+     "warning": 3
+    }
+   },
+   "guard": "OK"
+  },
+  {
+   "state": "not_applicable",
+   "reason": "not_applicable: absent in agp 9.3.2 (tier 1 data)",
+   "flag": "android.enforceDynamicFeatureVariantMatching",
+   "value": null
+  },
+  {
+   "state": "not_run",
+   "reason": "not run: the value that a future version forces is not known for this property",
+   "flag": "kotlin.pluginLoadedInMultipleProjects.ignore",
+   "value": null
+  },
+  {
+   "state": "not_run",
+   "reason": "not run: the value that a future version forces is not known for this property",
+   "flag": "kotlin.compiler.runViaBuildToolsApi",
+   "value": null
+  },
+  {
+   "state": "not_run",
+   "reason": "not run: the value that a future version forces is not known for this property",
+   "flag": "kotlin.kmp.isolated-projects.support",
+   "value": null
+  },
+  {
+   "state": "not_run",
+   "reason": "not run: the value that a future version forces is not known for this property",
+   "flag": "kotlin.incremental.useClasspathSnapshot",
+   "value": null
+  },
+  {
+   "state": "not_run",
+   "reason": "not run: the value that a future version forces is not known for this property",
+   "flag": "kotlin.compiler.keepIncrementalCompilationCachesInMemory",
+   "value": null
+  },
+  {
+   "state": "not_run",
+   "reason": "not run: the value that a future version forces is not known for this property",
+   "flag": "kotlin.mpp.androidSourceSetLayoutVersion",
+   "value": null
+  }
+ ]
+}
