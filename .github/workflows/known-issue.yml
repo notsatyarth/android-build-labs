@@ -1,0 +1,61 @@
+# Known-issue fixture: run a published repro of an upstream issue on each listed tool version and check it fails (or not)
+# the way the issue says. Default: KT-90672 (KGP 2.5.0-Beta2 with KSP and AGP built-in Kotlin). The repro repository is cloned
+# at CI time at the pinned ref; it carries no licence, so it is not copied into this repository.
+name: known-issue
+on:
+  workflow_dispatch:
+    inputs:
+      issue:
+        description: "issue id from tools/version-matrix/probes/known_issues.json"
+        required: false
+        default: "KT-90672"
+permissions:
+  contents: read
+jobs:
+  repro:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Runner info
+        run: bash .github/scripts/runner_info.sh
+      - name: Probe tests
+        run: python3 -I -m unittest discover tools/version-matrix/tests
+      - name: Run the repro per version
+        env:
+          ISSUE: ${{ inputs.issue }}
+        run: |
+          set -u
+          cd tools/version-matrix
+          python3 - "$ISSUE" > "$RUNNER_TEMP/plan.env" <<'PY'
+          import json, shlex, sys
+          from probes import known_issue
+          i = known_issue.load_issue(sys.argv[1])
+          r = i["repro"]
+          print("REPO=%s\nREF=%s\nVERSIONS=%s\nCMD=%s" % (shlex.quote(r["repo"]), r["ref"], shlex.quote(" ".join(r["versions"])), shlex.quote(json.dumps(r["command"]))))
+          PY
+          . "$RUNNER_TEMP/plan.env"
+          git init -q "$RUNNER_TEMP/repro"
+          git -C "$RUNNER_TEMP/repro" fetch -q --depth 1 "$REPO" "$REF"
+          git -C "$RUNNER_TEMP/repro" checkout -q FETCH_HEAD
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          echo "### $ISSUE: repro $REPO at ${REF:0:10}" >> "$GITHUB_STEP_SUMMARY"
+          echo "| version | state | expected | detail |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          for v in $VERSIONS; do
+            args=$(python3 -c "import json,sys;print(' '.join(a.replace('{version}',sys.argv[1]) for a in json.loads(sys.argv[2])))" "$v" "$CMD")
+            echo "== $v: $args"
+            ( cd "$RUNNER_TEMP/repro" && ./gradlew --stop >/dev/null 2>&1; $args ) > "$GITHUB_WORKSPACE/out/$ISSUE-$v.log" 2>&1 || true
+            python3 -m probes.known_issue --issue "$ISSUE" --version "$v" --log "$GITHUB_WORKSPACE/out/$ISSUE-$v.log" --out "$GITHUB_WORKSPACE/out/$ISSUE-$v.json" | tee /dev/stderr \
+              | sed 's/^\([^ ]*\) \([^:]*\): \([a-z_]*\) \(.*\)$/| \2 | \3 | - | \4 |/' >> "$GITHUB_STEP_SUMMARY"
+          done
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: known-issue-out
+          path: out/
+          retention-days: 90

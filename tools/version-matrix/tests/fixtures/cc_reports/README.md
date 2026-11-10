@@ -15,3 +15,6 @@ and 0 on Gradle 9.7.1.
 
 `nia_cf441fbb_gradle_8.11.1_no_problems.html`: nowinandroid cf441fbb (2025-01-06), Gradle 8.11.1, same trimming as above
 (CI run 42869725593). This Gradle version writes no uniqueProblemCount.
+
+`../kt90672_failure.excerpt.log`: the failure text as printed in the KT-90672 issue description (transcribed from the
+tracker, not captured by our CI); replaced by the CI capture once the known-issue workflow has produced one.

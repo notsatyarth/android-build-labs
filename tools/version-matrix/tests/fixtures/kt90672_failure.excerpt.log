@@ -1,0 +1,11 @@
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+A problem occurred configuring project ':second'.
+> Could not create task ':second:kspDebugKotlin'.
+   > Could not create task ':second:compileDebugKotlin'.
+      > Could not create task of type 'KotlinCompile'.
+         > Could not create an instance of type org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider.
+            > DefaultTaskCollection#configureEach(Action) on task set cannot be executed in the current context.
+
+BUILD FAILED in 9s

@@ -145,3 +145,26 @@ class CellProbes(unittest.TestCase):
             r = cell.run({"dir": d, "steps": [{"role": "task", "name": "01-help", "log": log}]})
         self.assertEqual(r["configuration_cache"]["state"], "fail")
         self.assertEqual(r["deprecations"]["state"], "fail")
+
+
+class KnownIssueProbe(unittest.TestCase):
+    def setUp(self):
+        from probes import known_issue
+        self.ki = known_issue
+        self.issue = known_issue.load_issue("KT-90672")
+
+    def test_signature_in_failed_build_reproduces(self):
+        with open(os.path.join(helpers.FIX, "kt90672_failure.excerpt.log"), encoding="utf-8") as f:
+            r = self.ki.parse(f.read(), self.issue)
+        self.assertEqual((r["state"], r["reproduces"]), ("fail", True))
+
+    def test_successful_build_does_not_reproduce(self):
+        r = self.ki.parse("> Task :x\nBUILD SUCCESSFUL in 3s\n", self.issue)
+        self.assertEqual((r["state"], r["reproduces"]), ("pass", False))
+
+    def test_other_failure_and_incomplete_log_are_inconclusive(self):
+        other = "* What went wrong:\nExecution failed for task ':a'.\nBUILD FAILED in 1s\n"
+        r = self.ki.parse(other, self.issue)
+        self.assertEqual(r["state"], "inconclusive")
+        self.assertIn("Execution failed", r["reason"])
+        self.assertEqual(self.ki.parse("", self.issue)["state"], "inconclusive")

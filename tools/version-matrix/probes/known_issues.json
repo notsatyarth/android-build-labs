@@ -1,0 +1,19 @@
+{
+  "_comment": "Known-issue fixtures: an upstream issue that has a public, reproducible repro. The repro repository is cloned at CI time at the pinned ref (it carries no licence, so it is not copied here).",
+  "issues": [
+    {
+      "id": "KT-90672",
+      "tracker_url": "https://youtrack.jetbrains.com/issue/KT-90672",
+      "summary": "KGP 2.5.0-Beta2 fails with KSP when AGP built-in Kotlin is active: configureEach(Action) on task set cannot be executed in the current context",
+      "tracker_state_2026-11-10": "Fixed; Planned for 2.5.0-RC, available in 2.5.20-Beta1 and 2.5.0-RC (neither published to Maven Central on that date); affected 2.5.0-Beta1 per tracker, but the repro passes on 2.5.0-Beta1",
+      "repro": {
+        "repo": "https://github.com/liutikas/kgp-2.5.0-beta2-ksp-fail",
+        "ref": "78ee315620b6cf498939ccfaeb5679bf265c8368",
+        "command": ["./gradlew", ":second:kspDebugKotlin", "--dry-run", "-PkgpVersion={version}", "-s"],
+        "versions": ["2.5.0-Beta1", "2.5.0-Beta2"]
+      },
+      "signature": "DefaultTaskCollection#configureEach\\(Action\\) on task set cannot be executed in the current context",
+      "expected": {"2.5.0-Beta1": "pass", "2.5.0-Beta2": "fail"}
+    }
+  ]
+}
