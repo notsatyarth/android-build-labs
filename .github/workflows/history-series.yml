@@ -61,4 +61,5 @@ jobs:
             out/*/*.log
             out/*/cell.json
             out/*/problems-report.html
+            out/*/configuration-cache-report.html
           retention-days: 30
