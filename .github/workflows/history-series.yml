@@ -1,0 +1,64 @@
+# Build nowinandroid at several commits (one cell per commit, per-cell ref) and keep each cell's logs and
+# reports. Used for the feature compatibility history charts; a cell that fails is a result, not a workflow failure.
+name: history-series
+on:
+  workflow_dispatch:
+    inputs:
+      shas:
+        description: "space-separated full nowinandroid commit SHAs, oldest first"
+        required: true
+        default: "cf441fbbc69c0aa80d159ae4a26687446abb68e1 2982e63cb691ad49cd009aab43dc206fee6699c2"
+permissions:
+  contents: read
+jobs:
+  series:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Runner info
+        run: bash .github/scripts/runner_info.sh
+      - name: Harness unit tests
+        run: python3 -I -m unittest discover tools/version-matrix/tests
+      - name: Fetch the commits
+        env:
+          SHAS: ${{ inputs.shas }}
+        run: |
+          set -eu
+          git init -q "$RUNNER_TEMP/nia"
+          for s in $SHAS; do git -C "$RUNNER_TEMP/nia" fetch -q --depth 1 https://github.com/android/nowinandroid "$s"; done
+          git -C "$RUNNER_TEMP/nia" checkout -q "$(echo $SHAS | awk '{print $NF}')"
+          git -C "$RUNNER_TEMP/nia" config user.email ci@example.invalid
+          git -C "$RUNNER_TEMP/nia" config user.name ci
+          python3 labs/history-series/make_config.py "$RUNNER_TEMP/matrix.json" $SHAS
+      - name: Plan
+        run: python3 tools/version-matrix/vmatrix.py plan --config "$RUNNER_TEMP/matrix.json" --project "$RUNNER_TEMP/nia" --offline
+      - name: Run
+        run: python3 tools/version-matrix/vmatrix.py run --config "$RUNNER_TEMP/matrix.json" --project "$RUNNER_TEMP/nia" --out out --offline --fail-on never
+      - name: Report
+        if: always()
+        run: |
+          echo "### History series on nowinandroid (CI: x86 Linux runner)" >> "$GITHUB_STEP_SUMMARY"
+          cat out/report.md >> "$GITHUB_STEP_SUMMARY"
+          python3 - >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import glob, json
+          print("\n| cell | commit | outcome | duration s | AGP | guard |\n|---|---|---|---|---|---|")
+          for f in sorted(glob.glob("out/*/cell.json")):
+              c = json.load(open(f))
+              print("| %s | %s | %s | %s | %s | %s |" % (c["name"], (c.get("commit") or "")[:10], c["outcome"], c["duration_s"],
+                    (c.get("pins") or {}).get("agp"), (c.get("guard") or {}).get("result")))
+          PY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: history-series-out
+          path: |
+            out/report.*
+            out/*/*.log
+            out/*/cell.json
+            out/*/problems-report.html
+          retention-days: 30
