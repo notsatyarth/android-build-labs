@@ -4,7 +4,7 @@
 # Cells: cc (configuration cache), ip (configuration cache + Isolated Projects), warn (deprecations, warning-mode all).
 # A cell that fails is a result: exit codes are recorded, the script itself only fails if it cannot run.
 set -u
-NIA=$(cd "$1" && pwd); OUT=$2; mkdir -p "$OUT"
+NIA=$(cd "$1" && pwd); mkdir -p "$2"; OUT=$(cd "$2" && pwd)   # absolute: we cd into the project below
 cd "$NIA"
 run_cell() {  # name, then gradle args
   local name=$1; shift
