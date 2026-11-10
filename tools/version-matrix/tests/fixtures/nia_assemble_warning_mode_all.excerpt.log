@@ -1,0 +1,103 @@
+Starting a Gradle Daemon, 2 stopped Daemons could not be reused, use --status for details
+Isolated Projects is an incubating feature.
+Calculating task graph as no cached configuration is available for tasks: :app:assembleDemoDebug
+Type-safe project accessors is an incubating feature.
+> Task :build-logic:convention:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :build-logic:convention:compileKotlin UP-TO-DATE
+> Task :build-logic:convention:compileJava NO-SOURCE
+> Task :build-logic:convention:pluginDescriptors UP-TO-DATE
+> Task :build-logic:convention:processResources UP-TO-DATE
+> Task :build-logic:convention:classes UP-TO-DATE
+> Task :build-logic:convention:jar UP-TO-DATE
+
+> Configure project :ui-test-hilt-manifest
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :core:analytics
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :core:data-test
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+> Task :core:model:compileKotlin
+w: Opt-in requirement marker kotlinx.coroutines.ExperimentalCoroutinesApi is unresolved. Please make sure it's present in the module dependencies
+
+> Task :core:datastore-proto:compileKotlin
+w: Opt-in requirement marker kotlinx.coroutines.ExperimentalCoroutinesApi is unresolved. Please make sure it's present in the module dependencies
+
+> Task :core:notifications:compileDemoDebugKotlin
+w: file:///home/runner/work/_temp/nia/core/notifications/src/main/kotlin/com/google/samples/apps/nowinandroid/core/notifications/SystemTrayNotifier.kt:57:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to field.
+- To opt in to applying to both value parameter and field, add '-Xannotation-default-target=param-property' to your compiler arguments.
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/_temp/nia/core/notifications/src/main/kotlin/com/google/samples/apps/nowinandroid/core/notifications/SystemTrayNotifier.kt:64:13 Return in function with expression body and without explicit return type. Use block body '{...}' or add an explicit return type. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-288.
+
+> Task :core:network:compileDemoDebugKotlin
+w: file:///home/runner/work/_temp/nia/core/network/src/main/kotlin/com/google/samples/apps/nowinandroid/core/network/demo/DemoNiaNetworkDataSource.kt:40:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+> Task :core:data:compileDemoDebugKotlin
+w: file:///home/runner/work/_temp/nia/core/data/src/main/kotlin/com/google/samples/apps/nowinandroid/core/data/repository/DefaultSearchContentsRepository.kt:44:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/_temp/nia/core/data/src/main/kotlin/com/google/samples/apps/nowinandroid/core/data/util/ConnectivityManagerNetworkMonitor.kt:40:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to field.
+- To opt in to applying to both value parameter and field, add '-Xannotation-default-target=param-property' to your compiler arguments.
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/_temp/nia/core/data/src/main/kotlin/com/google/samples/apps/nowinandroid/core/data/util/ConnectivityManagerNetworkMonitor.kt:41:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/_temp/nia/core/data/src/main/kotlin/com/google/samples/apps/nowinandroid/core/data/util/TimeZoneMonitor.kt:57:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to field.
+- To opt in to applying to both value parameter and field, add '-Xannotation-default-target=param-property' to your compiler arguments.
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/_temp/nia/core/data/src/main/kotlin/com/google/samples/apps/nowinandroid/core/data/util/TimeZoneMonitor.kt:59:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+> Task :core:designsystem:compileDemoDebugKotlin
+w: file:///home/runner/work/_temp/nia/core/designsystem/src/main/kotlin/com/google/samples/apps/nowinandroid/core/designsystem/component/Tabs.kt:88:5 'fun TabRow(selectedTabIndex: Int, modifier: Modifier = ..., containerColor: Color = ..., contentColor: Color = ..., indicator: ComposableFunction1<List<TabPosition>, Unit> = ..., divider: ComposableFunction0<Unit> = ..., tabs: ComposableFunction0<Unit>): Unit' is deprecated. Replaced with PrimaryTabRow and SecondaryTabRow.
+w: file:///home/runner/work/_temp/nia/core/designsystem/src/main/kotlin/com/google/samples/apps/nowinandroid/core/designsystem/component/Tabs.kt:95:37 'fun Modifier.tabIndicatorOffset(currentTabPosition: TabPosition): Modifier' is deprecated. Solely for use alongside deprecated TabRowDefaults.Indicator method. For recommended PrimaryIndicator and SecondaryIndicator methods, please use TabIndicatorScope.tabIndicatorOffset method.
+
+> Task :sync:work:compileDemoDebugKotlin
+w: file:///home/runner/work/_temp/nia/sync/work/src/main/kotlin/com/google/samples/apps/nowinandroid/sync/status/WorkManagerSyncManager.kt:37:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to field.
+- To opt in to applying to both value parameter and field, add '-Xannotation-default-target=param-property' to your compiler arguments.
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/_temp/nia/sync/work/src/main/kotlin/com/google/samples/apps/nowinandroid/sync/workers/SyncWorker.kt:58:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+> Task :app:compileDemoDebugKotlin
+w: file:///home/runner/work/_temp/nia/app/src/main/kotlin/com/google/samples/apps/nowinandroid/navigation/TopLevelNavItem.kt:44:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to field.
+- To opt in to applying to both value parameter and field, add '-Xannotation-default-target=param-property' to your compiler arguments.
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/_temp/nia/app/src/main/kotlin/com/google/samples/apps/nowinandroid/navigation/TopLevelNavItem.kt:45:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to field.
+- To opt in to applying to both value parameter and field, add '-Xannotation-default-target=param-property' to your compiler arguments.
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///home/runner/work/_temp/nia/app/src/main/kotlin/com/google/samples/apps/nowinandroid/util/ProfileVerifierLogger.kt:52:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+> androidx.window.extensions.embedding.AnimationBackground$ColorBackground
+> androidx.window.extensions.embedding.AnimationBackground
+> androidx.window.extensions.embedding.ActivityEmbeddingComponent
+> androidx.window.extensions.embedding.ActivityStack$Token
+> androidx.window.extensions.embedding.ActivityStack
+> androidx.window.extensions.layout.WindowLayoutComponent
+> androidx.window.sidecar.SidecarDeviceState
+> androidx.window.sidecar.SidecarInterface
+
+
+BUILD SUCCESSFUL in 5m 5s
+551 actionable tasks: 457 executed, 90 from cache, 4 up-to-date
+Configuration cache entry stored.
+

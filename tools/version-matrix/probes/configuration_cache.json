@@ -1,0 +1,9 @@
+{
+  "probe": "configuration-cache",
+  "feature": "Gradle configuration cache",
+  "item_kind": "build",
+  "report_glob": "build/reports/configuration-cache/*/*/configuration-cache-report.html",
+  "gradle_args": ["--configuration-cache", "--warning-mode=all"],
+  "tasks": ["help"],
+  "notes": "Only counts; per-problem details are added once a real report with problems is captured."
+}
