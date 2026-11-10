@@ -1,0 +1,99 @@
+# Flag probe, tier 2: build nowinandroid once per flag, each flag set alone (-P<flag>=<value>), one job per flag.
+# Flags absent in the chosen AGP or Kotlin version (tier 1 data) are skipped as not_applicable. A failing flag build is a
+# result, not a workflow failure. Values come from tools/version-matrix/probes/flags.json (value_basis says where each is from).
+name: flag-builds
+on:
+  workflow_dispatch:
+    inputs:
+      nia_ref:
+        description: "nowinandroid commit (full SHA)"
+        required: false
+        default: "2982e63cb691ad49cd009aab43dc206fee6699c2"
+      agp_version:
+        description: "AGP version every cell sets (default is the pin at the commit above)"
+        required: false
+        default: "9.3.2"
+      kotlin_version:
+        description: "Kotlin version every cell sets (default is the pin at the commit above)"
+        required: false
+        default: "2.3.0"
+permissions:
+  contents: read
+jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    outputs:
+      cells: ${{ steps.p.outputs.cells }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Plan
+        id: p
+        env:
+          AGP: ${{ inputs.agp_version }}
+          KOTLIN: ${{ inputs.kotlin_version }}
+        run: |
+          python3 labs/flag-builds/make_config.py "$RUNNER_TEMP/m.json" --agp "$AGP" --kotlin "$KOTLIN" | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "cells=$(python3 labs/flag-builds/make_config.py --agp "$AGP" --kotlin "$KOTLIN" --list-cells)" >> "$GITHUB_OUTPUT"
+          python3 -c "import json,os;json.dump(json.load(open(os.environ['RUNNER_TEMP']+'/m.json'))['_skipped'],open('skipped.json','w'))"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: skipped
+          path: skipped.json
+  build:
+    needs: plan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        cell: ${{ fromJSON(needs.plan.outputs.cells) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Clone nowinandroid
+        env:
+          REF: ${{ inputs.nia_ref }}
+        run: bash .github/scripts/clone_nia.sh "$RUNNER_TEMP/nia" "$REF" && git -C "$RUNNER_TEMP/nia" config user.email ci@example.invalid && git -C "$RUNNER_TEMP/nia" config user.name ci
+      - name: Build this flag
+        env:
+          AGP: ${{ inputs.agp_version }}
+          KOTLIN: ${{ inputs.kotlin_version }}
+          CELL: ${{ matrix.cell }}
+        run: |
+          python3 labs/flag-builds/make_config.py "$RUNNER_TEMP/m.json" --agp "$AGP" --kotlin "$KOTLIN"
+          python3 tools/version-matrix/vmatrix.py run --config "$RUNNER_TEMP/m.json" --project "$RUNNER_TEMP/nia" --cells "$CELL" --out out --offline --fail-on never
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: cell-${{ matrix.cell }}
+          path: |
+            out/report.json
+            out/*/cell.json
+            out/*/*.log
+          retention-days: 30
+  aggregate:
+    needs: [plan, build]
+    if: always() && needs.plan.result == 'success'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: parts
+      - name: Combine
+        env:
+          AGP: ${{ inputs.agp_version }}
+          KOTLIN: ${{ inputs.kotlin_version }}
+          REF: ${{ inputs.nia_ref }}
+        run: |
+          mkdir -p out
+          python3 labs/flag-builds/aggregate.py parts parts/skipped/skipped.json out/flag_builds.json --agp "$AGP" --kotlin "$KOTLIN" --ref "$REF" | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: flag-builds-results
+          path: out/flag_builds.json
+          retention-days: 90
