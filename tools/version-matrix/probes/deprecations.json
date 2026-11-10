@@ -1,0 +1,8 @@
+{
+  "probe": "gradle-deprecations",
+  "feature": "Gradle deprecations (features that a later Gradle major is stated to remove)",
+  "item_kind": "source_location",
+  "gradle_args": ["--warning-mode=all", "--stacktrace"],
+  "tasks": ["help"],
+  "notes": "Needs --warning-mode=all, otherwise Gradle prints only a summary line. The origin is the first stack frame outside org.gradle/java/jdk/kotlin."
+}

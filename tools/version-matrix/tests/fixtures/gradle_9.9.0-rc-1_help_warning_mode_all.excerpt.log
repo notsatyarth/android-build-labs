@@ -1,0 +1,335 @@
+# cmd: ./gradlew --console=plain --warning-mode=all --stacktrace --no-build-cache help
+# cwd: /home/runner/work/android-build-labs/android-build-labs/out/work/gradle-next
+# JAVA_HOME=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+Isolated Projects is an incubating feature.
+Calculating task graph as no cached configuration is available for tasks: help
+Type-safe project accessors is an incubating feature.
+
+> Configure project :build-logic:convention
+The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.9.0-rc-1/userguide/upgrading_version_9.html#deprecate-visible-property
+	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:374)
+	at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)
+	at com.android.build.gradle.internal.plugins.BasePlugin$Companion.createCustomLintChecksConfig(BasePlugin.kt:376)
+	at com.android.build.gradle.internal.plugins.LintPlugin.registerTasks(LintPlugin.kt:138)
+	at com.android.build.gradle.internal.plugins.LintPlugin.access$registerTasks(LintPlugin.kt:105)
+	at com.android.build.gradle.internal.plugins.LintPlugin$apply$2.execute(LintPlugin.kt:125)
+	at com.android.build.gradle.internal.plugins.LintPlugin$apply$2.execute(LintPlugin.kt:125)
+	at org.gradle.internal.code.DefaultUserCodeApplicationContext$DefaultApplication.reapplyAction(DefaultUserCodeApplicationContext.java:237)
+	at org.gradle.api.internal.DefaultCollectionCallbackActionDecorator$BuildOperationEmittingAction$1.run(DefaultCollectionCallbackActionDecorator.java:124)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:30)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:27)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+
+> Task :build-logic:convention:checkKotlinCompilerVersion
+> Task :build-logic:convention:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :build-logic:convention:compileKotlin UP-TO-DATE
+> Task :build-logic:convention:compileJava NO-SOURCE
+> Task :build-logic:convention:pluginDescriptors UP-TO-DATE
+> Task :build-logic:convention:processResources UP-TO-DATE
+> Task :build-logic:convention:classes UP-TO-DATE
+> Task :build-logic:convention:jar UP-TO-DATE
+
+> Configure project :
+The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.9.0-rc-1/userguide/upgrading_version_9.html#deprecate-visible-property
+	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:374)
+	at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)
+	at com.android.build.gradle.internal.lint.AndroidLintInputs.maybeCreateLintChecksClasspath(AndroidLintInputs.kt:2375)
+	at com.android.build.gradle.internal.lint.AndroidArtifactInput.initializeForStandalone(AndroidLintInputs.kt:1582)
+	at com.android.build.gradle.internal.lint.VariantInputs.initializeForStandalone(AndroidLintInputs.kt:1034)
+	at com.android.build.gradle.internal.lint.VariantInputs.initializeForStandalone$gradle_core(AndroidLintInputs.kt:984)
+	at com.android.build.gradle.internal.lint.LintModelWriterTask.configureForStandalone$gradle_core(LintModelWriterTask.kt:129)
+	at com.android.build.gradle.internal.lint.LintModelWriterTask.configureForStandalone$gradle_core$default(LintModelWriterTask.kt:114)
+	at com.android.build.gradle.internal.plugins.LintPlugin$registerTasks$1$lintModelWriterMainTask$1.execute(LintPlugin.kt:387)
+	at com.android.build.gradle.internal.plugins.LintPlugin$registerTasks$1$lintModelWriterMainTask$1.execute(LintPlugin.kt:386)
+	at org.gradle.api.internal.DefaultMutationGuard$1.execute(DefaultMutationGuard.java:66)
+	at org.gradle.api.internal.DefaultMutationGuard$1.execute(DefaultMutationGuard.java:66)
+	at org.gradle.internal.code.DefaultUserCodeApplicationContext$DefaultApplication.reapplyAction(DefaultUserCodeApplicationContext.java:237)
+	at org.gradle.api.internal.DefaultCollectionCallbackActionDecorator$BuildOperationEmittingAction$1.run(DefaultCollectionCallbackActionDecorator.java:124)
+The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.9.0-rc-1/userguide/upgrading_version_9.html#deprecate-visible-property
+	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:374)
+	at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)
+	at com.android.build.gradle.internal.lint.AndroidLintInputs.maybeCreateLintChecksClasspath(AndroidLintInputs.kt:2375)
+	at com.android.build.gradle.internal.lint.AndroidArtifactInput.initializeForStandalone(AndroidLintInputs.kt:1582)
+	at com.android.build.gradle.internal.lint.VariantInputs.initializeForStandalone(AndroidLintInputs.kt:1034)
+	at com.android.build.gradle.internal.lint.VariantInputs.initializeForStandalone$gradle_core(AndroidLintInputs.kt:984)
+	at com.android.build.gradle.internal.lint.AndroidLintAnalysisTask.configureForStandalone(AndroidLintAnalysisTask.kt:434)
+	at com.android.build.gradle.internal.lint.AndroidLintAnalysisTask.configureForStandalone$default(AndroidLintAnalysisTask.kt:408)
+	at com.android.build.gradle.internal.plugins.LintPlugin$registerTasks$1$lintAnalysisMainTask$1.execute(LintPlugin.kt:359)
+	at com.android.build.gradle.internal.plugins.LintPlugin$registerTasks$1$lintAnalysisMainTask$1.execute(LintPlugin.kt:357)
+	at org.gradle.api.internal.DefaultMutationGuard$1.execute(DefaultMutationGuard.java:66)
+	at org.gradle.api.internal.DefaultMutationGuard$1.execute(DefaultMutationGuard.java:66)
+	at org.gradle.internal.code.DefaultUserCodeApplicationContext$DefaultApplication.reapplyAction(DefaultUserCodeApplicationContext.java:237)
+	at org.gradle.api.internal.DefaultCollectionCallbackActionDecorator$BuildOperationEmittingAction$1.run(DefaultCollectionCallbackActionDecorator.java:124)
+The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.9.0-rc-1/userguide/upgrading_version_9.html#deprecate-visible-property
+	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:374)
+	at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)
+	at com.android.build.gradle.internal.lint.AndroidLintInputs.maybeCreateLintChecksClasspath(AndroidLintInputs.kt:2375)
+	at com.android.build.gradle.internal.lint.AndroidArtifactInput.initializeForStandalone(AndroidLintInputs.kt:1582)
+	at com.android.build.gradle.internal.lint.VariantInputs.initializeForStandalone(AndroidLintInputs.kt:1034)
+	at com.android.build.gradle.internal.lint.VariantInputs.initializeForStandalone$gradle_core(AndroidLintInputs.kt:984)
+	at com.android.build.gradle.internal.lint.LintModelWriterTask.configureForStandalone$gradle_core(LintModelWriterTask.kt:129)
+	at com.android.build.gradle.internal.lint.LintModelWriterTask.configureForStandalone$gradle_core$default(LintModelWriterTask.kt:114)
+	at com.android.build.gradle.internal.plugins.LintPlugin$registerTasks$1$lintVitalModelWriterMainTask$1.execute(LintPlugin.kt:534)
+	at com.android.build.gradle.internal.plugins.LintPlugin$registerTasks$1$lintVitalModelWriterMainTask$1.execute(LintPlugin.kt:530)
+	at org.gradle.api.internal.DefaultMutationGuard$1.execute(DefaultMutationGuard.java:66)
+	at org.gradle.api.internal.DefaultMutationGuard$1.execute(DefaultMutationGuard.java:66)
+	at org.gradle.internal.code.DefaultUserCodeApplicationContext$DefaultApplication.reapplyAction(DefaultUserCodeApplicationContext.java:237)
+	at org.gradle.api.internal.DefaultCollectionCallbackActionDecorator$BuildOperationEmittingAction$1.run(DefaultCollectionCallbackActionDecorator.java:124)
+The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.9.0-rc-1/userguide/upgrading_version_9.html#deprecate-visible-property
+	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:374)
+	at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)
+	at com.android.build.gradle.internal.lint.AndroidLintInputs.maybeCreateLintChecksClasspath(AndroidLintInputs.kt:2375)
+	at com.android.build.gradle.internal.lint.AndroidArtifactInput.initializeForStandalone(AndroidLintInputs.kt:1582)
+	at com.android.build.gradle.internal.lint.VariantInputs.initializeForStandalone(AndroidLintInputs.kt:1034)
+	at com.android.build.gradle.internal.lint.VariantInputs.initializeForStandalone$gradle_core(AndroidLintInputs.kt:984)
+	at com.android.build.gradle.internal.lint.AndroidLintAnalysisTask.configureForStandalone(AndroidLintAnalysisTask.kt:434)
+	at com.android.build.gradle.internal.lint.AndroidLintAnalysisTask.configureForStandalone$default(AndroidLintAnalysisTask.kt:408)
+	at com.android.build.gradle.internal.plugins.LintPlugin$registerTasks$1$lintVitalAnalysisMainTask$1.execute(LintPlugin.kt:503)
+	at com.android.build.gradle.internal.plugins.LintPlugin$registerTasks$1$lintVitalAnalysisMainTask$1.execute(LintPlugin.kt:500)
+	at org.gradle.api.internal.DefaultMutationGuard$1.execute(DefaultMutationGuard.java:66)
+	at org.gradle.api.internal.DefaultMutationGuard$1.execute(DefaultMutationGuard.java:66)
+	at org.gradle.internal.code.DefaultUserCodeApplicationContext$DefaultApplication.reapplyAction(DefaultUserCodeApplicationContext.java:237)
+	at org.gradle.api.internal.DefaultCollectionCallbackActionDecorator$BuildOperationEmittingAction$1.run(DefaultCollectionCallbackActionDecorator.java:124)
+The Configuration.setVisible(boolean) method has been deprecated. This is scheduled to be removed in Gradle 11. Consult the upgrading guide for further information: https://docs.gradle.org/9.9.0-rc-1/userguide/upgrading_version_9.html#deprecate-visible-property
+	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.setVisible(DefaultConfiguration.java:374)
+	at org.gradle.api.internal.artifacts.configurations.DefaultLegacyConfiguration_Decorated.setVisible(Unknown Source)
+	at com.android.build.gradle.internal.lint.AndroidLintInputs.maybeCreateLintChecksClasspath(AndroidLintInputs.kt:2375)
+	at com.android.build.gradle.internal.lint.JavaArtifactInput.initializeForStandalone(AndroidLintInputs.kt:1829)
+	at com.android.build.gradle.internal.lint.VariantInputs.initializeForStandalone(AndroidLintInputs.kt:1046)
+	at com.android.build.gradle.internal.lint.VariantInputs.initializeForStandalone$gradle_core(AndroidLintInputs.kt:984)
+	at com.android.build.gradle.internal.lint.LintModelWriterTask.configureForStandalone$gradle_core(LintModelWriterTask.kt:129)
+	at com.android.build.gradle.internal.plugins.LintPlugin$registerTasks$1$lintModelWriterTestTask$1.execute(LintPlugin.kt:469)
+	at com.android.build.gradle.internal.plugins.LintPlugin$registerTasks$1$lintModelWriterTestTask$1.execute(LintPlugin.kt:467)
+	at org.gradle.api.internal.DefaultMutationGuard$1.execute(DefaultMutationGuard.java:66)
+	at org.gradle.api.internal.DefaultMutationGuard$1.execute(DefaultMutationGuard.java:66)
+	at org.gradle.internal.code.DefaultUserCodeApplicationContext$DefaultApplication.reapplyAction(DefaultUserCodeApplicationContext.java:237)
+	at org.gradle.api.internal.DefaultCollectionCallbackActionDecorator$BuildOperationEmittingAction$1.run(DefaultCollectionCallbackActionDecorator.java:124)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:30)
+
+> Configure project :lint
+
+> Configure project :benchmarks
+
+> Configure project :app-nia-catalog
+
+> Configure project :core:common
+
+> Configure project :ui-test-hilt-manifest
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :core:analytics
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :core:data
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :core:data-test
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :app
+
+> Configure project :core:designsystem
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :core:datastore-proto
+
+> Configure project :core:datastore-test
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :core:datastore
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :core:domain
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :core:network
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :core:navigation
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :core:notifications
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :core:screenshot-testing
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :core:testing
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :sync:sync-test
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :feature:bookmarks:api
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :feature:foryou:api
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :feature:interests:api
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :feature:search:api
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Configure project :feature:topic:api
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+WARNING: androidTestImplementation dependencies are ignored because androidTest is disabled.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+
+> Task :help
+
+Welcome to Gradle 9.9.0-rc-1.
+
+To run a build, run gradlew <task> ...
+
+To see a list of available tasks, run gradlew tasks
+
+To see more detail about a task, run gradlew help --task <task>
+
+To see a list of command-line options, run gradlew --help
+
+For more detail on using Gradle, see https://docs.gradle.org/9.9.0-rc-1/userguide/command_line_interface.html
+
+For troubleshooting, visit https://help.gradle.org
+
+[Incubating] Problems report is available at: file:///home/runner/work/android-build-labs/android-build-labs/out/work/gradle-next/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 2s
+6 actionable tasks: 2 executed, 4 up-to-date
+Configuration cache entry stored.
+
+# exit=0

@@ -84,3 +84,36 @@ class FlagAvailabilityProbe(unittest.TestCase):
         s = fa.summarize(d)
         self.assertEqual(s["state"], "inconclusive")
         self.assertIn("9.9", s["reason"])
+
+
+class DeprecationProbe(unittest.TestCase):
+    def fx(self, name):
+        with open(os.path.join(helpers.FIX, name), encoding="utf-8") as f:
+            return f.read()
+
+    def test_real_gradle_9_9_log_has_deprecations_with_origin(self):
+        from probes import deprecations as dp
+        r = dp.parse(self.fx("gradle_9.9.0-rc-1_help_warning_mode_all.excerpt.log"))
+        self.assertEqual(r["state"], "fail")
+        d = next(x for x in r["deprecations"]
+                 if x["origin"] and x["origin"]["class"] == "com.android.build.gradle.internal.plugins.BasePlugin$Companion")
+        self.assertIn("Configuration.setVisible(boolean)", d["message"])
+        self.assertEqual(d["removal"], "Gradle 11")
+        self.assertIn("upgrading_version_9", d["doc"])
+        self.assertEqual(d["origin"]["at"], "BasePlugin.kt:376")
+        self.assertGreaterEqual(r["total"], 1)
+
+    def test_log_without_gradle_deprecations_is_pass(self):
+        from probes import deprecations as dp
+        # Kotlin "is deprecated" lines are not Gradle deprecations (no removal version)
+        r = dp.parse(self.fx("nia_assemble_warning_mode_all.excerpt.log"))
+        self.assertEqual((r["state"], r["total"]), ("pass", 0))
+
+    def test_incomplete_or_summary_only_logs_are_inconclusive(self):
+        from probes import deprecations as dp
+        self.assertEqual(dp.parse("")["state"], "inconclusive")
+        self.assertEqual(dp.parse("half a log without an end")["state"], "inconclusive")
+        s = "# cmd: ./gradlew --warning-mode=summary help\nBUILD SUCCESSFUL in 1s\n"
+        self.assertIn("details are not printed", dp.parse(s)["reason"])
+        s2 = "Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.\nBUILD SUCCESSFUL in 1s\n"
+        self.assertEqual(dp.parse(s2)["state"], "inconclusive")

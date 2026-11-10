@@ -7,3 +7,8 @@ removed, and the surrounding page is cut to the text around the data markers. ni
 mentioning "deprecat" with one line of context) of `./gradlew --warning-mode=all :app:assembleDemoDebug` on
 nowinandroid 2982e63, Gradle 9.7.1, AGP 9.3.2, JDK 21. No "Deprecated Gradle features were used" summary appears
 in this build: Gradle-level deprecations need another source (older commit or a next Gradle version).
+
+`../gradle_9.9.0-rc-1_help_warning_mode_all.excerpt.log`: `./gradlew --warning-mode=all --stacktrace help` on nowinandroid
+2982e63 with Gradle 9.9.0-rc-1 (CI run 41388330540, 2026-11-02). Stack frames cut to 14 per record and repeated records
+beyond the first six removed. The real full logs gave 69 to 70 deprecation messages (20 distinct) on Gradle 9.9.0-rc-1
+and 0 on Gradle 9.7.1.
