@@ -236,6 +236,19 @@ def _group_path(o):
     return " > ".join(x for x in names if x)
 
 
+def _txt(x):
+    """Text of a report field that is a string in some Gradle versions and a list of fragments in others."""
+    if x is None:
+        return ""
+    if isinstance(x, str):
+        return x
+    if isinstance(x, (list, tuple)):
+        return " ".join(t for t in (_txt(i) for i in x) if t)
+    if isinstance(x, dict):
+        return _txt(x.get("text") or x.get("name") or x.get("displayName") or "")
+    return str(x)
+
+
 def parse_problems_report(html, root=None):
     """Return (records, note). Never raises on unknown formats; returns ([], note)."""
     dec = json.JSONDecoder()
@@ -255,8 +268,8 @@ def parse_problems_report(html, root=None):
         return [], "no problem entries recognised in problems-report.html (internal format, may have changed)"
     recs = []
     for o in found:
-        label = o.get("contextualLabel") or o.get("label") or ""
-        det = o.get("details") or o.get("problemDetails") or ""
+        label = _txt(o.get("contextualLabel") or o.get("label"))
+        det = _txt(o.get("details") or o.get("problemDetails"))
         sev = str(o.get("severity", "")).upper()
         loc = None
         locs = o.get("locations") or o.get("originLocations") or []

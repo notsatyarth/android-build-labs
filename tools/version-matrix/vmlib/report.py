@@ -37,7 +37,10 @@ def analyze_cell(res, ruleset):
                 recs.append(r)
     pr = os.path.join(res.get("dir", ""), "problems-report.html")
     if os.path.isfile(pr):
-        prs, note = collect.parse_problems_report(_read(pr), root)
+        try:
+            prs, note = collect.parse_problems_report(_read(pr), root)
+        except Exception as e:  # best-effort parser on an internal format: a surprise must not stop the report
+            prs, note = [], "could not parse problems-report.html (%s: %s)" % (type(e).__name__, e)
         notes.append("problems-report.html: " + note)
         seen_at = {collect.loc_key(r.get("location")) for r in recs if collect.loc_key(r.get("location"))}
         for r in prs:

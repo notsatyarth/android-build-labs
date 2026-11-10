@@ -50,7 +50,20 @@ def main():
         d = os.path.dirname(mf)
         meta = json.load(open(mf))
         rp = os.path.join(d, "report.json")
-        rows.append(row(meta, json.load(open(rp)) if os.path.isfile(rp) else None))
+        rep = json.load(open(rp)) if os.path.isfile(rp) else None
+        if rep is None:
+            # the report step failed but the cell finished: keep what the cell itself recorded
+            cj = sorted(glob.glob(os.path.join(d, "*", "cell.json")))
+            if cj:
+                c = json.load(open(cj[0]))
+                r = row(meta, None)
+                r.update(outcome=c.get("outcome"), pins=c.get("pins"), duration_s=c.get("duration_s"),
+                         guard=(c.get("guard") or {}).get("result"), failed_step=c.get("failed_step"))
+                why = "the report step failed for this commit (cell finished with %s); see the job logs" % c.get("outcome")
+                r["probes"] = {k: result("inconclusive", why) for k in ("configuration_cache", "deprecations")}
+                rows.append(r)
+                continue
+        rows.append(row(meta, rep))
     rows.sort(key=lambda r: r.get("date") or "")
     out = {"schema": 1, "generated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "project": a.project,
            "commits": rows}

@@ -322,3 +322,17 @@ class PerCellRefTests(unittest.TestCase):
         self._plan([{"name": "old", "ref": self.old}])
         self.assertEqual(self.git("status", "--porcelain"), "")
         self.assertIn("9.4.0", helpers.rd(os.path.join(self.root, "gradle", "libs.versions.toml")))
+
+
+class ProblemsReportFieldShapes(unittest.TestCase):
+    def test_details_as_a_list_does_not_crash(self):
+        html = ('<script>{"problems":[{"contextualLabel":"Label","details":[{"text":"a"},{"text":"b"}],'
+                '"severity":"WARNING","problemId":[{"name":"deprecation"}]}]}</script>')
+        recs, note = collect.parse_problems_report(html)
+        self.assertTrue(isinstance(note, str))
+        for r in recs:
+            self.assertIsInstance(r["text"], str)
+
+    def test_txt_shapes(self):
+        self.assertEqual(collect._txt(None), "")
+        self.assertEqual(collect._txt(["x", {"text": "y"}]), "x y")
