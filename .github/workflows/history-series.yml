@@ -1,5 +1,6 @@
-# Build nowinandroid at several commits (one cell per commit, per-cell ref) and keep each cell's logs and
-# reports. Used for the feature compatibility history charts; a cell that fails is a result, not a workflow failure.
+# Build nowinandroid at several commits (one job per commit, per-cell ref in the harness) and combine the per-commit
+# results, including the configuration cache and deprecation probes, into history.json. A commit that fails to build is a
+# result, not a workflow failure.
 name: history-series
 on:
   workflow_dispatch:
@@ -11,55 +12,84 @@ on:
 permissions:
   contents: read
 jobs:
-  series:
+  plan:
     runs-on: ubuntu-24.04
-    timeout-minutes: 300
+    outputs:
+      shas: ${{ steps.p.outputs.shas }}
+    steps:
+      - id: p
+        env:
+          SHAS: ${{ inputs.shas }}
+        run: |
+          python3 - >> "$GITHUB_OUTPUT" <<'PY'
+          import json, os, re
+          shas = os.environ["SHAS"].split()
+          assert shas and all(re.fullmatch(r"[0-9a-f]{40}", s) for s in shas), "need full 40-character SHAs"
+          print("shas=" + json.dumps(shas))
+          PY
+  build:
+    needs: plan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        sha: ${{ fromJSON(needs.plan.outputs.shas) }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: "21"
-      - name: Runner info
-        run: bash .github/scripts/runner_info.sh
-      - name: Harness unit tests
-        run: python3 -I -m unittest discover tools/version-matrix/tests
-      - name: Fetch the commits
+      - name: Fetch the commit
         env:
-          SHAS: ${{ inputs.shas }}
+          SHA: ${{ matrix.sha }}
         run: |
           set -eu
           git init -q "$RUNNER_TEMP/nia"
-          for s in $SHAS; do git -C "$RUNNER_TEMP/nia" fetch -q --depth 1 https://github.com/android/nowinandroid "$s"; done
-          git -C "$RUNNER_TEMP/nia" checkout -q "$(echo $SHAS | awk '{print $NF}')"
+          git -C "$RUNNER_TEMP/nia" fetch -q --depth 1 https://github.com/android/nowinandroid "$SHA"
+          git -C "$RUNNER_TEMP/nia" checkout -q FETCH_HEAD
           git -C "$RUNNER_TEMP/nia" config user.email ci@example.invalid
           git -C "$RUNNER_TEMP/nia" config user.name ci
-          python3 labs/history-series/make_config.py "$RUNNER_TEMP/matrix.json" $SHAS
-      - name: Plan
-        run: python3 tools/version-matrix/vmatrix.py plan --config "$RUNNER_TEMP/matrix.json" --project "$RUNNER_TEMP/nia" --offline
+          mkdir -p out
+          python3 - "$SHA" "$RUNNER_TEMP/nia" > out/meta.json <<'PY'
+          import json, subprocess, sys
+          sha, repo = sys.argv[1], sys.argv[2]
+          g = lambda *a: subprocess.run(["git", "-C", repo] + list(a), capture_output=True, text=True).stdout.strip()
+          print(json.dumps({"sha": sha, "date": g("show", "-s", "--format=%cI", sha), "subject": g("show", "-s", "--format=%s", sha)}))
+          PY
+          python3 labs/history-series/make_config.py "$RUNNER_TEMP/matrix.json" "$SHA"
       - name: Run
         run: python3 tools/version-matrix/vmatrix.py run --config "$RUNNER_TEMP/matrix.json" --project "$RUNNER_TEMP/nia" --out out --offline --fail-on never
-      - name: Report
-        if: always()
-        run: |
-          echo "### History series on nowinandroid (CI: x86 Linux runner)" >> "$GITHUB_STEP_SUMMARY"
-          cat out/report.md >> "$GITHUB_STEP_SUMMARY"
-          python3 - >> "$GITHUB_STEP_SUMMARY" <<'PY'
-          import glob, json
-          print("\n| cell | commit | outcome | duration s | AGP | guard |\n|---|---|---|---|---|---|")
-          for f in sorted(glob.glob("out/*/cell.json")):
-              c = json.load(open(f))
-              print("| %s | %s | %s | %s | %s | %s |" % (c["name"], (c.get("commit") or "")[:10], c["outcome"], c["duration_s"],
-                    (c.get("pins") or {}).get("agp"), (c.get("guard") or {}).get("result")))
-          PY
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
-          name: history-series-out
+          name: commit-${{ matrix.sha }}
           path: |
-            out/report.*
-            out/*/*.log
+            out/meta.json
+            out/report.json
             out/*/cell.json
+            out/*/*.log
             out/*/problems-report.html
             out/*/configuration-cache-report.html
           retention-days: 30
+  aggregate:
+    needs: [plan, build]
+    if: always() && needs.plan.result == 'success'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: parts
+      - name: Combine
+        run: |
+          set -eo pipefail
+          mkdir -p out
+          python3 labs/history-series/aggregate_history.py parts out/history.json | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: history-json
+          path: out/history.json
+          retention-days: 90
