@@ -12,3 +12,6 @@ in this build: Gradle-level deprecations need another source (older commit or a 
 2982e63 with Gradle 9.9.0-rc-1 (CI run 41388330540, 2026-11-02). Stack frames cut to 14 per record and repeated records
 beyond the first six removed. The real full logs gave 69 to 70 deprecation messages (20 distinct) on Gradle 9.9.0-rc-1
 and 0 on Gradle 9.7.1.
+
+`nia_cf441fbb_gradle_8.11.1_no_problems.html`: nowinandroid cf441fbb (2025-01-06), Gradle 8.11.1, same trimming as above
+(CI run 42869725593). This Gradle version writes no uniqueProblemCount.

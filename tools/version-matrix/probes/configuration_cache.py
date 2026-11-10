@@ -1,7 +1,8 @@
 """Configuration cache probe: read build/reports/configuration-cache/<h>/<h>/configuration-cache-report.html.
 
 The report embeds its data as JSON between '// begin-report-data' and '// end-report-data' (format seen on
-Gradle 9.7.1 in nowinandroid CI output; labs/capture-samples). The format is not a public API, so every
+Gradle 9.7.1 in nowinandroid CI output; labs/capture-samples; Gradle 8.11.1 has the same layout without
+uniqueProblemCount and overflownProblemCount). The format is not a public API, so every
 structural surprise gives "inconclusive" with the reason, never "pass".
 """
 import json
@@ -9,7 +10,7 @@ import json
 from . import result
 
 BEGIN, END = "// begin-report-data", "// end-report-data"
-REQUIRED = ("totalProblemCount", "uniqueProblemCount", "cacheAction", "diagnostics")
+REQUIRED = ("totalProblemCount", "cacheAction", "diagnostics")   # uniqueProblemCount is absent on Gradle 8.11.1
 
 
 def load_data(html):
@@ -62,8 +63,8 @@ def parse(html):
         d = load_data(html)
     except (ValueError, TypeError) as e:
         return result("inconclusive", "cannot read configuration cache report: %s" % e)
-    total, unique = d["totalProblemCount"], d["uniqueProblemCount"]
-    if not isinstance(total, int) or not isinstance(unique, int):
+    total, unique = d["totalProblemCount"], d.get("uniqueProblemCount")
+    if not isinstance(total, int) or not (unique is None or isinstance(unique, int)):
         return result("inconclusive", "problem counts are not numbers")
     base = {"total_problems": total, "unique_problems": unique, "cache_action": d["cacheAction"],
             "requested_tasks": d.get("requestedTasks")}

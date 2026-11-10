@@ -17,6 +17,10 @@ class ConfigurationCacheProbe(unittest.TestCase):
         r = cc.parse(load("nia_help_no_problems"))
         self.assertEqual((r["state"], r["total_problems"], r["cache_action"]), ("pass", 0, "storing"))
 
+    def test_gradle_8_11_report_without_unique_count_is_still_read(self):
+        r = cc.parse(load("nia_cf441fbb_gradle_8.11.1_no_problems"))
+        self.assertEqual((r["state"], r["total_problems"], r["unique_problems"]), ("pass", 0, None))
+
     def test_task_project_at_execution_is_fail_with_origin_and_location(self):
         r = cc.parse(load("syn_task_project_at_execution"))
         self.assertEqual(r["state"], "fail")
@@ -34,7 +38,8 @@ class ConfigurationCacheProbe(unittest.TestCase):
 
     def test_unreadable_reports_are_inconclusive_never_pass(self):
         for html in ("", "<html></html>", "// begin-report-data\nnot json\n// end-report-data",
-                     '// begin-report-data\n{"totalProblemCount": 0}\n// end-report-data'):
+                     '// begin-report-data\n{"totalProblemCount": 0}\n// end-report-data',
+                     '// begin-report-data\n{"totalProblemCount": "0", "cacheAction": "x", "diagnostics": []}\n// end-report-data'):
             r = cc.parse(html)
             self.assertEqual(r["state"], "inconclusive", html)
             self.assertTrue(r["reason"])
