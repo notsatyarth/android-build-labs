@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feature compatibility dashboard</title>
+<style>
+:root{
+  color-scheme: light;
+  --surface:#fcfcfb; --card:#ffffff; --ink:#0b0b0b; --ink2:#52514e; --muted:#76746e;
+  --grid:#e1e0d9; --axis:#c3c2b7; --border:rgba(11,11,11,.10);
+  --blue:#2a78d6; --orange:#eb6834; --aqua:#1baf7a;
+  --good:#006300; --bad:#b3261e; --bad-fill:#e34948; --good-fill:#0ca30c;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --surface:#1a1a19; --card:#222221; --ink:#f0efec; --ink2:#c3c2b7; --muted:#9a988f;
+    --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,.10);
+    --blue:#3987e5; --orange:#d95926; --aqua:#199e70;
+    --good:#0ca30c; --bad:#e66767; --bad-fill:#e66767; --good-fill:#0ca30c;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --surface:#1a1a19; --card:#222221; --ink:#f0efec; --ink2:#c3c2b7; --muted:#9a988f;
+  --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,.10);
+  --blue:#3987e5; --orange:#d95926; --aqua:#199e70;
+  --good:#0ca30c; --bad:#e66767; --bad-fill:#e66767; --good-fill:#0ca30c;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1040px;margin:0 auto;padding:24px 16px 64px}
+header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap}
+h1{font-size:24px;margin:0 0 4px}
+h2{font-size:18px;margin:36px 0 4px}
+h3{font-size:14px;margin:0 0 2px}
+p{margin:4px 0;color:var(--ink2)}
+.sub{color:var(--ink2);max-width:70ch}
+button{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--axis);border-radius:6px;padding:4px 10px;cursor:pointer}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin:12px 0}
+.note{font-size:13px;color:var(--muted);margin-top:6px}
+svg{display:block;width:100%;height:auto;overflow:visible}
+svg text{fill:var(--ink2);font:11px system-ui,sans-serif}
+svg .lbl{fill:var(--ink)}
+.grid{stroke:var(--grid);stroke-width:1}
+.axis{stroke:var(--axis);stroke-width:1}
+.hit{fill:transparent;cursor:default}
+.hit:hover,.hit:focus{fill:rgba(128,128,128,.12);outline:none}
+details{margin-top:8px}
+summary{cursor:pointer;font-size:13px;color:var(--ink2)}
+table{border-collapse:collapse;width:100%;font-size:13px;margin-top:6px}
+th,td{border-bottom:1px solid var(--grid);padding:4px 8px;text-align:left;vertical-align:top}
+th{color:var(--ink2);font-weight:600}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--ink2);margin:6px 0}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.pass{color:var(--good)} .fail{color:var(--bad)}
+code{font:12px ui-monospace,Menlo,monospace;background:var(--grid);border-radius:4px;padding:0 4px}
+#tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--surface);font-size:12px;line-height:1.4;padding:6px 8px;border-radius:6px;max-width:320px;opacity:0;transition:opacity .08s;z-index:5;white-space:pre-line}
+.flags td:first-child{font-family:ui-monospace,Menlo,monospace;font-size:12px;white-space:nowrap}
+.flags td.c{text-align:center;padding:4px 2px}
+.stage{color:var(--muted);font-size:12px;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pin-ch{background:rgba(235,104,52,.18);font-weight:600}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div>
+    <h1>Feature compatibility dashboard</h1>
+    <p class="sub">How the nowinandroid build copes with specific Gradle, AGP and Kotlin features. Each chart is one feature. There is no combined score and no claim about any future tool release.</p>
+    <p class="note" id="meta"></p>
+  </div>
+  <button id="theme" type="button" aria-label="Toggle light or dark theme">Theme</button>
+</header>
+
+<h2>1. Build history on 10 commits</h2>
+<p>Each commit was built once, cold, with the Gradle, AGP and Kotlin versions that commit pins. This shows how the project changed. It does not show how older tool versions behave in general.</p>
+<div class="card">
+  <h3>Build duration and outcome</h3>
+  <p class="note">One cold run per commit on a GitHub x86 Linux runner, so differences of a minute or two are noise.</p>
+  <div id="c-duration"></div>
+  <div class="legend"><span><i style="background:var(--blue)"></i>Passed</span><span><i style="background:var(--bad-fill)"></i>Failed (the build stopped; its duration is time to failure)</span></div>
+  <div id="pins"></div>
+  <details><summary>Show table</summary><div class="scroll" id="t-duration"></div></details>
+</div>
+<div class="card">
+  <h3>Configuration cache problems</h3>
+  <p class="note">Problem count from the configuration cache report of each build. A build that failed before the report was written shows as a gap, not as zero.</p>
+  <div id="c-cc"></div>
+  <details><summary>Show table</summary><div class="scroll" id="t-cc"></div></details>
+</div>
+<div class="card">
+  <h3>Gradle deprecation warnings</h3>
+  <p class="note">Distinct warnings that name a removal in a later Gradle version. Hover a bar for the message and where it comes from.</p>
+  <div id="c-dep"></div>
+  <details><summary>Show table</summary><div class="scroll" id="t-dep"></div></details>
+</div>
+
+<h2>2. Which flags each tool version knows</h2>
+<p>For each version, was the flag name found in the plugin's published jar? This comes from reading class files, so it is inferred and not public API. "Known" means the name exists; it does not say what the default is.</p>
+<div class="card"><h3>Android Gradle plugin</h3><div class="scroll" id="fa-agp"></div></div>
+<div class="card"><h3>Kotlin Gradle plugin</h3><div class="scroll" id="fa-kgp"></div></div>
+
+<h2>3. Building nowinandroid with each flag set</h2>
+<p id="fb-intro"></p>
+<div class="card">
+  <div id="c-fb"></div>
+  <div class="legend" id="fb-legend"></div>
+  <h3 style="margin-top:12px">What failed, and where</h3>
+  <p class="note">For <code>android.simulateAgpVersionBehavior</code> (experimental, undocumented), the build log gives AGP's own reason: the option <code>android.useAndroidX</code> was removed in AGP 10 behavior. It fails at configuration in <code>app/build.gradle.kts</code>.</p>
+  <div class="scroll" id="fb-fail"></div>
+  <details><summary>Show every flag</summary><div class="scroll" id="t-fb"></div></details>
+  <p class="note">A pass does not prove the flag changed anything. Each flag is set alone, to a value chosen from its name. "Failed with this value" is not the same as "incompatible".</p>
+</div>
+
+<h2>4. Known issue fixture: KT-90672</h2>
+<p>A tracked Kotlin issue, reproduced from a small public repro project to prove the framework can catch a real regression.</p>
+<div class="card"><div class="scroll" id="ki"></div>
+<p class="note">The issue did not reproduce on nowinandroid. The Kotlin 2.5.0-Beta2 failure on nowinandroid in section 3 is a different one.</p></div>
+</main>
+<div id="tip" role="tooltip"></div>
+<script src="data.js"></script>
+<script>
+(function(){
+const D = window.DATA, NS = "http://www.w3.org/2000/svg";
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const tip = $("tip");
+function showTip(e, text){ tip.textContent = text; tip.style.opacity = 1; moveTip(e); }
+function moveTip(e){ const x = Math.min(e.clientX+12, innerWidth-330); tip.style.left = Math.max(8,x)+"px"; tip.style.top = (e.clientY+14)+"px"; }
+function hideTip(){ tip.style.opacity = 0; }
+function el(name, attrs, parent){ const n = document.createElementNS(NS,name); for(const k in attrs) n.setAttribute(k, attrs[k]); if(parent) parent.appendChild(n); return n; }
+function txt(parent,x,y,s,attrs){ const t = el("text",Object.assign({x,y},attrs||{}),parent); t.textContent = s; return t; }
+function hit(parent,x,y,w,h,text,label){
+  const r = el("rect",{x,y,width:w,height:h,class:"hit",tabindex:0,"aria-label":label||text},parent);
+  r.addEventListener("mouseenter",e=>showTip(e,text)); r.addEventListener("mousemove",moveTip); r.addEventListener("mouseleave",hideTip);
+  r.addEventListener("focus",()=>{const b=r.getBoundingClientRect(); showTip({clientX:b.left+b.width/2,clientY:b.top},text)}); r.addEventListener("blur",hideTip);
+}
+// theme toggle (storage is optional)
+(function(){
+  const root=document.documentElement; let t=null; try{t=localStorage.getItem("theme")}catch(e){}
+  if(t) root.dataset.theme=t;
+  $("theme").onclick=()=>{ const dark = root.dataset.theme ? root.dataset.theme==="dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark?"light":"dark"; try{localStorage.setItem("theme",root.dataset.theme)}catch(e){} };
+})();
+
+const H = D.history, C = H.commits;
+$("meta").textContent = "Project: "+H.project+" · history generated "+H.generated.slice(0,10)+" · frozen data, no network needed.";
+const short = c => c.sha.slice(0,7), day = c => c.date.slice(0,10);
+
+function table(headers, rows){
+  return "<table><thead><tr>"+headers.map(h=>"<th"+(h.num?' class="num"':"")+">"+esc(h.t||h)+"</th>").join("")+"</tr></thead><tbody>"+
+    rows.map(r=>"<tr>"+r.map((c,i)=>"<td"+(headers[i].num?' class="num"':"")+">"+esc(c)+"</td>").join("")+"</tr>").join("")+"</tbody></table>";
+}
+
+// ---- generic bar chart over commits ----
+function barChart(host, opts){
+  const W=640, H_=opts.h||200, L=40, R=8, T=26, B=44, iw=W-L-R, ih=H_-T-B, n=C.length, bw=iw/n;
+  const svg = el("svg",{viewBox:"0 0 "+W+" "+H_,role:"img","aria-label":opts.aria});
+  const max = Math.max(opts.min||1, ...opts.values.filter(v=>v!=null));
+  const step = opts.step, top = Math.ceil(max/step)*step;
+  for(let v=0; v<=top; v+=step){ const y=T+ih-ih*v/top; el("line",{x1:L,x2:W-R,y1:y,y2:y,class:v?"grid":"axis"},svg); txt(svg,L-6,y+4,v,{"text-anchor":"end"}); }
+  txt(svg,4,12,opts.unit,{});
+  C.forEach((c,i)=>{
+    const x=L+i*bw, v=opts.values[i];
+    if(v==null){ txt(svg,x+bw/2,T+ih-6,"no data",{"text-anchor":"middle"}); }
+    else if(v>0){ const h=Math.max(2,ih*v/top); el("rect",{x:x+bw*.18,y:T+ih-h,width:bw*.64,height:h,rx:3,fill:opts.color(c,i)},svg); }
+    if(v!=null) txt(svg,x+bw/2,(v>0?T+ih-Math.max(2,ih*v/top):T+ih)-4,opts.label(v),{"text-anchor":"middle",class:"lbl"});
+    txt(svg,x+bw/2,H_-B+14,short(c),{"text-anchor":"middle"});
+    txt(svg,x+bw/2,H_-B+27,day(c).slice(0,7),{"text-anchor":"middle"});
+    hit(svg,x,T,bw,ih+B-10,opts.tip(c,i),opts.tip(c,i));
+  });
+  host.appendChild(svg);
+}
+
+// duration
+barChart($("c-duration"),{aria:"Build duration per commit in seconds",unit:"seconds",step:100,min:100,h:220,
+  values:C.map(c=>c.duration_s), color:c=>c.outcome==="PASS"?"var(--blue)":"var(--bad-fill)", label:v=>Math.round(v)+"",
+  tip:c=>short(c)+" · "+day(c)+"\n"+c.subject+"\n"+(c.outcome==="PASS"?"Passed":"Failed")+" in "+Math.round(c.duration_s)+" s"+(c.outcome==="PASS"?"":"\n"+(c.first_error||"")+"\nGradle "+c.pins.gradle+", AGP "+c.pins.agp+", Kotlin "+c.pins.kotlin)});
+
+// pin strip: which tool versions each commit pins, change highlighted
+(function(){
+  const rows=[["gradle","Gradle"],["agp","AGP"],["kotlin","Kotlin"]];
+  let h='<div class="scroll"><table><thead><tr><th>Pinned by the commit</th>'+C.map(c=>"<th>"+short(c)+"</th>").join("")+"</tr></thead><tbody>";
+  rows.forEach(([k,name])=>{ h+="<tr><td>"+name+"</td>"+C.map((c,i)=>{ const ch=i>0&&C[i-1].pins[k]!==c.pins[k]; return '<td class="'+(ch?"pin-ch":"")+'">'+esc(c.pins[k])+"</td>"}).join("")+"</tr>"; });
+  h+='</tbody></table></div><p class="note">Shaded cells are where a tool version changed from the previous commit. When a bar changes, look here first.</p>';
+  $("pins").innerHTML=h;
+})();
+$("t-duration").innerHTML = table(["Commit","Date","Outcome",{t:"Seconds",num:1},"First error"],
+  C.map(c=>[short(c),day(c),c.outcome,Math.round(c.duration_s),c.first_error||""]));
+
+// configuration cache
+const cc = C.map(c=>{ const p=c.probes&&c.probes.configuration_cache; return p&&p.state!=="inconclusive"&&p.state!=="not_run"?p.total_problems:null; });
+barChart($("c-cc"),{aria:"Configuration cache problems per commit",unit:"problems",step:1,min:1,h:170,values:cc,
+  color:()=>"var(--orange)",label:v=>v+"",
+  tip:(c,i)=>{const p=c.probes.configuration_cache; return short(c)+" · "+day(c)+"\nConfiguration cache: "+p.state+(p.state==="pass"?" (0 problems)":p.total_problems!=null?" ("+p.total_problems+" problems)":"")+(p.reason?"\n"+p.reason:"")}});
+$("t-cc").innerHTML = table(["Commit","State",{t:"Problems",num:1},"Reason"],
+  C.map(c=>{const p=c.probes.configuration_cache;return [short(c),p.state,p.total_problems==null?"":p.total_problems,p.reason||""]}));
+
+// deprecations
+const dep = C.map(c=>{ const p=c.probes&&c.probes.deprecations; return p&&p.state!=="inconclusive"&&p.state!=="not_run"?p.distinct:null; });
+barChart($("c-dep"),{aria:"Gradle deprecation warnings per commit",unit:"distinct warnings",step:1,min:3,h:190,values:dep,
+  color:()=>"var(--aqua)",label:v=>v+"",
+  tip:c=>{const d=c.deprecation_details||[]; return short(c)+" · "+day(c)+"\n"+(d.length?d.map(x=>x.count+"× "+x.message+" Removal: "+x.removal+".\nFrom "+x.origin).join("\n"):"No deprecation warnings")}});
+$("t-dep").innerHTML = table(["Commit","Message","Removal","Origin",{t:"Count",num:1}],
+  C.flatMap(c=>{const d=c.deprecation_details||[]; return d.length?d.map(x=>[short(c),x.message,x.removal,x.origin,x.count]):[[short(c),"none","","",0]];}));
+
+// ---- flag availability tables ----
+function availTable(host, a){
+  const vs = Object.keys(a.versions);
+  let h='<table class="flags"><thead><tr><th>Flag</th>'+vs.map(v=>'<th class="c" style="text-align:center">'+esc(v)+"</th>").join("")+"<th>Stage in the source list</th></tr></thead><tbody>";
+  a.flags.forEach(f=>{
+    h+="<tr><td>"+esc(f.flag)+"</td>";
+    vs.forEach(v=>{ const s=(a.versions[v][f.flag]||{}).status;
+      h+='<td class="c" title="'+esc(f.flag+" in "+v+": "+(s||"not checked"))+'">'+(s==="declared"?'<span class="pass" aria-label="known">●</span>':s==="mentioned"?'<span aria-label="mentioned">◐</span>':'<span style="color:var(--muted)" aria-label="not found">○</span>')+"</td>"; });
+    h+='<td class="stage" title="'+esc(f.stage)+'">'+esc(f.stage)+"</td></tr>";
+  });
+  h+='</tbody></table><p class="note">● name found as a flag · ◐ name appears but not as a flag · ○ not found in that version. Versions are those in <code>data/flag-availability/versions.json</code>.</p>';
+  host.innerHTML=h;
+}
+availTable($("fa-agp"), D.flagAvailability.agp); availTable($("fa-kgp"), D.flagAvailability.kgp);
+
+// ---- flag builds ----
+(function(){
+  const b = D.flagBuilds[0]; if(!b){ $("c-fb").textContent="No flag build data."; return; }
+  $("fb-intro").textContent = "nowinandroid at "+b.project_ref.slice(0,7)+", AGP "+b.agp+", Kotlin "+b.kotlin+". One build per flag, each flag set alone.";
+  const order=[["pass","Passed","var(--good-fill)"],["fail","Failed with this value","var(--bad-fill)"],["not_applicable","Not applicable","var(--axis)"],["not_run","Not run","var(--grid)"]];
+  const total=order.reduce((s,o)=>s+(b.counts[o[0]]||0),0), W=640, svg=el("svg",{viewBox:"0 0 640 64",role:"img","aria-label":"Flag build results"},null);
+  let x=0; order.forEach(([k,name,col])=>{ const n=b.counts[k]||0; if(!n) return; const w=(W)*n/total;
+    el("rect",{x:x+1,y:8,width:Math.max(0,w-2),height:30,rx:4,fill:col,stroke:"var(--axis)","stroke-width":k==="not_run"?1:0},svg);
+    txt(svg,x+w/2,28,n,{"text-anchor":"middle",class:"lbl",style:"font-weight:600"}); hit(svg,x,4,w,38,name+": "+n+" of "+total+" flags");
+    x+=w; });
+  $("c-fb").appendChild(svg);
+  $("fb-legend").innerHTML=order.map(o=>'<span><i style="background:'+o[2]+';border:1px solid var(--axis)"></i>'+o[1]+" ("+(b.counts[o[0]]||0)+")</span>").join("");
+  const fails=b.results.filter(r=>r.state==="fail");
+  $("fb-fail").innerHTML = fails.length? table(["Flag and value","Failed step","First error"],fails.map(r=>[r.flag+"="+r.value,r.failed_step,r.first_error])) : "<p>No failures.</p>";
+  $("t-fb").innerHTML = table(["Flag","Value","State","Reason"],b.results.map(r=>[r.flag,r.value==null?"":r.value,r.state,r.reason||""]));
+})();
+
+// ---- known issue ----
+$("ki").innerHTML = table(["Issue","Kotlin version","Expected","Observed","Reproduced"],
+  D.knownIssues.map(k=>[k.issue,k.version,k.expected,k.state,k.reproduces?"yes":"no"]));
+})();
+</script>
+</body>
+</html>

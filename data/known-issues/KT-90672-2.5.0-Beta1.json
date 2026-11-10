@@ -1,0 +1,8 @@
+{
+ "state": "pass",
+ "reason": null,
+ "issue": "KT-90672",
+ "reproduces": false,
+ "version": "2.5.0-Beta1",
+ "expected": "pass"
+}
