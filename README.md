@@ -28,6 +28,7 @@ Results from GitHub-hosted runners are x86 Linux numbers. Do not compare their t
 | `labs/old-vs-new/` | Old versus new nowinandroid commits (three pairs) with gradle-profiler 0.26.0: configuration, clean and incremental build time, peak RSS, release APK size | yes: `old-vs-new` (one job per pair, `pairs` input) |
 | `labs/version-matrix/` | CI matrix config for `tools/version-matrix` on nowinandroid: baseline, next Gradle, AGP and Kotlin, `simulateAgpVersionBehavior`, `tryNext`, `--warning-mode=fail` | yes: `version-matrix` (cells that fail are findings) |
 | `tools/version-matrix/` | Run one project against a matrix of Gradle, AGP, Kotlin and KSP versions and report what broke and who owns it | used by `version-matrix`; example workflows in `ci/` |
+| `docs/compat-tracking.md` | Feature compatibility tracking: probes, flow, how to add a probe or adapt it to another project; dashboard in `docs/dashboard/` | yes: `history-series`, `flag-availability`, `flag-builds`, `known-issue` |
 | `tools/procwatch/` | Sample every JVM of a build (RSS, `-Xmx`, GC, plus macOS footprint or Linux RSS+swap) into a CSV | used by the labs |
 
 `MANIFEST.tsv` lists where each file came from in the author's original lab setup.
