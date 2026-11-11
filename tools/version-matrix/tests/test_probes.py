@@ -247,3 +247,54 @@ class CellConfigurationCacheScope(unittest.TestCase):
     def test_zero_problems_after_task_steps_is_pass(self):
         r = self._cell([{"name": "01-help", "role": "task", "log": "/nonexistent"}])["configuration_cache"]
         self.assertEqual(r["state"], "pass")
+
+
+class IsolatedProjectsAggregate(unittest.TestCase):
+    """labs/history-series/aggregate_history.ip_probe: reads <part>/ip/<cell>/cell.json and its configuration cache report."""
+
+    @staticmethod
+    def _agg():
+        import sys
+        d = os.path.join(helpers.HERE, "..", "..", "..", "labs", "history-series")
+        sys.path.insert(0, d)
+        import aggregate_history
+        return aggregate_history
+
+    def _part(self, report, outcome, steps, failed_step=None):
+        import json
+        import tempfile
+        part = tempfile.mkdtemp()
+        d = os.path.join(part, "ip", "c00-test")
+        os.makedirs(d)
+        if report:
+            with open(os.path.join(d, "configuration-cache-report.html"), "w", encoding="utf-8") as f, \
+                    open(os.path.join(FIX, report), encoding="utf-8") as src:
+                f.write(src.read())
+        with open(os.path.join(d, "cell.json"), "w") as f:
+            json.dump({"outcome": outcome, "steps": steps, "failed_step": failed_step}, f)
+        return part
+
+    def test_real_gradle_8_11_report_with_problems_is_fail_and_grouped(self):
+        part = self._part("nia_cf441fbb_gradle_8.11.1_isolated_projects.html", "FAIL", [{"role": "task"}], "01-help")
+        r, details = self._agg().ip_probe(part)
+        self.assertEqual((r["state"], r["total_problems"]), ("fail", 701))
+        self.assertTrue(all("<path>" in g["message"] or g["count"] >= 1 for g in details))
+        # the same message on two projects is one group, so there are fewer groups than readable problems
+        self.assertLess(len(details), 14)
+
+    def test_zero_problems_and_passing_build_is_pass(self):
+        part = self._part("nia_help_no_problems.html", "PASS", [{"role": "task"}])
+        r, details = self._agg().ip_probe(part)
+        self.assertEqual((r["state"], r["total_problems"], details), ("pass", 0, []))
+
+    def test_zero_problems_but_failed_build_is_inconclusive(self):
+        part = self._part("nia_help_no_problems.html", "FAIL", [{"role": "task"}], "01-help")
+        self.assertEqual(self._agg().ip_probe(part)[0]["state"], "inconclusive")
+
+    def test_build_that_never_reached_the_task_step_is_inconclusive(self):
+        part = self._part("nia_help_no_problems.html", "FAIL", [{"role": "guard"}], "guard-buildEnvironment")
+        self.assertEqual(self._agg().ip_probe(part)[0]["state"], "inconclusive")
+
+    def test_missing_ip_build_is_not_run(self):
+        import tempfile
+        self.assertEqual(self._agg().ip_probe(tempfile.mkdtemp())[0]["state"], "not_run")

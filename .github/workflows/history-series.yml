@@ -1,5 +1,5 @@
 # Build nowinandroid at several commits (one job per commit, per-cell ref in the harness) and combine the per-commit
-# results, including the configuration cache and deprecation probes, into history.json. A commit that fails to build is a
+# results, including the configuration cache, deprecation and Isolated Projects probes, into history.json. A commit that fails to build is a
 # result, not a workflow failure.
 name: history-series
 on:
@@ -60,8 +60,13 @@ jobs:
           print(json.dumps({"sha": sha, "date": g("show", "-s", "--format=%cI", sha), "subject": g("show", "-s", "--format=%s", sha)}))
           PY
           python3 labs/history-series/make_config.py "$RUNNER_TEMP/matrix.json" "$SHA"
+          python3 labs/history-series/make_config.py --ip "$RUNNER_TEMP/matrix-ip.json" "$SHA"
       - name: Run
         run: python3 tools/version-matrix/vmatrix.py run --config "$RUNNER_TEMP/matrix.json" --project "$RUNNER_TEMP/nia" --out out --offline --fail-on never
+      - name: Run with Isolated Projects on
+        # Second build of the same commit: configuration only (help), IP forced on. IP problems are a result, not a failure.
+        # Output goes under out/ip so the artifact layout of the first run does not change.
+        run: python3 tools/version-matrix/vmatrix.py run --config "$RUNNER_TEMP/matrix-ip.json" --project "$RUNNER_TEMP/nia" --out out/ip --offline --fail-on never
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
@@ -73,6 +78,10 @@ jobs:
             out/*/*.log
             out/*/problems-report.html
             out/*/configuration-cache-report.html
+            out/ip/report.json
+            out/ip/*/cell.json
+            out/ip/*/*.log
+            out/ip/*/configuration-cache-report.html
           retention-days: 30
   aggregate:
     needs: [plan, build]
