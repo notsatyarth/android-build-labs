@@ -93,6 +93,12 @@ code{font:12px ui-monospace,Menlo,monospace;background:var(--grid);border-radius
   <details><summary>Show table</summary><div class="scroll" id="t-cc"></div></details>
 </div>
 <div class="card">
+  <h3>Isolated Projects problems</h3>
+  <p class="note">The same commit built a second time with Isolated Projects forced on (configuration only, <code>help</code>). Only the newest commit turns it on itself; the rest do not, so these bars show how far each commit was from being able to. Hover a bar for the most common problems. A gap means the build stopped before the tasks ran.</p>
+  <div id="c-ip"></div>
+  <details><summary>Show table</summary><div class="scroll" id="t-ip"></div></details>
+</div>
+<div class="card">
   <h3>Gradle deprecation warnings</h3>
   <p class="note">Distinct warnings that name a removal in a later Gradle version. Hover a bar for the message and where it comes from.</p>
   <div id="c-dep"></div>
@@ -211,6 +217,17 @@ barChart($("c-cc"),{aria:"Configuration cache problems per commit",unit:"problem
   tip:(c,i)=>{const p=c.probes.configuration_cache; return short(c)+" · "+day(c)+"\nConfiguration cache: "+p.state+(p.state==="pass"?" (0 problems)":p.total_problems!=null?" ("+p.total_problems+" problems)":"")+(p.reason?"\n"+p.reason:"")}});
 $("t-cc").innerHTML = table(["Commit","State",{t:"Problems",num:1},"Reason"],
   C.map(c=>{const p=c.probes.configuration_cache;return [short(c),p.state,p.total_problems==null?"":p.total_problems,p.reason||""]}));
+
+// isolated projects
+const ipv = c=>{ const p=c.probes&&c.probes.isolated_projects; return p&&(p.state==="pass"||p.state==="fail")?p.total_problems:null; };
+barChart($("c-ip"),{aria:"Isolated Projects problems per commit",unit:"problems",step:200,min:200,h:170,values:C.map(ipv),
+  color:()=>"var(--purple, var(--blue))",label:v=>v+"",
+  tip:c=>{const p=c.probes.isolated_projects; if(!p) return short(c)+" · "+day(c)+"\nnot measured";
+    if(p.state!=="pass"&&p.state!=="fail") return short(c)+" · "+day(c)+"\nIsolated Projects: "+p.state+"\n"+(p.reason||"");
+    const d=(c.isolated_projects_details||[]).slice(0,4);
+    return short(c)+" · "+day(c)+"\nIsolated Projects: "+p.state+" ("+p.total_problems+" problems)"+(d.length?"\n"+d.map(x=>x.count+"× "+x.message).join("\n"):"")}});
+$("t-ip").innerHTML = table(["Commit","State",{t:"Problems",num:1},"Most common problem","Where"],
+  C.map(c=>{const p=c.probes.isolated_projects||{state:"not measured"},d=(c.isolated_projects_details||[])[0];return [short(c),p.state,p.total_problems==null?"":p.total_problems,d?d.count+"× "+d.message:(p.reason||""),d?d.example_location:""]}));
 
 // deprecations
 const dep = C.map(c=>{ const p=c.probes&&c.probes.deprecations; return p&&p.state!=="inconclusive"&&p.state!=="not_run"?p.distinct:null; });

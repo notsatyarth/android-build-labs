@@ -37,6 +37,7 @@ Rule: a report a parser cannot read is inconclusive, never "0 problems". Each pa
 | Probe | Code | Config | Workflow | Data |
 |---|---|---|---|---|
 | Configuration cache problems | `probes/configuration_cache.py` | `configuration_cache.json` | `history-series` | `data/history/` |
+| Isolated Projects problems | `probes/configuration_cache.py` (same report), run by `labs/history-series/aggregate_history.py` `ip_probe` | `make_config.py --ip` | `history-series` (second build per commit, `help` with IP forced on) | `data/history/` |
 | Gradle deprecations | `probes/deprecations.py` | `deprecations.json` | `history-series` | `data/history/` |
 | AGP and Kotlin compiler deprecations | `probes/tool_deprecations.py` | `tool_deprecations.json` | `history-series` | `data/history/` |
 | Flag availability (no build) | `probes/flag_availability.py` | `flags.json` | `flag-availability` | `data/flag-availability/` |
@@ -80,4 +81,5 @@ Keep company data out of this public repo. Use a private copy of the repo, or a 
 - The configuration cache parser's branches for old Gradle layouts with problems are untested because no real report with problems was captured.
 - `android.simulateAgpVersionBehavior` is experimental and undocumented.
 - The Kotlin deprecation chart counts deprecated APIs the project calls (mostly Compose), not Kotlin plugin settings. Console text, not a public API; it was checked against 10 real logs only, not re-run on CI.
-- Not built: R8 probe, plugin status, agent-written chart annotations, Isolated Projects probe.
+- Not built: R8 probe, plugin status, agent-written chart annotations.
+- Isolated Projects is measured on configuration only (`help`), forced on with `-Dorg.gradle.unsafe.isolated-projects=true`. Only the newest commit enables it in its own `gradle.properties`. Each commit's problems are grouped by message with project paths replaced, and the top group names the plugin class that triggered it (for example the Hilt and Firebase Performance Gradle plugins on the older commits).

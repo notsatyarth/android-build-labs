@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated": "2026-11-11T02:23:40Z",
+ "generated": "2026-11-11T07:40:10Z",
  "project": "android/nowinandroid",
  "commits": [
   {
@@ -14,7 +14,7 @@
     "kotlin": "2.1.0",
     "ksp": "2.1.0-1.0.29"
    },
-   "duration_s": 427.0,
+   "duration_s": 437.9,
    "guard": "OK",
    "first_error": null,
    "failed_step": null,
@@ -43,13 +43,45 @@
      "reason": null,
      "total": 0,
      "distinct": 0
+    },
+    "isolated_projects": {
+     "state": "fail",
+     "reason": "701 configuration cache problem(s)",
+     "total_problems": 701,
+     "unique_problems": null
     }
    },
    "tool_deprecation_details": {
     "agp": [],
     "kotlin": []
    },
-   "deprecation_details": []
+   "deprecation_details": [],
+   "isolated_projects_details": [
+    {
+     "message": "Project <path> cannot access Project.group functionality on another project <path>",
+     "origin_kind": "BuildLogic",
+     "example_location": "at dagger.hilt.android.plugin.HiltGradlePlugin.verifyDependencies(HiltGradlePlugin.kt:424)",
+     "count": 422
+    },
+    {
+     "message": "Project <path> cannot dynamically look up a property in the parent project <path>",
+     "origin_kind": "PropertyUsage",
+     "example_location": "at com.google.samples.apps.nowinandroid.KotlinAndroidKt$configureKotlinAndroid$$inlined$configureKotlin$1.invoke$lambda-0(KotlinAndroid.kt:81)",
+     "count": 191
+    },
+    {
+     "message": "Project <path> cannot access task dependencies directly",
+     "origin_kind": "BuildLogic",
+     "example_location": "at com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation$configureAsAbstractKotlinCompileTool(KspSubplugin.kt:364)",
+     "count": 56
+    },
+    {
+     "message": "Project <path> cannot access Project.file functionality on another project <path>",
+     "origin_kind": "BuildLogic",
+     "example_location": "at com.google.android.libraries.mapsplatform.secrets_gradle_plugin.ExtensionsKt.loadPropertiesFile(Extensions.kt:44)",
+     "count": 32
+    }
+   ]
   },
   {
    "sha": "23f602637b0db8c6fab5643fc2bcaae5faa3f805",
@@ -62,7 +94,7 @@
     "kotlin": "2.1.0",
     "ksp": "2.1.0-1.0.29"
    },
-   "duration_s": 418.0,
+   "duration_s": 435.3,
    "guard": "OK",
    "first_error": null,
    "failed_step": null,
@@ -91,13 +123,45 @@
      "reason": null,
      "total": 0,
      "distinct": 0
+    },
+    "isolated_projects": {
+     "state": "fail",
+     "reason": "702 configuration cache problem(s)",
+     "total_problems": 702,
+     "unique_problems": null
     }
    },
    "tool_deprecation_details": {
     "agp": [],
     "kotlin": []
    },
-   "deprecation_details": []
+   "deprecation_details": [],
+   "isolated_projects_details": [
+    {
+     "message": "Project <path> cannot access Project.group functionality on another project <path>",
+     "origin_kind": "BuildLogic",
+     "example_location": "at dagger.hilt.android.plugin.HiltGradlePlugin.verifyDependencies(HiltGradlePlugin.kt:424)",
+     "count": 423
+    },
+    {
+     "message": "Project <path> cannot dynamically look up a property in the parent project <path>",
+     "origin_kind": "PropertyUsage",
+     "example_location": "at com.google.samples.apps.nowinandroid.KotlinAndroidKt$configureKotlinAndroid$$inlined$configureKotlin$1.invoke$lambda-0(KotlinAndroid.kt:81)",
+     "count": 191
+    },
+    {
+     "message": "Project <path> cannot access task dependencies directly",
+     "origin_kind": "BuildLogic",
+     "example_location": "at com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation$configureAsAbstractKotlinCompileTool(KspSubplugin.kt:364)",
+     "count": 56
+    },
+    {
+     "message": "Project <path> cannot access Project.file functionality on another project <path>",
+     "origin_kind": "BuildLogic",
+     "example_location": "at com.google.android.libraries.mapsplatform.secrets_gradle_plugin.ExtensionsKt.loadPropertiesFile(Extensions.kt:44)",
+     "count": 32
+    }
+   ]
   },
   {
    "sha": "689ef92e41427ab70f82e2c9fe59755441deae92",
@@ -110,7 +174,7 @@
     "kotlin": "2.1.10",
     "ksp": "2.1.10-1.0.31"
    },
-   "duration_s": 421.7,
+   "duration_s": 426.0,
    "guard": "OK",
    "first_error": null,
    "failed_step": null,
@@ -139,13 +203,39 @@
      "reason": null,
      "total": 0,
      "distinct": 0
+    },
+    "isolated_projects": {
+     "state": "fail",
+     "reason": "235 configuration cache problem(s)",
+     "total_problems": 235,
+     "unique_problems": null
     }
    },
    "tool_deprecation_details": {
     "agp": [],
     "kotlin": []
    },
-   "deprecation_details": []
+   "deprecation_details": [],
+   "isolated_projects_details": [
+    {
+     "message": "Project <path> cannot dynamically look up a property in the parent project <path>",
+     "origin_kind": "BuildLogic",
+     "example_location": "at com.google.firebase.perf.plugin.FirebasePerfPlugin.apply(FirebasePerfPlugin.java:111)",
+     "count": 147
+    },
+    {
+     "message": "Project <path> cannot access task dependencies directly",
+     "origin_kind": "BuildLogic",
+     "example_location": "at com.google.devtools.ksp.gradle.KspGradleSubplugin.applyToCompilation$configureAsAbstractKotlinCompileTool(KspSubplugin.kt:372)",
+     "count": 56
+    },
+    {
+     "message": "Project <path> cannot access Project.file functionality on another project <path>",
+     "origin_kind": "BuildLogic",
+     "example_location": "at com.google.android.libraries.mapsplatform.secrets_gradle_plugin.ExtensionsKt.loadPropertiesFile(Extensions.kt:44)",
+     "count": 32
+    }
+   ]
   },
   {
    "sha": "7ff1913855ad1db355875502e964d7e12947241b",
@@ -158,7 +248,7 @@
     "kotlin": "2.1.10",
     "ksp": "2.1.10-1.0.31"
    },
-   "duration_s": 367.8,
+   "duration_s": 335.5,
    "guard": "OK",
    "first_error": null,
    "failed_step": null,
@@ -187,13 +277,27 @@
      "reason": null,
      "total": 0,
      "distinct": 0
+    },
+    "isolated_projects": {
+     "state": "fail",
+     "reason": "6 configuration cache problem(s)",
+     "total_problems": 6,
+     "unique_problems": null
     }
    },
    "tool_deprecation_details": {
     "agp": [],
     "kotlin": []
    },
-   "deprecation_details": []
+   "deprecation_details": [],
+   "isolated_projects_details": [
+    {
+     "message": "Project <path> cannot dynamically look up a property in the parent project <path>",
+     "origin_kind": "BuildLogic",
+     "example_location": "at com.google.firebase.perf.plugin.FirebasePerfPlugin.apply(FirebasePerfPlugin.java:111)",
+     "count": 6
+    }
+   ]
   },
   {
    "sha": "8af63fc67b937449cd1ba103950f429bc41eff0b",
@@ -206,7 +310,7 @@
     "kotlin": "2.1.10",
     "ksp": "2.1.10-1.0.31"
    },
-   "duration_s": 305.2,
+   "duration_s": 327.0,
    "guard": "OK",
    "first_error": null,
    "failed_step": null,
@@ -235,6 +339,12 @@
      "reason": "3 Kotlin deprecation warning(s)",
      "total": 3,
      "distinct": 3
+    },
+    "isolated_projects": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": null
     }
    },
    "tool_deprecation_details": {
@@ -257,7 +367,8 @@
      }
     ]
    },
-   "deprecation_details": []
+   "deprecation_details": [],
+   "isolated_projects_details": []
   },
   {
    "sha": "3bc6ed6dbbdc64d8233a0594b1ec7f4498a9b3aa",
@@ -270,7 +381,7 @@
     "kotlin": "2.2.20",
     "ksp": "2.3.1"
    },
-   "duration_s": 94.3,
+   "duration_s": 96.8,
    "guard": "UNVERIFIED",
    "first_error": "Execution failed for task ':build-logic:convention:compileKotlin'.",
    "failed_step": "guard-buildEnvironment",
@@ -293,13 +404,18 @@
     "kotlin_deprecations": {
      "state": "inconclusive",
      "reason": "no complete Gradle log (no 'BUILD SUCCESSFUL' or 'BUILD FAILED' line)"
+    },
+    "isolated_projects": {
+     "state": "inconclusive",
+     "reason": "the Isolated Projects build stopped before the task step (guard-buildEnvironment)"
     }
    },
    "tool_deprecation_details": {
     "agp": [],
     "kotlin": []
    },
-   "deprecation_details": []
+   "deprecation_details": [],
+   "isolated_projects_details": []
   },
   {
    "sha": "fb185ed7b2bf27c48343bdaed54e54883d3ee14a",
@@ -312,7 +428,7 @@
     "kotlin": "2.2.21",
     "ksp": "2.3.1"
    },
-   "duration_s": 376.2,
+   "duration_s": 363.6,
    "guard": "OK",
    "first_error": null,
    "failed_step": null,
@@ -341,6 +457,12 @@
      "reason": "2 Kotlin deprecation warning(s)",
      "total": 2,
      "distinct": 2
+    },
+    "isolated_projects": {
+     "state": "fail",
+     "reason": "70 configuration cache problem(s)",
+     "total_problems": 70,
+     "unique_problems": null
     }
    },
    "tool_deprecation_details": {
@@ -377,6 +499,14 @@
      "origin": "com.google.protobuf.gradle.ToolsLocator",
      "count": 1
     }
+   ],
+   "isolated_projects_details": [
+    {
+     "message": "Project <path> cannot access Project.tasks functionality on subprojects",
+     "origin_kind": "BuildLogic",
+     "example_location": "at com.google.samples.apps.nowinandroid.GraphKt.configureGraphTasks(Graph.kt:130)",
+     "count": 70
+    }
    ]
   },
   {
@@ -390,7 +520,7 @@
     "kotlin": "2.2.21",
     "ksp": "2.3.1"
    },
-   "duration_s": 344.6,
+   "duration_s": 406.3,
    "guard": "OK",
    "first_error": null,
    "failed_step": null,
@@ -419,6 +549,12 @@
      "reason": "2 Kotlin deprecation warning(s)",
      "total": 2,
      "distinct": 2
+    },
+    "isolated_projects": {
+     "state": "fail",
+     "reason": "70 configuration cache problem(s)",
+     "total_problems": 70,
+     "unique_problems": null
     }
    },
    "tool_deprecation_details": {
@@ -448,6 +584,14 @@
      "removal": "Gradle 10",
      "origin": "com.google.protobuf.gradle.ToolsLocator",
      "count": 1
+    }
+   ],
+   "isolated_projects_details": [
+    {
+     "message": "Project <path> cannot access Project.tasks functionality on subprojects",
+     "origin_kind": "BuildLogic",
+     "example_location": "at com.google.samples.apps.nowinandroid.GraphKt.configureGraphTasks(Graph.kt:130)",
+     "count": 70
     }
    ]
   },
@@ -462,7 +606,7 @@
     "kotlin": "2.3.0",
     "ksp": "2.3.4"
    },
-   "duration_s": 459.7,
+   "duration_s": 409.4,
    "guard": "OK",
    "first_error": null,
    "failed_step": null,
@@ -491,6 +635,12 @@
      "reason": "2 Kotlin deprecation warning(s)",
      "total": 2,
      "distinct": 2
+    },
+    "isolated_projects": {
+     "state": "fail",
+     "reason": "70 configuration cache problem(s)",
+     "total_problems": 70,
+     "unique_problems": null
     }
    },
    "tool_deprecation_details": {
@@ -521,6 +671,14 @@
      "origin": "com.google.protobuf.gradle.ToolsLocator",
      "count": 1
     }
+   ],
+   "isolated_projects_details": [
+    {
+     "message": "Project <path> cannot access Project.tasks functionality on subprojects",
+     "origin_kind": "BuildLogic",
+     "example_location": "at com.google.samples.apps.nowinandroid.GraphKt.configureGraphTasks(Graph.kt:130)",
+     "count": 70
+    }
    ]
   },
   {
@@ -534,7 +692,7 @@
     "kotlin": "2.3.0",
     "ksp": "2.3.4"
    },
-   "duration_s": 268.1,
+   "duration_s": 403.6,
    "guard": "OK",
    "first_error": null,
    "failed_step": null,
@@ -563,6 +721,12 @@
      "reason": "2 Kotlin deprecation warning(s)",
      "total": 2,
      "distinct": 2
+    },
+    "isolated_projects": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": 0
     }
    },
    "tool_deprecation_details": {
@@ -580,7 +744,8 @@
      }
     ]
    },
-   "deprecation_details": []
+   "deprecation_details": [],
+   "isolated_projects_details": []
   }
  ]
 }

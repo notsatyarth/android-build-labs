@@ -64,7 +64,8 @@ def ip_probe(part_dir):
     cj = sorted(glob.glob(os.path.join(part_dir, "ip", "*", "cell.json")))
     if not cj:
         return result("not_run", "no Isolated Projects build in this artifact"), []
-    c = json.load(open(cj[0]))
+    with open(cj[0]) as f:
+        c = json.load(f)
     d = os.path.dirname(cj[0])
     rp = os.path.join(d, "configuration-cache-report.html")
     ran_task = any(s.get("role") == "task" for s in c.get("steps", []))
