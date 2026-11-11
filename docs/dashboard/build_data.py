@@ -17,6 +17,7 @@ data = {
                          "kgp": load("data/flag-availability/kgp.json")},
     "flagBuilds": [load(p) for p in sorted(
         os.path.relpath(g, root) for g in glob.glob(os.path.join(root, "data/flag-builds/*.json")))],
+    "features": load("data/features/features.json"),
     "knownIssues": [load(p) for p in sorted(
         os.path.relpath(g, root) for g in glob.glob(os.path.join(root, "data/known-issues/*.json")))],
 }

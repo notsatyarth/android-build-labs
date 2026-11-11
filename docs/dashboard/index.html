@@ -63,6 +63,22 @@ code{font:12px ui-monospace,Menlo,monospace;background:var(--grid);border-radius
 .flags td.c{text-align:center;padding:4px 2px}
 .stage{color:var(--muted);font-size:12px;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pin-ch{background:rgba(235,104,52,.18);font-weight:600}
+.feat{padding:0}
+.feat>summary{list-style:none;padding:12px 16px;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;font-size:15px;color:var(--ink)}
+.feat>summary::-webkit-details-marker{display:none}
+.feat>summary::before{content:"\25B8";color:var(--muted);width:1em}
+.feat[open]>summary::before{content:"\25BE"}
+.feat .fn{font-weight:600}
+.feat .meta{font-size:12px;color:var(--muted)}
+.feat .body{padding:0 16px 14px}
+.feat dl{margin:6px 0;display:grid;grid-template-columns:max-content 1fr;gap:4px 12px;font-size:14px}
+.feat dt{color:var(--muted)} .feat dd{margin:0;color:var(--ink2)}
+.st{display:inline-block;font-size:12px;border:1px solid currentColor;border-radius:999px;padding:0 8px;white-space:nowrap}
+.st-ran{color:var(--good)} .st-probe{color:var(--blue)} .st-docs{color:var(--muted)}
+.evt{margin:4px 0 0;padding-left:18px;font-size:13px;color:var(--ink2)}
+a{color:var(--blue)}
+.fgrid{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+@media (max-width:560px){ .feat dl{grid-template-columns:1fr} .feat dt{margin-top:6px} }
 </style>
 </head>
 <body>
@@ -94,7 +110,7 @@ code{font:12px ui-monospace,Menlo,monospace;background:var(--grid);border-radius
 </div>
 <div class="card">
   <h3>Isolated Projects problems</h3>
-  <p class="note">The same commit built a second time with Isolated Projects forced on (configuration only, <code>help</code>). Only the newest commit turns it on itself; the rest do not, so these bars show how far each commit was from being able to. Hover a bar for the most common problems. A gap means the build stopped before the tasks ran.</p>
+  <p class="note">The same commit built a second time with Isolated Projects forced on (configuration only, <code>help</code>). Only the newest commit turns it on itself; the rest do not, so these bars show how far each commit was from being able to. Hover a bar for the most common problems. A gap means the build stopped before the tasks ran. Counts are not strictly comparable across Gradle versions: the Gradle manual says violations are deduplicated from 9.4.0, and from 9.7.0 the warn mode no longer downgrades them. Read the chart as how far each commit was from Isolated Projects.</p>
   <div id="c-ip"></div>
   <details><summary>Show table</summary><div class="scroll" id="t-ip"></div></details>
 </div>
@@ -138,6 +154,11 @@ code{font:12px ui-monospace,Menlo,monospace;background:var(--grid);border-radius
 <p>A tracked Kotlin issue, reproduced from a small public repro project to prove the framework can catch a real regression.</p>
 <div class="card"><div class="scroll" id="ki"></div>
 <p class="note">The issue did not reproduce on nowinandroid. The Kotlin 2.5.0-Beta2 failure on nowinandroid in section 3 is a different one.</p></div>
+<h2>5. Feature bridge: what each feature gives you, and how to adopt it</h2>
+<p>For each feature: what the source says it gives you, what it needs, the migration steps, and what nowinandroid did. Every step says whether we ran it, whether a probe can check it, or whether it comes from the vendor page only.</p>
+<div class="card"><p id="fb-how" class="note"></p><div class="fgrid"><button type="button" id="f-open">Open all</button><button type="button" id="f-close">Close all</button></div></div>
+<div id="features"></div>
+<div class="card"><h3>Cautions</h3><ul id="f-cautions"></ul><h3>Not run</h3><ul id="f-notrun"></ul></div>
 </main>
 <div id="tip" role="tooltip"></div>
 <script src="data.js"></script>
@@ -280,6 +301,37 @@ availTable($("fa-agp"), D.flagAvailability.agp); availTable($("fa-kgp"), D.flagA
   const fails=b.results.filter(r=>r.state==="fail");
   $("fb-fail").innerHTML = fails.length? table(["Flag and value","Failed step","First error"],fails.map(r=>[r.flag+"="+r.value,r.failed_step,r.first_error])) : "<p>No failures.</p>";
   $("t-fb").innerHTML = table(["Flag","Value","State","Reason"],b.results.map(r=>[r.flag,r.value==null?"":r.value,r.state,r.reason||""]));
+})();
+
+// ---- feature bridge ----
+(function(){
+  const F = D.features, newest = C[C.length-1];
+  const okUrl = u => /^https:\/\//.test(u||"");
+  const link = (t,u) => okUrl(u) ? '<a href="'+esc(u)+'" rel="noopener">'+esc(t)+"</a>" : esc(t);
+  const stCls = {"ran":"st-ran","probe ready":"st-probe","docs only":"st-docs"}, stSym = {"ran":"\u2713 ","probe ready":"\u25E6 ","docs only":"\u2013 "};
+  const chip = s => '<span class="st '+(stCls[s]||"st-docs")+'">'+(stSym[s]||"")+esc(s)+"</span>";
+  const unit = {configuration_cache:"problems",isolated_projects:"problems",agp_deprecations:"distinct warnings"};
+  const anchor = {configuration_cache:"c-cc",isolated_projects:"c-ip",agp_deprecations:"c-agp"};
+  $("fb-how").textContent = F.how_to_read;
+  $("f-cautions").innerHTML = F.cautions.map(x=>"<li>"+esc(x)+"</li>").join("");
+  $("f-notrun").innerHTML = F.not_run.map(x=>"<li>"+esc(x)+"</li>").join("");
+  $("features").innerHTML = F.features.map(f=>{
+    const counts = {}; f.steps.forEach(s=>counts[s.status]=(counts[s.status]||0)+1);
+    const cs = f.steps.length ? f.steps.length+" steps: "+Object.keys(counts).map(k=>counts[k]+" "+k).join(", ") : "no migration steps";
+    let probe = "";
+    if(f.probe){ const p = newest.probes[f.probe.key];
+      const v = p ? (p.state+(p.total_problems!=null?" ("+p.total_problems+" "+unit[f.probe.key]+")":p.distinct!=null?" ("+p.distinct+" "+unit[f.probe.key]+")":"")) : "not measured";
+      probe = "<dt>Our probe</dt><dd>"+esc(f.probe.label)+": newest commit "+esc(short(newest))+" is "+esc(v)+'. <a href="#'+anchor[f.probe.key]+'">See the chart</a>.</dd>'; }
+    const steps = f.steps.length ? '<div class="scroll"><table><thead><tr><th>Step</th><th>Check</th><th>Status</th><th>Evidence</th></tr></thead><tbody>'+
+      f.steps.map(s=>"<tr><td>"+esc(s.action)+"</td><td>"+esc(s.check)+"</td><td>"+chip(s.status)+"</td><td>"+(s.evidence||[]).map(e=>link(e.label,e.url)).join("<br>")+"</td></tr>").join("")+"</tbody></table></div>" : "";
+    const evts = (f.nowinandroid.events||[]).length ? '<ul class="evt">'+f.nowinandroid.events.map(e=>"<li>"+esc(e.date)+" \u00B7 "+link(e.sha,"https://github.com/android/nowinandroid/commit/"+e.sha)+": "+esc(e.what)+"</li>").join("")+"</ul>" : "";
+    return '<details class="card feat" id="f-'+esc(f.id)+'"><summary><span class="fn">'+esc(f.name)+'</span><span class="meta">'+esc(f.tool)+" \u00B7 "+esc(cs)+"</span></summary><div class=\"body\">"+
+      "<dl><dt>Gives you</dt><dd>"+esc(f.gives)+"</dd><dt>Needs</dt><dd>"+esc(f.needs)+"</dd><dt>State</dt><dd>"+esc(f.state)+(f.state_note?" "+esc(f.state_note):"")+"</dd>"+
+      "<dt>Sources</dt><dd>"+f.sources.map(s=>link(s.title,s.url)).join(" \u00B7 ")+"</dd>"+probe+"<dt>On nowinandroid</dt><dd>"+esc(f.nowinandroid.summary)+evts+"</dd></dl>"+steps+"</div></details>";
+  }).join("");
+  const setAll = o => document.querySelectorAll("details.feat").forEach(d=>d.open=o);
+  $("f-open").onclick=()=>setAll(true); $("f-close").onclick=()=>setAll(false);
+  if(location.hash){ const t=document.querySelector(location.hash.replace(/[^#\w-]/g,"")); if(t&&t.tagName==="DETAILS") t.open=true; }
 })();
 
 // ---- known issue ----

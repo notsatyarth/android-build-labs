@@ -1,0 +1,589 @@
+{
+ "schema": 1,
+ "generated": "2026-11-11",
+ "project": "android/nowinandroid",
+ "how_to_read": "Each feature lists what a source says it gives you, what it needs, the migration steps, and what nowinandroid did. A step is 'ran' (we ran it or committed data shows it; evidence linked), 'probe ready' (a probe can check it but we did not run that step alone) or 'docs only' (from the vendor page, not run).",
+ "cautions": [
+  "Vendor numbers (for example the Gradle team's IDE sync times) are vendor-reported and are not shown here; nowinandroid has not been measured for them.",
+  "Isolated Projects counts are not strictly comparable across Gradle versions (deduplication from 9.4.0, warn mode change in 9.7.0).",
+  "AGP 10 statements quote Google's roadmap page, which calls its dates estimates. Nothing here adds to that page."
+ ],
+ "not_run": [
+  "No step was run on a second AGP or Kotlin pairing (flag builds cover AGP 9.3.2 with Kotlin 2.3.0).",
+  "Isolated Projects was measured on configuration only (help), never on a full build.",
+  "No timing benefit was measured for any feature in this work.",
+  "R8 is not covered."
+ ],
+ "features": [
+  {
+   "id": "configuration-cache",
+   "name": "Configuration cache",
+   "tool": "Gradle",
+   "gives": "Caches the result of the configuration phase and reuses it in later builds.",
+   "needs": "Build logic that does not read the Project at execution time and follows the other configuration cache rules. Setting org.gradle.configuration-cache=true.",
+   "state": "Stable. The Gradle manual calls it the preferred mode of execution since Gradle 9.0.0.",
+   "state_note": "The manual page still says it becomes the default in Gradle 10; a newer Gradle post moved that to Gradle 11. No version is claimed here.",
+   "sources": [
+    {
+     "title": "Gradle manual: Configuration cache",
+     "url": "https://docs.gradle.org/current/userguide/configuration_cache.html"
+    },
+    {
+     "title": "Gradle manual: Configuration cache adoption guide",
+     "url": "https://docs.gradle.org/current/userguide/configuration_cache_adoption.html"
+    }
+   ],
+   "probe": {
+    "key": "configuration_cache",
+    "label": "Configuration cache problems"
+   },
+   "steps": [
+    {
+     "action": "Update Gradle to a recent version (the guide says CC quality improves with each minor release).",
+     "check": "./gradlew --version; the harness records the pins per commit.",
+     "status": "probe ready",
+     "evidence": []
+    },
+    {
+     "action": "Enable the cache and run only help (--configuration-cache).",
+     "check": "Log says \"Configuration cache entry stored.\"; the probe reads the report.",
+     "status": "ran",
+     "evidence": [
+      {
+       "label": "history run 42948422863",
+       "url": "https://github.com/notsatyarth/android-build-labs/actions/runs/42948422863"
+      }
+     ]
+    },
+    {
+     "action": "If it fails or misses, read the report (build/reports/configuration-cache/<hash>/<hash>/configuration-cache-report.html, not the Problems report).",
+     "check": "The probe returns each problem with message, task or build file, and line.",
+     "status": "ran",
+     "evidence": [
+      {
+       "label": "trimmed real reports in the repo test fixtures",
+       "url": "https://github.com/notsatyarth/android-build-labs/tree/main/tools/version-matrix/tests/fixtures/cc_reports"
+      }
+     ]
+    },
+    {
+     "action": "Fix build logic, dry-run and run the real dev loop, fix the rest, mark truly incompatible tasks.",
+     "check": "Problems reach 0 in the probe.",
+     "status": "docs only",
+     "evidence": []
+    },
+    {
+     "action": "Roll out to the team, then to CI.",
+     "check": "CI stays green with the cache on.",
+     "status": "ran",
+     "evidence": [
+      {
+       "label": "nowinandroid e5f1b842 (CI and parallel option, 2024-12-20)",
+       "url": "https://github.com/android/nowinandroid/commit/e5f1b842"
+      }
+     ]
+    },
+    {
+     "action": "Enforce with org.gradle.configuration-cache.problems=fail.",
+     "check": "The next violation fails the build.",
+     "status": "ran",
+     "evidence": [
+      {
+       "label": "nowinandroid 153fba10 (2026-08-31)",
+       "url": "https://github.com/android/nowinandroid/commit/153fba10"
+      },
+      {
+       "label": "pair run 42987060914",
+       "url": "https://github.com/notsatyarth/android-build-labs/actions/runs/42987060914"
+      }
+     ]
+    }
+   ],
+   "nowinandroid": {
+    "summary": "Already in use in 2023, re-enabled after being switched off by mistake in 2024, used on CI in Dec 2024, enforced with problems=fail in Aug 2026. Zero problems on the 9 history commits that built.",
+    "events": [
+     {
+      "date": "2024-10-16",
+      "sha": "81ecd97d",
+      "what": "Re-enabled (it had been switched off by mistake)."
+     },
+     {
+      "date": "2024-12-20",
+      "sha": "e5f1b842",
+      "what": "Used on CI, with the parallel option."
+     },
+     {
+      "date": "2026-08-31",
+      "sha": "153fba10",
+      "what": "problems=warn changed to problems=fail, with a plugin bump that carried a fix."
+     }
+    ]
+   }
+  },
+  {
+   "id": "isolated-projects",
+   "name": "Isolated Projects",
+   "tool": "Gradle",
+   "gives": "Aims at better scalability and performance, especially for large builds and IDE sync. Each project is isolated from the others.",
+   "needs": "Build logic and plugins that do not reach into other projects. The manual says it uses the configuration cache infrastructure as its foundation.",
+   "state": "Incubating since Gradle 9.7.0; the stable property names org.gradle.isolated-projects are preferred and the .unsafe names are deprecated.",
+   "state_note": "Violations are deduplicated from Gradle 9.4.0, and from 9.7.0 --configuration-cache-problems=warn no longer turns them into warnings, so counts are not strictly comparable across Gradle versions. The Gradle team's own sync numbers are vendor-reported.",
+   "sources": [
+    {
+     "title": "Gradle manual: Isolated Projects",
+     "url": "https://docs.gradle.org/current/userguide/isolated_projects.html"
+    },
+    {
+     "title": "Gradle blog: How the Gradle team adopted Isolated Projects",
+     "url": "https://blog.gradle.org/isolated-projects-in-gradle-team"
+    }
+   ],
+   "probe": {
+    "key": "isolated_projects",
+    "label": "Isolated Projects problems"
+   },
+   "steps": [
+    {
+     "action": "Make the build configuration-cache compatible first.",
+     "check": "The configuration cache probe is pass.",
+     "status": "ran",
+     "evidence": [
+      {
+       "label": "history run 42948422863",
+       "url": "https://github.com/notsatyarth/android-build-labs/actions/runs/42948422863"
+      }
+     ]
+    },
+    {
+     "action": "Try it: -Dorg.gradle.unsafe.isolated-projects=true --configuration-cache help (Gradle 9.7.0 and later prefer org.gradle.isolated-projects).",
+     "check": "The probe lists problems grouped by message, with the plugin class that caused each.",
+     "status": "ran",
+     "evidence": [
+      {
+       "label": "history run 42979291804 (Isolated Projects on)",
+       "url": "https://github.com/notsatyarth/android-build-labs/actions/runs/42979291804"
+      }
+     ]
+    },
+    {
+     "action": "Fix or switch off the violators: update the plugin, or skip the tool while Isolated Projects is on.",
+     "check": "Problem count drops.",
+     "status": "ran",
+     "evidence": [
+      {
+       "label": "nowinandroid 4a5becfc: 273 to 0 on the same Gradle 9.3.0",
+       "url": "https://github.com/android/nowinandroid/commit/4a5becfc"
+      },
+      {
+       "label": "pair run 42988732699",
+       "url": "https://github.com/notsatyarth/android-build-labs/actions/runs/42988732699"
+      }
+     ]
+    },
+    {
+     "action": "Measure the gain. The manual says it only speeds up the configuration phase and suggests a \"dangerously ignore problems\" mode to estimate before fixing everything.",
+     "check": "Compare configuration-phase time with and without, using a Build Scan or profile report.",
+     "status": "docs only",
+     "evidence": []
+    },
+    {
+     "action": "Turn it on in gradle.properties.",
+     "check": "The probe stays at 0.",
+     "status": "ran",
+     "evidence": [
+      {
+       "label": "nowinandroid 12f80da6 (2026-09-02): 0 before and after",
+       "url": "https://github.com/android/nowinandroid/commit/12f80da6"
+      },
+      {
+       "label": "pair run 42987060914",
+       "url": "https://github.com/notsatyarth/android-build-labs/actions/runs/42987060914"
+      }
+     ]
+    }
+   ],
+   "nowinandroid": {
+    "summary": "The build was made to pass in Feb 2026 and the property was turned on in Sept 2026. The switch changed nothing measurable because the count was already 0.",
+    "events": [
+     {
+      "date": "2026-02-19",
+      "sha": "4a5becfc",
+      "what": "Made the build pass with Isolated Projects on: enabled KSP's support, skipped Spotless and the graph tasks when it is on. 273 problems to 0 (203 from the Spotless plugin, 70 from the project's own graph tasks)."
+     },
+     {
+      "date": "2026-09-02",
+      "sha": "12f80da6",
+      "what": "Turned the property on. 0 problems before and after."
+     }
+    ]
+   }
+  },
+  {
+   "id": "built-in-kotlin",
+   "name": "Built-in Kotlin",
+   "tool": "AGP 9.0 and later",
+   "gives": "No need to apply the org.jetbrains.kotlin.android plugin. Simpler build files, and fewer compatibility problems between AGP and that plugin.",
+   "needs": "AGP 9.0 or higher. Remove the plugin, then migrate kapt, kotlinOptions {} and kotlin.sourceSets {} where they are used.",
+   "state": "On by default in AGP 9.0. Temporary opt-out: android.builtInKotlin=false (the page says that also needs android.newDsl=false).",
+   "state_note": "Google's roadmap page, which calls its dates estimates, says AGP 10.0 removes the opt-out flags.",
+   "sources": [
+    {
+     "title": "Android: Migrate to built-in Kotlin",
+     "url": "https://developer.android.com/build/migrate-to-built-in-kotlin"
+    },
+    {
+     "title": "Android: AGP roadmap",
+     "url": "https://developer.android.com/build/releases/gradle-plugin-roadmap"
+    }
+   ],
+   "probe": {
+    "key": "agp_deprecations",
+    "label": "AGP deprecation warnings"
+   },
+   "steps": [
+    {
+     "action": "Upgrade to AGP 9.0 or higher. Built-in Kotlin is on by default.",
+     "check": "The android.builtInKotlin flag build passes with value true.",
+     "status": "ran",
+     "evidence": [
+      {
+       "label": "flag builds run 42863141845",
+       "url": "https://github.com/notsatyarth/android-build-labs/actions/runs/42863141845"
+      }
+     ]
+    },
+    {
+     "action": "Remove the org.jetbrains.kotlin.android plugin from module builds, or from the convention plugins that apply it.",
+     "check": "The build no longer fails with the \"no longer required\" error.",
+     "status": "ran",
+     "evidence": [
+      {
+       "label": "nowinandroid d46b9dc2 removed three applies, but that work-in-progress commit does not build",
+       "url": "https://github.com/android/nowinandroid/commit/d46b9dc2"
+      },
+      {
+       "label": "pair run 42987135426",
+       "url": "https://github.com/notsatyarth/android-build-labs/actions/runs/42987135426"
+      }
+     ]
+    },
+    {
+     "action": "Migrate kotlin-kapt, android.kotlinOptions {} and kotlin.sourceSets {} where used.",
+     "check": "Build passes; no deprecation warnings.",
+     "status": "docs only",
+     "evidence": []
+    },
+    {
+     "action": "If needed, opt out temporarily with android.builtInKotlin=false.",
+     "check": "The AGP deprecation probe shows the warning that names the removal.",
+     "status": "ran",
+     "evidence": [
+      {
+       "label": "pair run 42987060914",
+       "url": "https://github.com/notsatyarth/android-build-labs/actions/runs/42987060914"
+      }
+     ]
+    }
+   ],
+   "nowinandroid": {
+    "summary": "The convention plugins stopped applying the Kotlin Android plugin in a work-in-progress commit in Oct 2025. That commit does not build, so there is no clean before and after; the final state builds.",
+    "events": [
+     {
+      "date": "2025-10-28",
+      "sha": "d46b9dc2",
+      "what": "Removed three applies of the Kotlin Android plugin in the convention plugins (work in progress; does not build)."
+     }
+    ]
+   }
+  },
+  {
+   "id": "new-dsl-variant-api",
+   "name": "New DSL and Variant API",
+   "tool": "AGP",
+   "gives": "A lazy model that works with the configuration cache. The Instrumentation API instruments each library as soon as it is ready and only re-instruments changed classes.",
+   "needs": "Replace applicationVariants, libraryVariants, variantFilter and eager buildConfigField with androidComponents (onVariants, beforeVariants), Artifacts and Sources APIs. Third-party plugins must stop using the old types.",
+   "state": "Roadmap page (dates are estimates): AGP 10.0 completes the move to a fully lazy model and enforces it.",
+   "state_note": "",
+   "sources": [
+    {
+     "title": "Android: AGP API updates",
+     "url": "https://developer.android.com/build/releases/gradle-plugin-api-updates"
+    },
+    {
+     "title": "Android: AGP roadmap",
+     "url": "https://developer.android.com/build/releases/gradle-plugin-roadmap"
+    }
+   ],
+   "probe": {
+    "key": "agp_deprecations",
+    "label": "AGP deprecation warnings"
+   },
+   "steps": [
+    {
+     "action": "Run the AGP Upgrade Assistant in Android Studio.",
+     "check": "n/a (IDE)",
+     "status": "docs only",
+     "evidence": []
+    },
+    {
+     "action": "Upgrade to the latest AGP 9.x and fix its deprecation warnings. The page says the build should work without android.newDsl=false and android.builtInKotlin=false.",
+     "check": "The AGP deprecation probe shows 0 warnings.",
+     "status": "ran",
+     "evidence": [
+      {
+       "label": "nowinandroid eee94e4b: 1 to 0",
+       "url": "https://github.com/android/nowinandroid/commit/eee94e4b"
+      },
+      {
+       "label": "pair run 42987060914",
+       "url": "https://github.com/notsatyarth/android-build-labs/actions/runs/42987060914"
+      }
+     ]
+    },
+    {
+     "action": "Replace the legacy variant APIs with androidComponents, Artifacts and Sources APIs.",
+     "check": "Flag builds with the legacy-API and new-DSL-interface flags at the future value pass.",
+     "status": "ran",
+     "evidence": [
+      {
+       "label": "flag builds run 42863141845",
+       "url": "https://github.com/notsatyarth/android-build-labs/actions/runs/42863141845"
+      }
+     ]
+    },
+    {
+     "action": "Update third-party plugins. The page says plugins that use legacy extension types fail with a ClassCastException.",
+     "check": "Build passes after the plugin bumps.",
+     "status": "ran",
+     "evidence": [
+      {
+       "label": "nowinandroid eee94e4b bumped the protobuf plugin",
+       "url": "https://github.com/android/nowinandroid/commit/eee94e4b"
+      }
+     ]
+    }
+   ],
+   "nowinandroid": {
+    "summary": "Opted out in Oct 2025 with a note about a blocker in the protobuf plugin, and opted back in in Jan 2026 after bumping that plugin. The AGP deprecation warning went from 1 to 0.",
+    "events": [
+     {
+      "date": "2025-10-28",
+      "sha": "9908869a",
+      "what": "Set android.newDsl=false."
+     },
+     {
+      "date": "2026-01-27",
+      "sha": "eee94e4b",
+      "what": "Removed the opt-out after bumping the protobuf plugin and moving one module off the Android library plugin."
+     }
+    ]
+   }
+  },
+  {
+   "id": "task-configuration-avoidance",
+   "name": "Task configuration avoidance",
+   "tool": "Gradle",
+   "gives": "A registered task is known to the build but is not created or configured until it is needed, so unneeded tasks cost nothing.",
+   "needs": "Use tasks.register and the lazy APIs in build logic and plugins instead of the eager ones.",
+   "state": "Documented API with a migration guide.",
+   "state_note": "",
+   "sources": [
+    {
+     "title": "Gradle manual: Avoiding unnecessary task configuration",
+     "url": "https://docs.gradle.org/current/userguide/task_configuration_avoidance.html"
+    }
+   ],
+   "probe": null,
+   "steps": [
+    {
+     "action": "Migrate tasks.all {} and tasks.withType(...) {} configuration.",
+     "check": "Fewer tasks created at configuration time; the Build Scan configuration performance tab shows eager and lazy tasks.",
+     "status": "docs only",
+     "evidence": []
+    },
+    {
+     "action": "Replace by-name lookups (getByName) with named.",
+     "check": "Same check.",
+     "status": "docs only",
+     "evidence": []
+    },
+    {
+     "action": "Replace create(...) with register(...).",
+     "check": "Same check.",
+     "status": "docs only",
+     "evidence": []
+    },
+    {
+     "action": "Measured on nowinandroid: how many tasks get realized.",
+     "check": "The task-realization lab in this repo.",
+     "status": "ran",
+     "evidence": [
+      {
+       "label": "labs/task-realization",
+       "url": "https://github.com/notsatyarth/android-build-labs/tree/main/labs/task-realization"
+      }
+     ]
+    }
+   ],
+   "nowinandroid": {
+    "summary": "tasks.register appears in the build logic from 2022 and tasks.create in places (a coverage setup in 2024). There is no single adoption commit.",
+    "events": []
+   }
+  },
+  {
+   "id": "problems-api",
+   "name": "Problems API",
+   "tool": "Gradle",
+   "gives": "Plugins report structured problems. They go into an HTML Problems Report, to the console (warnings with --warning-mode=all), and to IDEs as Tooling API events.",
+   "needs": "Plugin authors adopt it. App teams read the report.",
+   "state": "Documented in the user manual.",
+   "state_note": "",
+   "sources": [
+    {
+     "title": "Gradle manual: Reporting plugin problems",
+     "url": "https://docs.gradle.org/current/userguide/reporting_problems.html"
+    }
+   ],
+   "probe": null,
+   "steps": [
+    {
+     "action": "Read the HTML Problems Report; the console prints its location at the end of the build.",
+     "check": "The harness saves problems-report.html per build; no feature probe reads it yet.",
+     "status": "docs only",
+     "evidence": []
+    }
+   ],
+   "nowinandroid": {
+    "summary": "Not something an app team adopts.",
+    "events": []
+   }
+  },
+  {
+   "id": "toolchains",
+   "name": "Java toolchains and the Foojay resolver",
+   "tool": "Gradle",
+   "gives": "Gradle downloads and manages the required JDK. The same Java version is used to compile and run.",
+   "needs": "A toolchain definition, plus a resolver plugin such as org.gradle.toolchains.foojay-resolver-convention in settings.",
+   "state": "Documented, stable.",
+   "state_note": "",
+   "sources": [
+    {
+     "title": "Gradle manual: Toolchains",
+     "url": "https://docs.gradle.org/current/userguide/toolchains.html"
+    }
+   ],
+   "probe": null,
+   "steps": [
+    {
+     "action": "Declare the toolchain in the build.",
+     "check": "./gradlew javaToolchains lists detected toolchains (named on the manual page).",
+     "status": "docs only",
+     "evidence": []
+    },
+    {
+     "action": "Add a toolchain resolver in settings for auto-download.",
+     "check": "A clean machine builds without a local JDK.",
+     "status": "docs only",
+     "evidence": []
+    }
+   ],
+   "nowinandroid": {
+    "summary": "Tried jvmToolchain in early 2023 and removed it in May 2023. No Foojay resolver at head.",
+    "events": [
+     {
+      "date": "2023-02-11",
+      "sha": "ea7bcf33",
+      "what": "Configured jvmToolchain."
+     },
+     {
+      "date": "2023-05-16",
+      "sha": "76b0b081",
+      "what": "Removed the toolchain setup."
+     }
+    ]
+   }
+  },
+  {
+   "id": "kmp-library-plugin",
+   "name": "AGP KMP library plugin",
+   "tool": "AGP",
+   "gives": "A single-variant plugin for Kotlin Multiplatform libraries. The page says this simplifies configuration and improves build performance.",
+   "needs": "AGP 8.10.0 and KGP 2.0.0 at least. No build types or product flavors; some features are opt-in or unsupported. A KMP module on com.android.library uses APIs the page says are deprecated in AGP 9.0 and expected to be removed in AGP 10.0.",
+   "state": "Documented by Google.",
+   "state_note": "",
+   "sources": [
+    {
+     "title": "Android: Android-KMP library plugin",
+     "url": "https://developer.android.com/kotlin/multiplatform/plugin"
+    }
+   ],
+   "probe": null,
+   "steps": [
+    {
+     "action": "Declare the plugins in the version catalog and add them to the root build with apply false.",
+     "check": "Sync succeeds.",
+     "status": "docs only",
+     "evidence": []
+    },
+    {
+     "action": "Apply the plugin in the KMP library module and move the sources.",
+     "check": "Module builds.",
+     "status": "docs only",
+     "evidence": []
+    },
+    {
+     "action": "Check the limits (no build types or flavors). For a module that needs variants, the page recommends a separate com.android.library module.",
+     "check": "Build passes.",
+     "status": "docs only",
+     "evidence": []
+    }
+   ],
+   "nowinandroid": {
+    "summary": "Not adopted. nowinandroid has no KMP library module, so it cannot be run there.",
+    "events": []
+   }
+  },
+  {
+   "id": "build-tools-api",
+   "name": "Kotlin Build Tools API",
+   "tool": "Kotlin",
+   "gives": "One entry point to the Kotlin compiler for build systems: incremental compilation, compiler plugins, daemons.",
+   "needs": "Direct use needs an opt-in (ExperimentalBuildToolsApi). It is a plugin and build-tool author feature.",
+   "state": "Beta for Kotlin/JVM, Alpha for Kotlin/JS and Wasm.",
+   "state_note": "",
+   "sources": [
+    {
+     "title": "Kotlin docs: Build tools API",
+     "url": "https://kotlinlang.org/docs/build-tools-api.html"
+    }
+   ],
+   "probe": null,
+   "steps": [],
+   "nowinandroid": {
+    "summary": "Nothing for an app team to adopt.",
+    "events": []
+   }
+  },
+  {
+   "id": "declarative-gradle",
+   "name": "Declarative Gradle",
+   "tool": "Gradle",
+   "gives": "A declarative build language, so tools can read how a build is configured without running imperative logic (Gradle's stated aim).",
+   "needs": "Nothing an app team should do yet.",
+   "state": "Experimental, in its third early-access preview.",
+   "state_note": "",
+   "sources": [
+    {
+     "title": "Declarative Gradle",
+     "url": "https://declarative.gradle.org/"
+    }
+   ],
+   "probe": null,
+   "steps": [],
+   "nowinandroid": {
+    "summary": "Not adopted. A \"watch\" item, not a migration.",
+    "events": []
+   }
+  }
+ ]
+}
