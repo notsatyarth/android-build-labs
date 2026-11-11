@@ -1,0 +1,45 @@
+# Per-process CPU time, wall time and peak memory of a clean nowinandroid :app:assembleDemoDebug (Gradle daemon, each Kotlin daemon,
+# AAPT2), sampled every 0.5 s by tools/procwatch with --cpu. Median over N builds on a CI x86 Linux runner.
+name: process-samples
+on:
+  workflow_dispatch:
+    inputs:
+      nia_ref:
+        description: "nowinandroid commit (full SHA)"
+        required: false
+        default: "2982e63cb691ad49cd009aab43dc206fee6699c2"
+      builds:
+        description: "number of builds"
+        required: false
+        default: "5"
+permissions:
+  contents: read
+jobs:
+  samples:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Runner info
+        run: bash .github/scripts/runner_info.sh
+      - name: Clone nowinandroid
+        env:
+          REF: ${{ inputs.nia_ref }}
+        run: bash .github/scripts/clone_nia.sh "$RUNNER_TEMP/nia" "$REF" && git -C "$RUNNER_TEMP/nia" config user.email ci@example.invalid && git -C "$RUNNER_TEMP/nia" config user.name ci
+      - name: Builds
+        run: bash labs/process-samples/run.sh "$RUNNER_TEMP/nia" out "${{ inputs.builds }}"
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Per-process CPU, wall and peak memory, nowinandroid clean assembleDemoDebug (CI: x86 Linux runner)" >> "$GITHUB_STEP_SUMMARY"
+          python3 -I labs/process-samples/summarize.py out | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: process-samples
+          path: out/
+          retention-days: 30
