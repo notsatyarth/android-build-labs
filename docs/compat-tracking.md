@@ -71,6 +71,21 @@ Keep company data out of this public repo. Use a private copy of the repo, or a 
 - Flag builds apply each flag with `-P<flag>=<value>`. A project that already sets a flag in `gradle.properties` needs that flag removed first, or the result is meaningless.
 - A company build usually has private repositories and credentials. Provide them through the CI secret store, never in a file here. Show company results as screenshots in a talk, not as data in the public repo.
 
+## Add a feature to the feature bridge
+
+The bridge (dashboard section 5) is data, not code: `data/features/features.json`. To add a feature, add one object to `features` with:
+
+- `id`, `name`, `tool`: short and plain.
+- `gives`, `needs`, `state`: what a public page says, in your own words. Quote a source for anything you cannot verify; vendor figures are labelled vendor-reported. Do not add a claim about a tool version that no source states.
+- `sources`: list of `{title, url}`, https pages only. Re-read each page before you rely on it.
+- `probe`: `{key, label}` naming a probe key in the history data (`configuration_cache`, `isolated_projects`, `agp_deprecations`), or `null`. The card shows that probe's value on the newest commit.
+- `steps`: each `{action, check, status, evidence}`. `status` is exactly `ran`, `probe ready` or `docs only`. Use `ran` only when you have a CI run or a nowinandroid commit to link in `evidence`.
+- `nowinandroid`: a one-line summary and `events` (`{date, sha, what}`), found by searching the public repo's history (`git log -S` on the settings file or plugin id). Say "not adopted" when it is not.
+
+Then run `python3 docs/dashboard/build_data.py` and open the page. Keep out of the file: vault notes, chat or Slack text, company data, and commit authors.
+
+To measure a before and after for an adoption commit, run `history-series` on the commit and its parent (full SHAs, oldest first) and save the result next to `data/history/nowinandroid-adoption-pairs.json`.
+
 ## Known limits
 
 - The history set is 10 commits, each built once, cold. Timings are single runs on x86 Linux runners; compare outcomes, not seconds.
@@ -78,7 +93,7 @@ Keep company data out of this public repo. Use a private copy of the repo, or a 
 - Flag test values are chosen from the flag name. A pass does not prove the flag changed anything.
 - Flag builds ran on one AGP and Kotlin pairing (9.3.2 and 2.3.0). More pairings are possible through the `agp_version` and `kotlin_version` inputs.
 - The configuration cache chart is zero on every commit that built, and that is a real zero: the report was read (thousands of `diagnostics` entries are configuration inputs, not problems). nowinandroid sets `org.gradle.configuration-cache.problems=warn` in 2025 commits and `fail` at head, and is clean in all of them. The commit that failed in the guard step shows a gap, because its only report covers `buildEnvironment`, not the project's tasks.
-- The configuration cache parser's branches for old Gradle layouts with problems are untested because no real report with problems was captured.
+- The configuration cache parser has been run on real reports with problems from Gradle 9.7.1 (a deliberate violation) and Gradle 8.11.1 (701 Isolated Projects problems on nowinandroid, trimmed in `tests/fixtures/cc_reports`). Gradle versions between those, and layouts we have not captured, are untested.
 - `android.simulateAgpVersionBehavior` is experimental and undocumented.
 - The Kotlin deprecation chart counts deprecated APIs the project calls (mostly Compose), not Kotlin plugin settings. Console text, not a public API; it was checked against 10 real logs only, not re-run on CI.
 - Not built: R8 probe, plugin status, agent-written chart annotations.
