@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated": "2026-11-11T02:09:48Z",
+ "generated": "2026-11-11T02:23:40Z",
  "project": "android/nowinandroid",
  "commits": [
   {
@@ -276,8 +276,8 @@
    "failed_step": "guard-buildEnvironment",
    "probes": {
     "configuration_cache": {
-     "state": "pass",
-     "reason": null,
+     "state": "inconclusive",
+     "reason": "the build stopped before the project's tasks ran; the report only covers the guard step",
      "total_problems": 0,
      "unique_problems": null,
      "cache_action": "storing"

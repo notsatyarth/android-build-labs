@@ -227,3 +227,23 @@ class ToolDeprecationsProbe(unittest.TestCase):
         one = self.fx("agp_newdsl_warning.excerpt.log")
         r = td.parse([one, one])["agp_deprecations"]
         self.assertEqual(r["total"], 1)
+
+
+class CellConfigurationCacheScope(unittest.TestCase):
+    def _cell(self, steps):
+        import tempfile
+        from probes import cell
+        d = tempfile.mkdtemp()
+        with open(os.path.join(d, "configuration-cache-report.html"), "w", encoding="utf-8") as f, \
+                open(os.path.join(FIX, "nia_help_no_problems.html"), encoding="utf-8") as src:
+            f.write(src.read())
+        return cell.run({"dir": d, "steps": steps})
+
+    def test_zero_problems_from_guard_step_only_is_inconclusive(self):
+        r = self._cell([{"name": "guard-buildEnvironment", "role": "guard"}])["configuration_cache"]
+        self.assertEqual(r["state"], "inconclusive")
+        self.assertEqual(r["total_problems"], 0)
+
+    def test_zero_problems_after_task_steps_is_pass(self):
+        r = self._cell([{"name": "01-help", "role": "task", "log": "/nonexistent"}])["configuration_cache"]
+        self.assertEqual(r["state"], "pass")

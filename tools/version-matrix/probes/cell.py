@@ -16,12 +16,18 @@ def _read(path):
 def run(res):
     d = res.get("dir") or ""
     out = {}
+    task_steps = [s for s in res.get("steps", []) if s.get("role") == "task"]
     p = os.path.join(d, "configuration-cache-report.html")
     if os.path.isfile(p):
         out["configuration_cache"] = configuration_cache.parse(_read(p))
+        cc = out["configuration_cache"]
+        if cc["state"] == "pass" and not task_steps:
+            # The only report is from a guard step (for example buildEnvironment). Zero problems there says nothing
+            # about the project's tasks, which never ran. A fail is kept: problems that were found are real.
+            out["configuration_cache"] = dict(cc, state="inconclusive",
+                                              reason="the build stopped before the project's tasks ran; the report only covers the guard step")
     else:
         out["configuration_cache"] = result("inconclusive", "no configuration cache report was collected for this cell")
-    task_steps = [s for s in res.get("steps", []) if s.get("role") == "task"]
     log = task_steps[0].get("log") if task_steps else None
     if log and os.path.isfile(log):
         out["deprecations"] = deprecations.parse(_read(log))

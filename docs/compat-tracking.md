@@ -76,7 +76,8 @@ Keep company data out of this public repo. Use a private copy of the repo, or a 
 - Flag availability comes from class-file strings. "Known" means the name exists, not its default. This is inferred, not public API.
 - Flag test values are chosen from the flag name. A pass does not prove the flag changed anything.
 - Flag builds ran on one AGP and Kotlin pairing (9.3.2 and 2.3.0). More pairings are possible through the `agp_version` and `kotlin_version` inputs.
-- The configuration cache chart is zero on every commit. The parser's branches for old Gradle layouts with problems are untested because no real report with problems was captured.
+- The configuration cache chart is zero on every commit that built, and that is a real zero: the report was read (thousands of `diagnostics` entries are configuration inputs, not problems). nowinandroid sets `org.gradle.configuration-cache.problems=warn` in 2025 commits and `fail` at head, and is clean in all of them. The commit that failed in the guard step shows a gap, because its only report covers `buildEnvironment`, not the project's tasks.
+- The configuration cache parser's branches for old Gradle layouts with problems are untested because no real report with problems was captured.
 - `android.simulateAgpVersionBehavior` is experimental and undocumented.
 - The Kotlin deprecation chart counts deprecated APIs the project calls (mostly Compose), not Kotlin plugin settings. Console text, not a public API; it was checked against 10 real logs only, not re-run on CI.
 - Not built: R8 probe, plugin status, agent-written chart annotations, Isolated Projects probe.
