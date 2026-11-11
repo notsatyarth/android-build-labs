@@ -1,0 +1,11 @@
+# REAL: trimmed from nowinandroid 12c265cf (AGP 9.0.0-beta04) help log, CI run 42876138951
+
+> Configure project :app
+WARNING: The option setting 'android.newDsl=false' is deprecated.
+The current default is 'true'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+This version of the Baseline Profile Gradle Plugin was tested with versions below Android
+Gradle Plugin version Android Gradle Plugin version 9.0.0-alpha01 and it may not work as intended.
+Current version is Android Gradle Plugin version 9.0.0-beta04.
+
+BUILD SUCCESSFUL in 1m 3s

@@ -98,6 +98,18 @@ code{font:12px ui-monospace,Menlo,monospace;background:var(--grid);border-radius
   <div id="c-dep"></div>
   <details><summary>Show table</summary><div class="scroll" id="t-dep"></div></details>
 </div>
+<div class="card">
+  <h3>AGP deprecation warnings</h3>
+  <p class="note">Warnings the Android Gradle plugin prints during the build that say an option is deprecated. A gap means the log was incomplete (the build failed before any tasks).</p>
+  <div id="c-agp"></div>
+  <details><summary>Show table</summary><div class="scroll" id="t-agp"></div></details>
+</div>
+<div class="card">
+  <h3>Kotlin compiler deprecation warnings</h3>
+  <p class="note">Deprecated APIs that the project's own source calls, as reported by the Kotlin compiler, with file and line. Mostly library APIs (for example Compose), so this is a source-location item, not a Kotlin plugin setting.</p>
+  <div id="c-kt"></div>
+  <details><summary>Show table</summary><div class="scroll" id="t-kt"></div></details>
+</div>
 
 <h2>2. Which flags each tool version knows</h2>
 <p>For each version, was the flag name found in the plugin's published jar? This comes from reading class files, so it is inferred and not public API. "Known" means the name exists; it does not say what the default is.</p>
@@ -207,6 +219,19 @@ barChart($("c-dep"),{aria:"Gradle deprecation warnings per commit",unit:"distinc
   tip:c=>{const d=c.deprecation_details||[]; return short(c)+" · "+day(c)+"\n"+(d.length?d.map(x=>x.count+"× "+x.message+" Removal: "+x.removal+".\nFrom "+x.origin).join("\n"):"No deprecation warnings")}});
 $("t-dep").innerHTML = table(["Commit","Message","Removal","Origin",{t:"Count",num:1}],
   C.flatMap(c=>{const d=c.deprecation_details||[]; return d.length?d.map(x=>[short(c),x.message,x.removal,x.origin,x.count]):[[short(c),"none","","",0]];}));
+
+// AGP and Kotlin deprecations
+const td = c => c.tool_deprecation_details || {agp:[],kotlin:[]};
+function toolDep(kind, host, thost, unit, color, aria, line){
+  const vals = C.map(c=>{ const p=c.probes&&c.probes[kind]; return p&&(p.state==="pass"||p.state==="fail")?p.distinct:null; });
+  barChart($(host),{aria:aria,unit:unit,step:1,min:3,h:190,values:vals,color:()=>color,label:v=>v+"",
+    tip:c=>{const p=c.probes[kind]; if(p.state==="not_run"||p.state==="inconclusive") return short(c)+" · "+day(c)+"\n"+p.state+": "+(p.reason||"");
+      const d=kind==="agp_deprecations"?td(c).agp:td(c).kotlin; return short(c)+" · "+day(c)+"\n"+(d.length?d.map(line).join("\n"):"No warnings")}});
+}
+toolDep("agp_deprecations","c-agp","t-agp","distinct warnings","var(--orange)","AGP deprecation warnings per commit",x=>x.count+"× "+x.message+(x.removal?" Removal: "+x.removal+".":""));
+toolDep("kotlin_deprecations","c-kt","t-kt","distinct warnings","var(--blue)","Kotlin compiler deprecation warnings per commit",x=>x.count+"× "+x.symbol+(x.location?" at "+x.location:""));
+$("t-agp").innerHTML = table(["Commit","State","Message","Removal"],C.flatMap(c=>{const p=c.probes.agp_deprecations,d=td(c).agp;return d.length?d.map(x=>[short(c),p.state,x.message,x.removal||""]):[[short(c),p.state,p.reason||"none",""]];}));
+$("t-kt").innerHTML = table(["Commit","State","Symbol","Location"],C.flatMap(c=>{const p=c.probes.kotlin_deprecations,d=td(c).kotlin;return d.length?d.map(x=>[short(c),p.state,x.symbol,x.location||""]):[[short(c),p.state,p.reason||"none",""]];}));
 
 // ---- flag availability tables ----
 function availTable(host, a){

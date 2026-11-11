@@ -21,7 +21,9 @@ def row(meta, rep):
     if not cells:
         return dict(base, outcome=None, pins=None, duration_s=None, guard=None, first_error=None,
                     probes={"configuration_cache": result("inconclusive", "no report for this commit (the job did not finish)"),
-                            "deprecations": result("inconclusive", "no report for this commit (the job did not finish)")})
+                            "deprecations": result("inconclusive", "no report for this commit (the job did not finish)"),
+                            "agp_deprecations": result("inconclusive", "no report for this commit (the job did not finish)"),
+                            "kotlin_deprecations": result("inconclusive", "no report for this commit (the job did not finish)")})
     c = cells[0]
     fe = c.get("first_error")
     fe = (fe.get("text") if isinstance(fe, dict) else fe) or None
@@ -36,7 +38,11 @@ def row(meta, rep):
                 probes={"configuration_cache": slim(p.get("configuration_cache") or result("inconclusive", "probe did not run"),
                                                     ("total_problems", "unique_problems", "cache_action")),
                         "deprecations": slim(p.get("deprecations") or result("inconclusive", "probe did not run"),
-                                             ("total", "distinct"))})
+                                             ("total", "distinct")),
+                        "agp_deprecations": slim(p.get("agp_deprecations") or result("inconclusive", "probe did not run"),
+                                                 ("total", "distinct")),
+                        "kotlin_deprecations": slim(p.get("kotlin_deprecations") or result("inconclusive", "probe did not run"),
+                                                    ("total", "distinct"))})
 
 
 def reprobe(part_dir):
@@ -74,7 +80,7 @@ def main():
                 r.update(outcome=c.get("outcome"), pins=c.get("pins"), duration_s=c.get("duration_s"),
                          guard=(c.get("guard") or {}).get("result"), failed_step=c.get("failed_step"))
                 why = "the report step failed for this commit (cell finished with %s); see the job logs" % c.get("outcome")
-                r["probes"] = {k: result("inconclusive", why) for k in ("configuration_cache", "deprecations")}
+                r["probes"] = {k: result("inconclusive", why) for k in ("configuration_cache", "deprecations", "agp_deprecations", "kotlin_deprecations")}
                 rows.append(r)
                 continue
         r = row(meta, rep)
@@ -83,7 +89,14 @@ def main():
             def keep(x, keys):
                 return {k: x[k] for k in ("state", "reason") + keys if k in x}
             r["probes"] = {"configuration_cache": keep(fresh["configuration_cache"], ("total_problems", "unique_problems", "cache_action")),
-                           "deprecations": keep(fresh["deprecations"], ("total", "distinct", "unrecognised"))}
+                           "deprecations": keep(fresh["deprecations"], ("total", "distinct", "unrecognised")),
+                           "agp_deprecations": keep(fresh["agp_deprecations"], ("total", "distinct")),
+                           "kotlin_deprecations": keep(fresh["kotlin_deprecations"], ("total", "distinct"))}
+            r["tool_deprecation_details"] = {
+                "agp": [{"message": x["message"], "removal": x["removal"], "count": x["count"]}
+                        for x in (fresh["agp_deprecations"].get("deprecations") or [])],
+                "kotlin": [{"symbol": x["symbol"], "location": x["location"], "count": x["count"]}
+                           for x in (fresh["kotlin_deprecations"].get("deprecations") or [])]}
             r["deprecation_details"] = [{"message": x["message"], "removal": x["removal"], "origin": (x["origin"] or {}).get("class"),
                                          "count": x["count"]} for x in (fresh["deprecations"].get("deprecations") or [])]
         rows.append(r)

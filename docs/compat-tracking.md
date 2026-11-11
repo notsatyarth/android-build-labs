@@ -38,6 +38,7 @@ Rule: a report a parser cannot read is inconclusive, never "0 problems". Each pa
 |---|---|---|---|---|
 | Configuration cache problems | `probes/configuration_cache.py` | `configuration_cache.json` | `history-series` | `data/history/` |
 | Gradle deprecations | `probes/deprecations.py` | `deprecations.json` | `history-series` | `data/history/` |
+| AGP and Kotlin compiler deprecations | `probes/tool_deprecations.py` | `tool_deprecations.json` | `history-series` | `data/history/` |
 | Flag availability (no build) | `probes/flag_availability.py` | `flags.json` | `flag-availability` | `data/flag-availability/` |
 | Flag builds (one build per flag) | `labs/flag-builds/` | `flags.json` | `flag-builds` | `data/flag-builds/` |
 | Known issue (KT-90672) | `probes/known_issue.py` | `known_issues.json` | `known-issue` | `data/known-issues/` |
@@ -77,4 +78,5 @@ Keep company data out of this public repo. Use a private copy of the repo, or a 
 - Flag builds ran on one AGP and Kotlin pairing (9.3.2 and 2.3.0). More pairings are possible through the `agp_version` and `kotlin_version` inputs.
 - The configuration cache chart is zero on every commit. The parser's branches for old Gradle layouts with problems are untested because no real report with problems was captured.
 - `android.simulateAgpVersionBehavior` is experimental and undocumented.
+- The Kotlin deprecation chart counts deprecated APIs the project calls (mostly Compose), not Kotlin plugin settings. Console text, not a public API; it was checked against 10 real logs only, not re-run on CI.
 - Not built: R8 probe, plugin status, agent-written chart annotations, Isolated Projects probe.

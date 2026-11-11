@@ -1,0 +1,8 @@
+{
+  "probe": "tool-deprecations",
+  "feature": "AGP and Kotlin compiler deprecation warnings in the build log",
+  "item_kind": "source_location",
+  "gradle_args": ["--warning-mode=all"],
+  "tasks": [":app:assembleDemoDebug"],
+  "notes": "AGP prints WARNING blocks while configuring; the Kotlin compiler prints 'w:' lines only when a Kotlin compile task runs, so the help task alone cannot show them. Console text, not a public API."
+}

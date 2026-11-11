@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated": "2026-11-10T18:48:40Z",
+ "generated": "2026-11-11T02:09:48Z",
  "project": "android/nowinandroid",
  "commits": [
   {
@@ -31,7 +31,23 @@
      "reason": null,
      "total": 0,
      "distinct": 0
+    },
+    "agp_deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "kotlin_deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
     }
+   },
+   "tool_deprecation_details": {
+    "agp": [],
+    "kotlin": []
    },
    "deprecation_details": []
   },
@@ -63,7 +79,23 @@
      "reason": null,
      "total": 0,
      "distinct": 0
+    },
+    "agp_deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "kotlin_deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
     }
+   },
+   "tool_deprecation_details": {
+    "agp": [],
+    "kotlin": []
    },
    "deprecation_details": []
   },
@@ -95,7 +127,23 @@
      "reason": null,
      "total": 0,
      "distinct": 0
+    },
+    "agp_deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "kotlin_deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
     }
+   },
+   "tool_deprecation_details": {
+    "agp": [],
+    "kotlin": []
    },
    "deprecation_details": []
   },
@@ -127,7 +175,23 @@
      "reason": null,
      "total": 0,
      "distinct": 0
+    },
+    "agp_deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "kotlin_deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
     }
+   },
+   "tool_deprecation_details": {
+    "agp": [],
+    "kotlin": []
    },
    "deprecation_details": []
   },
@@ -159,7 +223,39 @@
      "reason": null,
      "total": 0,
      "distinct": 0
+    },
+    "agp_deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "kotlin_deprecations": {
+     "state": "fail",
+     "reason": "3 Kotlin deprecation warning(s)",
+     "total": 3,
+     "distinct": 3
     }
+   },
+   "tool_deprecation_details": {
+    "agp": [],
+    "kotlin": [
+     {
+      "symbol": "'fun PaneExpansionState.defaultDragHandleSemantics(): SemanticsPropertyReceiver.() -> Unit'",
+      "location": "InterestsListDetailScreen.kt:230",
+      "count": 1
+     },
+     {
+      "symbol": "'fun TabRow(selectedTabIndex: Int, modifier: Modifier = ..., containerColor: Color = ..., contentColor: Color = ..., indicator: @Composable() ComposableFunction1<@ParameterName(...) List<TabPosition>,",
+      "location": "Tabs.kt:88",
+      "count": 1
+     },
+     {
+      "symbol": "'fun Modifier.tabIndicatorOffset(currentTabPosition: TabPosition): Modifier'",
+      "location": "Tabs.kt:95",
+      "count": 1
+     }
+    ]
    },
    "deprecation_details": []
   },
@@ -189,7 +285,19 @@
     "deprecations": {
      "state": "inconclusive",
      "reason": "no task log for this cell (the build did not reach the tasks)"
+    },
+    "agp_deprecations": {
+     "state": "inconclusive",
+     "reason": "no complete Gradle log (no 'BUILD SUCCESSFUL' or 'BUILD FAILED' line)"
+    },
+    "kotlin_deprecations": {
+     "state": "inconclusive",
+     "reason": "no complete Gradle log (no 'BUILD SUCCESSFUL' or 'BUILD FAILED' line)"
     }
+   },
+   "tool_deprecation_details": {
+    "agp": [],
+    "kotlin": []
    },
    "deprecation_details": []
   },
@@ -221,7 +329,34 @@
      "reason": "3 Gradle deprecation message(s), 3 distinct",
      "total": 3,
      "distinct": 3
+    },
+    "agp_deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "kotlin_deprecations": {
+     "state": "fail",
+     "reason": "2 Kotlin deprecation warning(s)",
+     "total": 2,
+     "distinct": 2
     }
+   },
+   "tool_deprecation_details": {
+    "agp": [],
+    "kotlin": [
+     {
+      "symbol": "'fun TabRow(selectedTabIndex: Int, modifier: Modifier = ..., containerColor: Color = ..., contentColor: Color = ..., indicator: ComposableFunction1<List<TabPosition>, Unit> = ..., divider: ComposableF",
+      "location": "Tabs.kt:88",
+      "count": 1
+     },
+     {
+      "symbol": "'fun Modifier.tabIndicatorOffset(currentTabPosition: TabPosition): Modifier'",
+      "location": "Tabs.kt:95",
+      "count": 1
+     }
+    ]
    },
    "deprecation_details": [
     {
@@ -272,7 +407,40 @@
      "reason": "1 Gradle deprecation message(s), 1 distinct",
      "total": 1,
      "distinct": 1
+    },
+    "agp_deprecations": {
+     "state": "fail",
+     "reason": "1 AGP deprecation warning(s)",
+     "total": 1,
+     "distinct": 1
+    },
+    "kotlin_deprecations": {
+     "state": "fail",
+     "reason": "2 Kotlin deprecation warning(s)",
+     "total": 2,
+     "distinct": 2
     }
+   },
+   "tool_deprecation_details": {
+    "agp": [
+     {
+      "message": "The option setting 'android.newDsl=false' is deprecated.",
+      "removal": "AGP 10.0",
+      "count": 1
+     }
+    ],
+    "kotlin": [
+     {
+      "symbol": "'fun TabRow(selectedTabIndex: Int, modifier: Modifier = ..., containerColor: Color = ..., contentColor: Color = ..., indicator: ComposableFunction1<List<TabPosition>, Unit> = ..., divider: ComposableF",
+      "location": "Tabs.kt:88",
+      "count": 1
+     },
+     {
+      "symbol": "'fun Modifier.tabIndicatorOffset(currentTabPosition: TabPosition): Modifier'",
+      "location": "Tabs.kt:95",
+      "count": 1
+     }
+    ]
    },
    "deprecation_details": [
     {
@@ -311,7 +479,40 @@
      "reason": "1 Gradle deprecation message(s), 1 distinct",
      "total": 1,
      "distinct": 1
+    },
+    "agp_deprecations": {
+     "state": "fail",
+     "reason": "1 AGP deprecation warning(s)",
+     "total": 1,
+     "distinct": 1
+    },
+    "kotlin_deprecations": {
+     "state": "fail",
+     "reason": "2 Kotlin deprecation warning(s)",
+     "total": 2,
+     "distinct": 2
     }
+   },
+   "tool_deprecation_details": {
+    "agp": [
+     {
+      "message": "The option setting 'android.newDsl=false' is deprecated.",
+      "removal": "AGP 10.0",
+      "count": 1
+     }
+    ],
+    "kotlin": [
+     {
+      "symbol": "'fun TabRow(selectedTabIndex: Int, modifier: Modifier = ..., containerColor: Color = ..., contentColor: Color = ..., indicator: ComposableFunction1<List<TabPosition>, Unit> = ..., divider: ComposableF",
+      "location": "Tabs.kt:88",
+      "count": 1
+     },
+     {
+      "symbol": "'fun Modifier.tabIndicatorOffset(currentTabPosition: TabPosition): Modifier'",
+      "location": "Tabs.kt:95",
+      "count": 1
+     }
+    ]
    },
    "deprecation_details": [
     {
@@ -350,7 +551,34 @@
      "reason": null,
      "total": 0,
      "distinct": 0
+    },
+    "agp_deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "kotlin_deprecations": {
+     "state": "fail",
+     "reason": "2 Kotlin deprecation warning(s)",
+     "total": 2,
+     "distinct": 2
     }
+   },
+   "tool_deprecation_details": {
+    "agp": [],
+    "kotlin": [
+     {
+      "symbol": "'fun TabRow(selectedTabIndex: Int, modifier: Modifier = ..., containerColor: Color = ..., contentColor: Color = ..., indicator: ComposableFunction1<List<TabPosition>, Unit> = ..., divider: ComposableF",
+      "location": "Tabs.kt:88",
+      "count": 1
+     },
+     {
+      "symbol": "'fun Modifier.tabIndicatorOffset(currentTabPosition: TabPosition): Modifier'",
+      "location": "Tabs.kt:95",
+      "count": 1
+     }
+    ]
    },
    "deprecation_details": []
   }

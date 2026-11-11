@@ -183,3 +183,47 @@ class KnownIssueProbe(unittest.TestCase):
         self.assertEqual(r["state"], "inconclusive")
         self.assertIn("Execution failed", r["reason"])
         self.assertEqual(self.ki.parse("", self.issue)["state"], "inconclusive")
+
+
+class ToolDeprecationsProbe(unittest.TestCase):
+    @staticmethod
+    def fx(name):
+        with open(os.path.join(helpers.FIX, name), encoding="utf-8") as f:
+            return f.read()
+
+    def test_agp_newdsl_warning_is_fail_with_removal_text(self):
+        from probes import tool_deprecations as td
+        r = td.parse([self.fx("agp_newdsl_warning.excerpt.log")])["agp_deprecations"]
+        self.assertEqual(r["state"], "fail")
+        self.assertIn("android.newDsl=false", r["deprecations"][0]["message"])
+        self.assertEqual(r["deprecations"][0]["removal"], "AGP 10.0")
+
+    def test_kotlin_deprecated_library_api_has_file_and_line(self):
+        from probes import tool_deprecations as td
+        r = td.parse([self.fx("kotlin_deprecation_warnings.excerpt.log")])["kotlin_deprecations"]
+        self.assertEqual(r["state"], "fail")
+        self.assertTrue(any(d["location"] == "Tabs.kt:88" for d in r["deprecations"]), r["deprecations"])
+        self.assertFalse(any("Opt-in" in d["message"] for d in r["deprecations"]))
+
+    def test_non_deprecation_warnings_are_ignored(self):
+        from probes import tool_deprecations as td
+        log = "> Task :x:compileKotlin\nw: file:///ws/A.kt:1:1 Unused variable\nWARNING: androidTestImplementation dependencies are ignored\nBUILD SUCCESSFUL in 1s\n"
+        r = td.parse([log])
+        self.assertEqual((r["agp_deprecations"]["state"], r["kotlin_deprecations"]["state"]), ("pass", "pass"))
+
+    def test_no_kotlin_compile_is_not_run_never_pass(self):
+        from probes import tool_deprecations as td
+        r = td.parse(["> Task :help\nBUILD SUCCESSFUL in 1s\n"])
+        self.assertEqual(r["kotlin_deprecations"]["state"], "not_run")
+
+    def test_incomplete_log_is_inconclusive(self):
+        from probes import tool_deprecations as td
+        r = td.parse(["> Task :help\n"])
+        self.assertEqual((r["agp_deprecations"]["state"], r["kotlin_deprecations"]["state"]), ("inconclusive", "inconclusive"))
+        self.assertEqual(td.parse([])["agp_deprecations"]["state"], "inconclusive")
+
+    def test_same_warning_in_two_logs_counts_once(self):
+        from probes import tool_deprecations as td
+        one = self.fx("agp_newdsl_warning.excerpt.log")
+        r = td.parse([one, one])["agp_deprecations"]
+        self.assertEqual(r["total"], 1)
