@@ -1,0 +1,724 @@
+{
+ "schema": 1,
+ "note": "History runs 42987060914, 42987135426, 42988732699: before/after pairs around adoption commits in android/nowinandroid",
+ "commits": [
+  {
+   "sha": "705fd9068bb2225cb351a0c10b2154e0e56f40de",
+   "date": "2025-10-28T10:39:28-07:00",
+   "subject": "Merge pull request #1977 from liutikas/upgrade-agp-gradle-kgp",
+   "outcome": "PASS",
+   "pins": {
+    "gradle": "9.1.0",
+    "agp": "8.13.0",
+    "kotlin": "2.2.20",
+    "ksp": "2.2.20-2.0.4"
+   },
+   "duration_s": 275.6,
+   "guard": "OK",
+   "first_error": null,
+   "failed_step": null,
+   "probes": {
+    "configuration_cache": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": null,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "fail",
+     "reason": "3 Gradle deprecation message(s), 3 distinct",
+     "total": 3,
+     "distinct": 3
+    },
+    "agp_deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "kotlin_deprecations": {
+     "state": "fail",
+     "reason": "3 Kotlin deprecation warning(s)",
+     "total": 3,
+     "distinct": 3
+    },
+    "isolated_projects": {
+     "state": "fail",
+     "reason": "58 configuration cache problem(s)",
+     "total_problems": 58,
+     "unique_problems": null
+    }
+   },
+   "tool_deprecation_details": {
+    "agp": [],
+    "kotlin": [
+     {
+      "symbol": "'fun PaneExpansionState.defaultDragHandleSemantics(): SemanticsPropertyReceiver.() -> Unit'",
+      "location": "InterestsListDetailScreen.kt:230",
+      "count": 1
+     },
+     {
+      "symbol": "'fun TabRow(selectedTabIndex: Int, modifier: Modifier = ..., containerColor: Color = ..., contentColor: Color = ..., indicator: ComposableFunction1<List<TabPosition>, Unit> = ..., divider: ComposableF",
+      "location": "Tabs.kt:88",
+      "count": 1
+     },
+     {
+      "symbol": "'fun Modifier.tabIndicatorOffset(currentTabPosition: TabPosition): Modifier'",
+      "location": "Tabs.kt:95",
+      "count": 1
+     }
+    ]
+   },
+   "deprecation_details": [
+    {
+     "message": "Declaring dependencies using multi-string notation has been deprecated.",
+     "removal": "Gradle 10",
+     "origin": "com.android.build.gradle.internal.lint.LintFromMaven$Companion",
+     "count": 1
+    },
+    {
+     "message": "Declaring dependencies using multi-string notation has been deprecated.",
+     "removal": "Gradle 10",
+     "origin": "com.android.build.gradle.internal.res.Aapt2FromMaven$Companion",
+     "count": 1
+    },
+    {
+     "message": "Declaring dependencies using multi-string notation has been deprecated.",
+     "removal": "Gradle 10",
+     "origin": "com.google.protobuf.gradle.ToolsLocator",
+     "count": 1
+    }
+   ],
+   "isolated_projects_details": [
+    {
+     "message": "Project <path> cannot access Project.tasks functionality on subprojects",
+     "origin_kind": "BuildLogic",
+     "example_location": "at com.google.samples.apps.nowinandroid.GraphKt.configureGraphTasks(Graph.kt:130)",
+     "count": 58
+    }
+   ]
+  },
+  {
+   "sha": "d46b9dc291c0d0adb8f552247ad68d300a841672",
+   "date": "2025-10-28T20:19:21+01:00",
+   "subject": "\ud83d\udea7 AGP 9",
+   "outcome": "FAIL",
+   "pins": {
+    "gradle": "9.1.0",
+    "agp": "9.0.0-alpha05",
+    "kotlin": "2.2.20",
+    "ksp": "2.2.20-2.0.4"
+   },
+   "duration_s": 92.9,
+   "guard": "UNVERIFIED",
+   "first_error": "An exception occurred applying plugin request [id: 'nowinandroid.hilt']",
+   "failed_step": "guard-buildEnvironment",
+   "probes": {
+    "configuration_cache": {
+     "state": "inconclusive",
+     "reason": "the build stopped before the project's tasks ran; the report only covers the guard step",
+     "total_problems": 0,
+     "unique_problems": null,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "inconclusive",
+     "reason": "no task log for this cell (the build did not reach the tasks)"
+    },
+    "agp_deprecations": {
+     "state": "inconclusive",
+     "reason": "no complete Gradle log (no 'BUILD SUCCESSFUL' or 'BUILD FAILED' line)"
+    },
+    "kotlin_deprecations": {
+     "state": "inconclusive",
+     "reason": "no complete Gradle log (no 'BUILD SUCCESSFUL' or 'BUILD FAILED' line)"
+    },
+    "isolated_projects": {
+     "state": "inconclusive",
+     "reason": "the Isolated Projects build stopped before the task step (guard-buildEnvironment)"
+    }
+   },
+   "tool_deprecation_details": {
+    "agp": [],
+    "kotlin": []
+   },
+   "deprecation_details": [],
+   "isolated_projects_details": []
+  },
+  {
+   "sha": "379956cb30cd10a4d9649a1c00661e9fdae187c9",
+   "date": "2026-01-27T14:37:28-08:00",
+   "subject": "Merge pull request #2045 from Jaehwa-Noh/rename-package",
+   "outcome": "PASS",
+   "pins": {
+    "gradle": "9.3.0",
+    "agp": "9.0.0",
+    "kotlin": "2.3.0",
+    "ksp": "2.3.4"
+   },
+   "duration_s": 427.9,
+   "guard": "OK",
+   "first_error": null,
+   "failed_step": null,
+   "probes": {
+    "configuration_cache": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": null,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "fail",
+     "reason": "1 Gradle deprecation message(s), 1 distinct",
+     "total": 1,
+     "distinct": 1
+    },
+    "agp_deprecations": {
+     "state": "fail",
+     "reason": "1 AGP deprecation warning(s)",
+     "total": 1,
+     "distinct": 1
+    },
+    "kotlin_deprecations": {
+     "state": "fail",
+     "reason": "2 Kotlin deprecation warning(s)",
+     "total": 2,
+     "distinct": 2
+    },
+    "isolated_projects": {
+     "state": "fail",
+     "reason": "70 configuration cache problem(s)",
+     "total_problems": 70,
+     "unique_problems": null
+    }
+   },
+   "tool_deprecation_details": {
+    "agp": [
+     {
+      "message": "The option setting 'android.newDsl=false' is deprecated.",
+      "removal": "AGP 10.0",
+      "count": 1
+     }
+    ],
+    "kotlin": [
+     {
+      "symbol": "'fun TabRow(selectedTabIndex: Int, modifier: Modifier = ..., containerColor: Color = ..., contentColor: Color = ..., indicator: ComposableFunction1<List<TabPosition>, Unit> = ..., divider: ComposableF",
+      "location": "Tabs.kt:88",
+      "count": 1
+     },
+     {
+      "symbol": "'fun Modifier.tabIndicatorOffset(currentTabPosition: TabPosition): Modifier'",
+      "location": "Tabs.kt:95",
+      "count": 1
+     }
+    ]
+   },
+   "deprecation_details": [
+    {
+     "message": "Declaring dependencies using multi-string notation has been deprecated.",
+     "removal": "Gradle 10",
+     "origin": "com.google.protobuf.gradle.ToolsLocator",
+     "count": 1
+    }
+   ],
+   "isolated_projects_details": [
+    {
+     "message": "Project <path> cannot access Project.tasks functionality on subprojects",
+     "origin_kind": "BuildLogic",
+     "example_location": "at com.google.samples.apps.nowinandroid.GraphKt.configureGraphTasks(Graph.kt:130)",
+     "count": 70
+    }
+   ]
+  },
+  {
+   "sha": "eee94e4b7df65504523d7e726901764e9df251fc",
+   "date": "2026-01-27T15:36:34-08:00",
+   "subject": "Finalize bump agp 9.0 (enable newDsl) (#2054)",
+   "outcome": "PASS",
+   "pins": {
+    "gradle": "9.3.0",
+    "agp": "9.0.0",
+    "kotlin": "2.3.0",
+    "ksp": "2.3.4"
+   },
+   "duration_s": 366.9,
+   "guard": "OK",
+   "first_error": null,
+   "failed_step": null,
+   "probes": {
+    "configuration_cache": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": null,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "agp_deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "kotlin_deprecations": {
+     "state": "fail",
+     "reason": "2 Kotlin deprecation warning(s)",
+     "total": 2,
+     "distinct": 2
+    },
+    "isolated_projects": {
+     "state": "fail",
+     "reason": "70 configuration cache problem(s)",
+     "total_problems": 70,
+     "unique_problems": null
+    }
+   },
+   "tool_deprecation_details": {
+    "agp": [],
+    "kotlin": [
+     {
+      "symbol": "'fun TabRow(selectedTabIndex: Int, modifier: Modifier = ..., containerColor: Color = ..., contentColor: Color = ..., indicator: ComposableFunction1<List<TabPosition>, Unit> = ..., divider: ComposableF",
+      "location": "Tabs.kt:88",
+      "count": 1
+     },
+     {
+      "symbol": "'fun Modifier.tabIndicatorOffset(currentTabPosition: TabPosition): Modifier'",
+      "location": "Tabs.kt:95",
+      "count": 1
+     }
+    ]
+   },
+   "deprecation_details": [],
+   "isolated_projects_details": [
+    {
+     "message": "Project <path> cannot access Project.tasks functionality on subprojects",
+     "origin_kind": "BuildLogic",
+     "example_location": "at com.google.samples.apps.nowinandroid.GraphKt.configureGraphTasks(Graph.kt:130)",
+     "count": 70
+    }
+   ]
+  },
+  {
+   "sha": "5ba16edde991ab39bec27283a85072b5d3750be8",
+   "date": "2026-01-30T09:17:35-08:00",
+   "subject": "Apply spotless by default (#2055)",
+   "outcome": "PASS",
+   "pins": {
+    "gradle": "9.3.0",
+    "agp": "9.0.0",
+    "kotlin": "2.3.0",
+    "ksp": "2.3.4"
+   },
+   "duration_s": 362.8,
+   "guard": "OK",
+   "first_error": null,
+   "failed_step": null,
+   "probes": {
+    "configuration_cache": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": null,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "agp_deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "kotlin_deprecations": {
+     "state": "fail",
+     "reason": "2 Kotlin deprecation warning(s)",
+     "total": 2,
+     "distinct": 2
+    },
+    "isolated_projects": {
+     "state": "fail",
+     "reason": "273 configuration cache problem(s)",
+     "total_problems": 273,
+     "unique_problems": null
+    }
+   },
+   "tool_deprecation_details": {
+    "agp": [],
+    "kotlin": [
+     {
+      "symbol": "'fun TabRow(selectedTabIndex: Int, modifier: Modifier = ..., containerColor: Color = ..., contentColor: Color = ..., indicator: ComposableFunction1<List<TabPosition>, Unit> = ..., divider: ComposableF",
+      "location": "Tabs.kt:88",
+      "count": 1
+     },
+     {
+      "symbol": "'fun Modifier.tabIndicatorOffset(currentTabPosition: TabPosition): Modifier'",
+      "location": "Tabs.kt:95",
+      "count": 1
+     }
+    ]
+   },
+   "deprecation_details": [],
+   "isolated_projects_details": [
+    {
+     "message": "Project <path> cannot dynamically look up a property in the parent project <path>",
+     "origin_kind": "PropertyUsage",
+     "example_location": "at com.diffplug.gradle.spotless.GradleCompat.isPropertyPresent(GradleCompat.java:39)",
+     "count": 129
+    },
+    {
+     "message": "Project <path> cannot access Project.tasks functionality on another project <path>",
+     "origin_kind": "BuildLogic",
+     "example_location": "at com.diffplug.gradle.spotless.SpotlessExtension.findRegisterDepsTask(SpotlessExtension.java:319)",
+     "count": 74
+    },
+    {
+     "message": "Project <path> cannot access Project.tasks functionality on subprojects",
+     "origin_kind": "BuildLogic",
+     "example_location": "at com.google.samples.apps.nowinandroid.GraphKt.configureGraphTasks(Graph.kt:130)",
+     "count": 70
+    }
+   ]
+  },
+  {
+   "sha": "4a5becfc8878471c1063a10c558f87e4399d12f2",
+   "date": "2026-02-19T14:26:32-08:00",
+   "subject": "Make isolated projects mode pass without issues (#2073)",
+   "outcome": "PASS",
+   "pins": {
+    "gradle": "9.3.0",
+    "agp": "9.0.0",
+    "kotlin": "2.3.0",
+    "ksp": "2.3.4"
+   },
+   "duration_s": 421.8,
+   "guard": "OK",
+   "first_error": null,
+   "failed_step": null,
+   "probes": {
+    "configuration_cache": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": null,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "agp_deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "kotlin_deprecations": {
+     "state": "fail",
+     "reason": "2 Kotlin deprecation warning(s)",
+     "total": 2,
+     "distinct": 2
+    },
+    "isolated_projects": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": null
+    }
+   },
+   "tool_deprecation_details": {
+    "agp": [],
+    "kotlin": [
+     {
+      "symbol": "'fun TabRow(selectedTabIndex: Int, modifier: Modifier = ..., containerColor: Color = ..., contentColor: Color = ..., indicator: ComposableFunction1<List<TabPosition>, Unit> = ..., divider: ComposableF",
+      "location": "Tabs.kt:88",
+      "count": 1
+     },
+     {
+      "symbol": "'fun Modifier.tabIndicatorOffset(currentTabPosition: TabPosition): Modifier'",
+      "location": "Tabs.kt:95",
+      "count": 1
+     }
+    ]
+   },
+   "deprecation_details": [],
+   "isolated_projects_details": []
+  },
+  {
+   "sha": "7d45eae4f8720a0c77f507712ba2437ff974b6ed",
+   "date": "2026-04-30T14:59:53+01:00",
+   "subject": "Merge pull request #2100 from FletchMcKee/graph-update",
+   "outcome": "PASS",
+   "pins": {
+    "gradle": "9.4.0",
+    "agp": "9.0.0",
+    "kotlin": "2.3.0",
+    "ksp": "2.3.4"
+   },
+   "duration_s": 463.2,
+   "guard": "OK",
+   "first_error": null,
+   "failed_step": null,
+   "probes": {
+    "configuration_cache": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": 0,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "agp_deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "kotlin_deprecations": {
+     "state": "fail",
+     "reason": "2 Kotlin deprecation warning(s)",
+     "total": 2,
+     "distinct": 2
+    },
+    "isolated_projects": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": 0
+    }
+   },
+   "tool_deprecation_details": {
+    "agp": [],
+    "kotlin": [
+     {
+      "symbol": "'fun TabRow(selectedTabIndex: Int, modifier: Modifier = ..., containerColor: Color = ..., contentColor: Color = ..., indicator: ComposableFunction1<List<TabPosition>, Unit> = ..., divider: ComposableF",
+      "location": "Tabs.kt:88",
+      "count": 1
+     },
+     {
+      "symbol": "'fun Modifier.tabIndicatorOffset(currentTabPosition: TabPosition): Modifier'",
+      "location": "Tabs.kt:95",
+      "count": 1
+     }
+    ]
+   },
+   "deprecation_details": [],
+   "isolated_projects_details": []
+  },
+  {
+   "sha": "153fba10cf6f8a07d36afdd4d767220f00139b27",
+   "date": "2026-08-31T13:03:01-07:00",
+   "subject": "Enforce org.gradle.configuration-cache.problems=fail",
+   "outcome": "PASS",
+   "pins": {
+    "gradle": "9.4.0",
+    "agp": "9.0.0",
+    "kotlin": "2.3.0",
+    "ksp": "2.3.4"
+   },
+   "duration_s": 339.8,
+   "guard": "OK",
+   "first_error": null,
+   "failed_step": null,
+   "probes": {
+    "configuration_cache": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": 0,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "agp_deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "kotlin_deprecations": {
+     "state": "fail",
+     "reason": "2 Kotlin deprecation warning(s)",
+     "total": 2,
+     "distinct": 2
+    },
+    "isolated_projects": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": 0
+    }
+   },
+   "tool_deprecation_details": {
+    "agp": [],
+    "kotlin": [
+     {
+      "symbol": "'fun TabRow(selectedTabIndex: Int, modifier: Modifier = ..., containerColor: Color = ..., contentColor: Color = ..., indicator: ComposableFunction1<List<TabPosition>, Unit> = ..., divider: ComposableF",
+      "location": "Tabs.kt:88",
+      "count": 1
+     },
+     {
+      "symbol": "'fun Modifier.tabIndicatorOffset(currentTabPosition: TabPosition): Modifier'",
+      "location": "Tabs.kt:95",
+      "count": 1
+     }
+    ]
+   },
+   "deprecation_details": [],
+   "isolated_projects_details": []
+  },
+  {
+   "sha": "07a8a171b679bc74d2963ea1ba929cbc5dc6079a",
+   "date": "2026-09-01T14:17:22+01:00",
+   "subject": "Merge pull request #2135 from liutikas/gradle760",
+   "outcome": "PASS",
+   "pins": {
+    "gradle": "9.7.1",
+    "agp": "9.3.2",
+    "kotlin": "2.3.0",
+    "ksp": "2.3.4"
+   },
+   "duration_s": 288.5,
+   "guard": "OK",
+   "first_error": null,
+   "failed_step": null,
+   "probes": {
+    "configuration_cache": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": 0,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "agp_deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "kotlin_deprecations": {
+     "state": "fail",
+     "reason": "2 Kotlin deprecation warning(s)",
+     "total": 2,
+     "distinct": 2
+    },
+    "isolated_projects": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": 0
+    }
+   },
+   "tool_deprecation_details": {
+    "agp": [],
+    "kotlin": [
+     {
+      "symbol": "'fun TabRow(selectedTabIndex: Int, modifier: Modifier = ..., containerColor: Color = ..., contentColor: Color = ..., indicator: ComposableFunction1<List<TabPosition>, Unit> = ..., divider: ComposableF",
+      "location": "Tabs.kt:88",
+      "count": 1
+     },
+     {
+      "symbol": "'fun Modifier.tabIndicatorOffset(currentTabPosition: TabPosition): Modifier'",
+      "location": "Tabs.kt:95",
+      "count": 1
+     }
+    ]
+   },
+   "deprecation_details": [],
+   "isolated_projects_details": []
+  },
+  {
+   "sha": "12f80da6518e161ed16a06a68e71fb8a873576d6",
+   "date": "2026-09-02T10:34:02-07:00",
+   "subject": "Enable gradle project isolation (#2139)",
+   "outcome": "PASS",
+   "pins": {
+    "gradle": "9.7.1",
+    "agp": "9.3.2",
+    "kotlin": "2.3.0",
+    "ksp": "2.3.4"
+   },
+   "duration_s": 332.7,
+   "guard": "OK",
+   "first_error": null,
+   "failed_step": null,
+   "probes": {
+    "configuration_cache": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": 0,
+     "cache_action": "storing"
+    },
+    "deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "agp_deprecations": {
+     "state": "pass",
+     "reason": null,
+     "total": 0,
+     "distinct": 0
+    },
+    "kotlin_deprecations": {
+     "state": "fail",
+     "reason": "2 Kotlin deprecation warning(s)",
+     "total": 2,
+     "distinct": 2
+    },
+    "isolated_projects": {
+     "state": "pass",
+     "reason": null,
+     "total_problems": 0,
+     "unique_problems": 0
+    }
+   },
+   "tool_deprecation_details": {
+    "agp": [],
+    "kotlin": [
+     {
+      "symbol": "'fun TabRow(selectedTabIndex: Int, modifier: Modifier = ..., containerColor: Color = ..., contentColor: Color = ..., indicator: ComposableFunction1<List<TabPosition>, Unit> = ..., divider: ComposableF",
+      "location": "Tabs.kt:88",
+      "count": 1
+     },
+     {
+      "symbol": "'fun Modifier.tabIndicatorOffset(currentTabPosition: TabPosition): Modifier'",
+      "location": "Tabs.kt:95",
+      "count": 1
+     }
+    ]
+   },
+   "deprecation_details": [],
+   "isolated_projects_details": []
+  }
+ ]
+}

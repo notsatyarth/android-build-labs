@@ -14,3 +14,5 @@ Read with care:
 - `pass` for deprecations means no recognised Gradle deprecation message in the `help` log, with `--warning-mode=all`;
   it does not cover AGP's or Kotlin's own deprecation warnings.
 - Evenly spaced commits are a sample, not the whole history.
+
+`nowinandroid-adoption-pairs.json`: same schema as `nowinandroid.json`, for before/after pairs around commits where nowinandroid adopted a feature (history-series runs 42987060914, 42987135426, 42988732699). Not part of the dashboard's main history series.
