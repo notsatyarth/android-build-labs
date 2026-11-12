@@ -59,6 +59,8 @@ STATES = {
     "3":  dict(res_values=True, inter="strategy", sources=True, app_main=False, minify=False),
     "4":  dict(res_values=True, inter="strategy", sources=True, app_main=True, minify=True),
     "5":  dict(res_values=True, inter="flavors", sources=True, app_main=True, minify=True),
+    "6":  dict(res_values=True, inter="strategy", sources=True, app_main=True, minify=False),
+    "7":  dict(res_values=True, inter="flavors", sources=True, app_main=True, minify=False),
 }
 
 
@@ -171,6 +173,14 @@ def run_cp(cp, logs):
         sym = "error: cannot find symbol" in t and "class FakeSensor" in t
         facts.update(failed_task=task, cannot_find_symbol=sym)
         return f"rc {rc}; {task}; cannot find symbol FakeSensor: {sym}", facts
+    if cp in ("6", "7"):
+        # verifyVariantAlignment (verify-variant-alignment.gradle.kts), run for the realdevice debug variant
+        rc, t = gradle(L("verify"), "verifyVariantAlignment", "-PalignVariant=realdeviceDebug")
+        facts["rc"] = rc
+        facts["mismatch_lines"] = re.findall(r"^\s+:\w+ compiles against .*$", t, re.M)
+        facts["ok_line"] = "no mismatch" in t
+        return (f"rc {rc}; " + ("; ".join(x.strip() for x in facts["mismatch_lines"]) if facts["mismatch_lines"] else
+                (first(r"verifyVariantAlignment: .*", t) or first(r"What went wrong:\n.*\n.*", t) or "no output"))), facts
     raise SystemExit(f"unknown checkpoint {cp}")
 
 
@@ -187,6 +197,10 @@ def verdict(cp, f):
         return f["rc"] == 0 and f.get("real_reader") and not f.get("real_fake") and f.get("emu_reader") and f.get("emu_fake")
     if cp == "4":
         return f["rc"] != 0 and f["r8_missing"] == "ERROR: R8: Missing class lab.leaf.FakeSensor (referenced from: java.lang.String lab.intermediate1.Reader.read())"
+    if cp == "6":
+        return f["rc"] != 0 and len(f["mismatch_lines"]) == 2 and all("emulator" in l and "realdevice" in l for l in f["mismatch_lines"])
+    if cp == "7":
+        return f["rc"] == 0 and f["ok_line"]
     if cp == "5":
         return f["rc"] != 0 and f["failed_task"] == "Execution failed for task ':intermediate1:compileRealdeviceDebugJavaWithJavac'" and f["cannot_find_symbol"]
 
