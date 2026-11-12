@@ -9,7 +9,7 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 tasks.register("verifyVariantAlignment") {
     notCompatibleWithConfigurationCache("reads other projects' resolved graphs at execution time")
     doLast {
-        val variant = property("alignVariant") as String // for example realdeviceDebug
+        val variant = project.property("alignVariant") as String // for example realdeviceDebug
         val buildType = Regex("[A-Z][a-z]*$").find(variant)?.value?.lowercase() ?: variant
 
         // project path -> flavor and build type attributes of the variant Gradle picked for it
