@@ -7,6 +7,7 @@ Samples `ps` every INTERVAL seconds while the command runs and for a short tail 
 (daemons outlive the build), classifies each java process by its main class and records RSS.
 RSS is physical memory held by the process (what the OS sees), not the JVM heap.
 
+--client also samples the Gradle client (the wrapper JVM started by ./gradlew, found by gradle-wrapper.jar); off by default so totals of older labs do not change.
 --cpu adds a last column cpu_s: cumulative CPU seconds of the process (user + system) at that sample.
 Per-process CPU time is the last value minus the first; wall time is first to last sighting.
 Default output is unchanged, so existing labs that read the CSV keep working.
@@ -75,6 +76,8 @@ def main():
     cpu = "--cpu" in args
     if "--interval" in args:
         interval = float(args[args.index("--interval") + 1])
+    if "--client" in args:
+        CLASSES.append(("gradle-client", "gradle-wrapper.jar"))
     cmd = args[args.index("--") + 1:]
     t0 = time.time()
     proc = subprocess.Popen(cmd)
