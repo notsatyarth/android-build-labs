@@ -175,7 +175,7 @@ def run_cp(cp, logs):
         return f"rc {rc}; {task}; cannot find symbol FakeSensor: {sym}", facts
     if cp in ("6", "7"):
         # verifyVariantAlignment (verify-variant-alignment.gradle.kts), run for the realdevice debug variant
-        rc, t = gradle(L("verify"), "verifyVariantAlignment", "-PalignVariant=realdeviceDebug")
+        rc, t = gradle(L("verify"), "verifyVariantAlignment", "-PalignVariant=realdeviceDebug", "--warning-mode=all")
         facts["rc"] = rc
         facts["mismatch_lines"] = re.findall(r"^\s+:\w+ compiles against .*$", t, re.M)
         facts["ok_line"] = "no mismatch" in t
