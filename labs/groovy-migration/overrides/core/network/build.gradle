@@ -1,0 +1,49 @@
+import com.android.build.api.variant.BuildConfigField
+import java.io.StringReader
+import java.util.Properties
+
+plugins {
+    alias(libs.plugins.nowinandroid.android.library)
+    alias(libs.plugins.nowinandroid.android.library.jacoco)
+    alias(libs.plugins.nowinandroid.hilt)
+    id("kotlinx-serialization")
+}
+
+android {
+    buildFeatures {
+        buildConfig = true
+    }
+    namespace = "com.google.samples.apps.nowinandroid.core.network"
+    testOptions.unitTests.includeAndroidResources = true
+}
+
+dependencies {
+    api(libs.kotlinx.datetime)
+    api(projects.core.common)
+    api(projects.core.model)
+
+    implementation(libs.coil.kt)
+    implementation(libs.coil.kt.svg)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.okhttp.logging)
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.kotlin.serialization)
+
+    testImplementation(libs.kotlinx.coroutines.test)
+}
+
+def backendUrl = providers.fileContents(
+    isolated.rootProject.projectDirectory.file("local.properties")
+).asText.map { text ->
+    def properties = new Properties()
+    properties.load(new StringReader(text))
+    properties["BACKEND_URL"]
+}.orElse("http://example.com")
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.buildConfigFields.put("BACKEND_URL", backendUrl.map { value ->
+            new BuildConfigField("String", "\"${value}\"", null)
+        })
+    }
+}
