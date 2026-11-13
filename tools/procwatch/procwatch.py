@@ -9,6 +9,8 @@ RSS is physical memory held by the process (what the OS sees), not the JVM heap.
 
 --client also samples the Gradle client (the wrapper JVM started by ./gradlew, found by gradle-wrapper.jar); off by default so totals of older labs do not change.
 --cpu adds a last column cpu_s: cumulative CPU seconds of the process (user + system) at that sample.
+--tail SECONDS keeps sampling that long after the command exits (default 6), to see which processes outlive the build.
+--meta also writes OUT.csv.meta.json: t0_epoch (when sampling started), cmd_exit_s (seconds from t0 to the command's exit), exit_code.
 Per-process CPU time is the last value minus the first; wall time is first to last sighting.
 Default output is unchanged, so existing labs that read the CSV keep working.
 """
@@ -78,6 +80,8 @@ def main():
         interval = float(args[args.index("--interval") + 1])
     if "--client" in args:
         CLASSES.append(("gradle-client", "gradle-wrapper.jar"))
+    tail = float(args[args.index("--tail") + 1]) if "--tail" in args else 6
+    meta = "--meta" in args
     cmd = args[args.index("--") + 1:]
     t0 = time.time()
     proc = subprocess.Popen(cmd)
@@ -85,7 +89,7 @@ def main():
     with open(out, "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["elapsed_s", "pid", "ppid", "kind", "rss_mb", "xmx", "gc"] + (["cpu_s"] if cpu else []))
-        tail_until = None
+        tail_until, cmd_exit = None, None
         while True:
             rows = snapshot(cpu)
             el = round(time.time() - t0, 1)
@@ -97,11 +101,17 @@ def main():
             peak_total = max(peak_total, total)
             f.flush()
             if proc.poll() is not None:
-                tail_until = tail_until or time.time() + 6
+                if tail_until is None:
+                    cmd_exit = round(time.time() - t0, 1)
+                    tail_until = time.time() + tail
                 if time.time() >= tail_until:
                     break
             time.sleep(interval)
     final = snapshot()
+    if meta:
+        import json
+        with open(out + ".meta.json", "w") as f:
+            json.dump({"t0_epoch": t0, "cmd_exit_s": cmd_exit, "exit_code": proc.returncode, "tail_s": tail}, f)
     print(f"\nexit code {proc.returncode}; wall {round(time.time()-t0)} s; peak total RSS of sampled JVMs {peak_total} MB")
     print("peak RSS per process (pid, kind, MB):")
     for (pid, kind), mb in sorted(seen.items(), key=lambda x: -x[1]):
