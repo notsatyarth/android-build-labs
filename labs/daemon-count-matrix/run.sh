@@ -50,10 +50,15 @@ P
 { echo "# $CELL"; grep -E '^(kotlin|ksp) = ' "$NIA/gradle/libs.versions.toml"; echo "root: $(grep '^kotlin.daemon.jvmargs' "$NIA/gradle.properties")"; echo "build-logic: $(grep '^kotlin.daemon.jvmargs' "$NIA/build-logic/gradle.properties")"; } > "$OUT/setup.txt"
 cat "$OUT/setup.txt"
 stop() { (cd "$NIA" && ./gradlew --stop >/dev/null 2>&1); pkill -f "GradleDaemon|KotlinCompileDaemon|GradleWorkerMain"; pkill -x aapt2; sleep 3; true; }
-# Warm-up build with the cell's versions (not measured), so no measured build downloads dependencies.
-stop; (cd "$NIA" && ./gradlew :app:assembleDemoDebug --console=plain > "$OUT/warmup.log" 2>&1); echo "warm-up: $(grep -E 'BUILD (SUCCESSFUL|FAILED)' "$OUT/warmup.log")"
-rm -f "$OUT"/gc/*.log
-for i in $(seq 1 "$N"); do
+# Warm-up build with the cell's versions (not measured), so no measured build downloads dependencies. WARMUP=0 skips it and
+# START=k numbers the measured builds from k (pair.sh uses both to alternate two cells build by build on one runner).
+if [ "${WARMUP:-1}" = 1 ]; then
+  stop; (cd "$NIA" && ./gradlew :app:assembleDemoDebug --console=plain > "$OUT/warmup.log" 2>&1); echo "warm-up: $(grep -E 'BUILD (SUCCESSFUL|FAILED)' "$OUT/warmup.log")"
+  rm -f "$OUT"/gc/*.log
+fi
+[ "$N" -gt 0 ] || exit 0
+S=${START:-1}
+for i in $(seq "$S" $((S + N - 1))); do
   stop
   (cd "$NIA" && ./gradlew -p build-logic :convention:clean --console=plain > "$OUT/run$i.clean.log" 2>&1); stop
   (cd "$NIA" && python3 -I "$HERE/../../tools/procwatch/procwatch.py" "$OUT/run$i.csv" --interval 0.5 --cpu --client --meta -- ./gradlew :app:assembleDemoDebug --no-build-cache --rerun-tasks --console=plain > "$OUT/run$i.log" 2>&1)

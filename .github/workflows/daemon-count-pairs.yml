@@ -1,0 +1,95 @@
+# One vs two Kotlin daemons with both cells on the SAME runner: labs/daemon-count-matrix/pair.sh builds the two cells of a pair
+# alternately (A B A B ...), so runner speed cancels out of the time comparison. One job per pair, then compare_pairs.py.
+# Why: in daemon-count-matrix each cell ran on its own runner, and runner-to-runner speed differences were larger than the
+# effect being measured (run 43374821972). Results are x86 Linux runner numbers.
+name: daemon-count-pairs
+on:
+  workflow_dispatch:
+    inputs:
+      nia_ref:
+        description: "nowinandroid commit (full SHA)"
+        required: false
+        default: "2982e63cb691ad49cd009aab43dc206fee6699c2"
+      builds:
+        description: "builds per cell"
+        required: false
+        default: "5"
+      pairs:
+        description: "space-separated pairs A:B (cells as in run.sh)"
+        required: false
+        default: "d1_lo_2g:d2_lo_2g d1_hi_2g:d2_hi_2g d1_lo_4g:d2_lo_4g d1_hi_4g:d2_hi_4g d2_hi_4g:shipped_4g"
+permissions:
+  contents: read
+jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    outputs:
+      pairs: ${{ steps.p.outputs.pairs }}
+    steps:
+      - id: p
+        env:
+          PAIRS: ${{ inputs.pairs }}
+        run: |
+          python3 - >> "$GITHUB_OUTPUT" <<'PY'
+          import json, os, re
+          cell = r"(d[12]_(lo|hi)_[24]g|shipped_4g)"
+          pairs = os.environ["PAIRS"].split()
+          assert pairs and all(re.fullmatch(cell + ":" + cell, p) for p in pairs), "bad pair"
+          print("pairs=" + json.dumps(pairs))
+          PY
+  pair:
+    needs: plan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        pair: ${{ fromJSON(needs.plan.outputs.pairs) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Runner info
+        run: bash .github/scripts/runner_info.sh
+      - name: Clone nowinandroid
+        env:
+          REF: ${{ inputs.nia_ref }}
+        run: bash .github/scripts/clone_nia.sh "$RUNNER_TEMP/nia" "$REF" && git -C "$RUNNER_TEMP/nia" config user.email ci@example.invalid && git -C "$RUNNER_TEMP/nia" config user.name ci
+      - name: Pair ${{ matrix.pair }}
+        env:
+          PAIR: ${{ matrix.pair }}
+          N: ${{ inputs.builds }}
+        run: |
+          A=${PAIR%%:*}; B=${PAIR##*:}
+          echo "PAIR_DIR=out/$A-vs-$B" >> "$GITHUB_ENV"
+          bash labs/daemon-count-matrix/pair.sh "$RUNNER_TEMP/nia" "out/$A-vs-$B" "$A" "$B" "$N"
+      - name: This pair alone
+        if: always()
+        run: python3 -I labs/daemon-count-matrix/compare_pairs.py "$PAIR_DIR"
+      - name: Artifact name
+        if: always()
+        env:
+          PAIR: ${{ matrix.pair }}
+        run: echo "ART=daemon-pair-${PAIR/:/-vs-}" >> "$GITHUB_ENV"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: ${{ env.ART }}
+          path: out/
+          retention-days: 30
+  compare:
+    needs: pair
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: parts
+      - name: Compare
+        run: |
+          set -o pipefail
+          echo "## One vs two Kotlin daemons, same-runner pairs (CI: x86 Linux runner)" >> "$GITHUB_STEP_SUMMARY"
+          python3 -I labs/daemon-count-matrix/compare_pairs.py parts | tee -a "$GITHUB_STEP_SUMMARY"
