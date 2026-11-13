@@ -29,9 +29,11 @@ def load(cell):
         d["last"] = t; d["peak"] = max(d["peak"], rss); d["rss"].append((t, rss))
         totals[t] = totals.get(t, 0.0) + rss
     end = meta["cmd_exit_s"]
-    tail_end = max(totals) if totals else end
+    # End of sampling = command exit + tail (from the meta file), not the last sample with a process in it: when every
+    # process has exited there are no rows, and the last rows would otherwise look "alive".
+    tail_end = end + float(meta.get("tail_s", 6))
     for d in procs.values():
-        d["alive"] = d["last"] >= tail_end - 1.5
+        d["alive"] = d["last"] >= tail_end - 2.5
         at = [rss for t, rss in d["rss"] if t <= end]
         d["rss_at_end"] = at[-1] if at else None
     marks = {}
@@ -42,7 +44,7 @@ def load(cell):
     def held(t0):  # total RSS at the last sample at or before t0
         return next((totals[t] for t in sorted(totals, reverse=True) if t <= t0), 0.0)
     return {"meta": meta, "procs": procs, "end": end, "tail_end": tail_end, "marks": marks,
-            "rss_end": held(end), "rss_tail": totals.get(tail_end, 0.0), "dir": p.parent}
+            "rss_end": held(end), "rss_tail": sum(d["rss"][-1][1] for d in procs.values() if d["alive"]), "dir": p.parent}
 
 
 cells = {c: load(c) for c in SETUP}
@@ -101,8 +103,9 @@ if a3:
           bool(gd) and all(not p["alive"] and 50 <= p["last"] - a3["end"] <= 150 for _, p in gd), f"Gradle daemon last seen {lasts} s; Kotlin daemons alive at end: {sum(p['alive'] for _, p in of(a3, 'kotlin-daemon'))} of {len(of(a3, 'kotlin-daemon'))}")
 if a4:
     kds, gd = of(a4, "kotlin-daemon"), of(a4, "gradle-daemon")
-    check("H6 with autoshutdownIdleSeconds=60 the Kotlin daemons end 30 to 150 s after the build while the Gradle daemon stays (a4)",
-          bool(kds) and all(not p["alive"] and 30 <= p["last"] - a4["end"] <= 150 for _, p in kds) and all(p["alive"] for _, p in gd),
+    # A Kotlin daemon idles from its own last compile, so the build-logic daemon can stop before the build ends.
+    check("H6 with autoshutdownIdleSeconds=60 every Kotlin daemon ends by 150 s after the build while the Gradle daemon stays (a4)",
+          bool(kds) and all(not p["alive"] and p["last"] - a4["end"] <= 150 for _, p in kds) and all(p["alive"] for _, p in gd),
           f"Kotlin daemons last seen {[round(p['last'] - a4['end']) for _, p in kds]} s; Gradle daemon alive: {[p['alive'] for _, p in gd]}")
 if a5 and "stop_at" in a5["marks"]:
     s = a5["marks"]["stop_at"]
