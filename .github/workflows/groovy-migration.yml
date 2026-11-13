@@ -1,0 +1,62 @@
+# Kotlin DSL vs Groovy DSL module scripts on nowinandroid (labs/groovy-migration): one runner, the two variants alternate
+# (kts, groovy, kts, groovy, ...), so both see the same machine. Results are x86 Linux runner numbers; never compare them
+# with the macOS numbers in the lab note.
+name: groovy-migration
+on:
+  workflow_dispatch:
+    inputs:
+      nia_ref:
+        description: "nowinandroid commit (full SHA)"
+        required: false
+        default: "2982e63cb691ad49cd009aab43dc206fee6699c2"
+      rounds:
+        description: "rounds (each round = one kts run + one groovy run)"
+        required: false
+        default: "3"
+permissions:
+  contents: read
+jobs:
+  pairs:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Runner info
+        run: bash .github/scripts/runner_info.sh
+      - name: Clone nowinandroid
+        env:
+          REF: ${{ inputs.nia_ref }}
+        run: bash .github/scripts/clone_nia.sh "$RUNNER_TEMP/nia" "$REF" && git -C "$RUNNER_TEMP/nia" config user.email ci@example.invalid && git -C "$RUNNER_TEMP/nia" config user.name ci
+      - name: Warm-up builds (downloads dependencies for both variants so no measured run does)
+        run: |
+          set -e
+          cd "$RUNNER_TEMP/nia" && ./gradlew :app:assembleDemoDebug --console=plain -q && ./gradlew --stop
+          python3 -I "$GITHUB_WORKSPACE/labs/groovy-migration/convert.py" . && ./gradlew :app:assembleDemoDebug --console=plain -q && ./gradlew --stop
+          git checkout -q -- . && git clean -fdxq
+      - name: Alternating runs
+        env:
+          ROUNDS: ${{ inputs.rounds }}
+        run: |
+          for r in $(seq 1 "$ROUNDS"); do
+            for v in kts groovy; do bash labs/groovy-migration/run.sh "$RUNNER_TEMP/nia" out "$v" "r$r"; done
+          done
+      - name: Compare
+        if: always()
+        run: |
+          set -o pipefail
+          echo '## Groovy migration (CI: x86 Linux runner)' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          python3 -I labs/groovy-migration/compare.py out | tee -a "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: groovy-migration
+          path: |
+            out/
+            !out/**/*.apk
+          retention-days: 30
