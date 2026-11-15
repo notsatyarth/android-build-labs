@@ -8,7 +8,7 @@ import os
 import re
 import sys
 
-PAT = re.compile(r"(?i)(deprecat|removed in|no longer|is an error|\be: |\[Kotlin|KGP:|experimental|unsupported|not supported|AGP:|android\.[A-Za-z.]+.*(false|true))")
+PAT = re.compile(r"(?i)(isolated.projects|configuration cache|feature preview|implicit lookup|BUILD (SUCCESSFUL|FAILED)|deprecat|removed in|no longer|is an error|\be: |\[Kotlin|KGP:|experimental|unsupported|not supported|AGP:|android\.[A-Za-z.]+.*(false|true))")
 
 
 def main():
@@ -24,6 +24,9 @@ def main():
             if l not in seen:
                 seen.add(l); keep.append(l)
         print("#### %s / %s" % (cell, step))
+        cmd = next((l[7:].strip()[:500] for l in text.splitlines() if l.startswith("# cmd:")), None)
+        if cmd:
+            print("Command: `%s`" % cmd)
         if m:
             print("What went wrong:\n```\n%s\n```" % m.group(1).strip()[:1800])
         if keep:
