@@ -1,4 +1,5 @@
 // Switch on one Gradle feature preview from outside the project, so a full build can be tested without editing settings.gradle.kts.
 beforeSettings { settings ->
     settings.enableFeaturePreview("NO_IMPLICIT_LOOKUP_IN_PARENT_PROJECTS")
+    println("LAB feature preview NO_IMPLICIT_LOOKUP_IN_PARENT_PROJECTS enabled for " + settings.rootDir.name)
 }
