@@ -26,8 +26,9 @@ def availability(tool, version):
         return None
 
 
-def build(agp=None, kotlin=None):
-    flags = json.load(open(os.path.join(ROOT, "tools", "version-matrix", "probes", "flags.json")))["flags"]
+def build(agp=None, kotlin=None, only=None):
+    spec = json.load(open(os.path.join(ROOT, "tools", "version-matrix", "probes", "flags.json")))
+    flags = spec["flags"]
     avail = {"agp": availability("agp", agp) if agp else None, "kgp": availability("kgp", kotlin) if kotlin else None}
     cells, skipped = [], []
     for f in flags:
@@ -47,6 +48,21 @@ def build(agp=None, kotlin=None):
         if axes:
             cell["axes"] = axes
         cells.append(cell)
+    # extra cells: a build with a changed Gradle argument instead of a -P flag (names start with "check-")
+    for x in spec.get("extra_cells", []):
+        cell = {"name": x["name"], "flags": {}, "gradle_args": [g.replace("@ROOT@", ROOT) for g in x["gradle_args"]]}
+        axes = {}
+        if agp:
+            axes["agp"] = agp
+        if kotlin:
+            axes["kotlin"] = kotlin
+        if axes:
+            cell["axes"] = axes
+        cells.append(cell)
+    if only:
+        keep = set(only)
+        cells = [c for c in cells if c["name"] in keep or c["name"].replace("flag-", "", 1) in keep]
+        skipped = [x for x in skipped if slug(x["flag"]) in keep]
     return cells, skipped
 
 
@@ -56,8 +72,9 @@ def main():
     ap.add_argument("--agp")
     ap.add_argument("--kotlin")
     ap.add_argument("--list-cells", action="store_true")
+    ap.add_argument("--only", default="", help="comma-separated cell names (with or without the flag- prefix); empty = all")
     a = ap.parse_args()
-    cells, skipped = build(a.agp, a.kotlin)
+    cells, skipped = build(a.agp, a.kotlin, [x for x in a.only.split(",") if x])
     if a.list_cells:
         print(json.dumps([c["name"] for c in cells]))
         return

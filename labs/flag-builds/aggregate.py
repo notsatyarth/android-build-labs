@@ -21,7 +21,10 @@ def first_line(x):
 
 
 def one(cell):
-    flag, value = next(iter(cell["flags"].items()))
+    if cell.get("flags"):
+        flag, value = next(iter(cell["flags"].items()))
+    else:  # a check-* cell: a changed Gradle argument, no -P flag
+        flag, value = cell["name"], " ".join(g.split("/")[-1] for g in cell.get("gradle_args", []))
     base = {"flag": flag, "value": value, "duration_s": cell.get("duration_s"), "outcome": cell.get("outcome"),
             "failed_step": cell.get("failed_step"), "first_error": first_line(cell.get("first_error")),
             "by_owner": cell.get("by_owner"), "guard": (cell.get("guard") or {}).get("result")}
@@ -47,7 +50,7 @@ def main():
     results = []
     for f in sorted(glob.glob(os.path.join(a.cells_dir, "**", "report.json"), recursive=True)):
         for c in json.load(open(f))["cells"]:
-            if c.get("flags"):
+            if c.get("flags") or c["name"].startswith("check-"):
                 results.append(one(c))
     for s in json.load(open(a.skipped)):
         st = "not_applicable" if s["reason"].startswith("not_applicable") else "not_run"
