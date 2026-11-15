@@ -11,3 +11,5 @@ Read the results with care:
 - Test values come from the flag name and stage (`value_basis` in probes/flags.json), not from a source that states them.
 - `android.simulateAgpVersionBehavior` is experimental and undocumented.
 - `fail` is "failed with this value", with the failing step and first error line.
+
+Follow-up runs, 2026-11-15 (same commit, AGP and Kotlin; workflow runs 43741679346, 43742983124, 43743719105): test values for the six flags that were not run, a full-build `--warning-mode=fail` check, a Gradle feature preview through an init script, and the failure causes printed in each job's log. Results are in the job logs, not in a JSON file here. nowinandroid already sets `org.gradle.isolated-projects=true`, so the `org.gradle.isolated-projects` cell adds nothing.
