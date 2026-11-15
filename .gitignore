@@ -9,3 +9,7 @@ runs/
 logs/
 *.log
 !tools/version-matrix/tests/fixtures/*.log
+.idea/
+
+# Harness-generated skills dropped into the working tree
+skills/system/
