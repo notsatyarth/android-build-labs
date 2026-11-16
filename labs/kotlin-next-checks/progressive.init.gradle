@@ -1,0 +1,10 @@
+// Turn on Kotlin progressive mode for every Kotlin compile task of the main build, from outside the project.
+// Uses Groovy dynamic dispatch (the init script cannot see KGP classes) and configureEach, so no task is realized early.
+allprojects { p ->
+    p.tasks.configureEach { t ->
+        if (t.name.startsWith("compile") && t.name.contains("Kotlin") && t.hasProperty("compilerOptions")) {
+            t.compilerOptions.progressiveMode.set(true)
+            println("LAB progressiveMode=true on " + t.path)
+        }
+    }
+}
