@@ -13,8 +13,12 @@ import os
 import re
 import sys
 
-ERR = re.compile(r"^e: .*SystemTrayNotifier\.kt:64", re.M)
-WARN = re.compile(r"^w: .*SystemTrayNotifier\.kt:64", re.M)
+# Two report formats: the classic compiler line ("e: file:///...SystemTrayNotifier.kt:64:13 ...", seen with 2.3.0) and
+# Gradle Problems API output ("Problem found: Kotlin compiler: NAME (id: kotlin:compiler:error:NAME)" followed by
+# "Location: ...SystemTrayNotifier.kt line 64", seen with 2.4.21).
+LOC = r"[^\n]*\n(?:[^\n]*\n){0,4}?[^\n]*SystemTrayNotifier\.kt line 64"
+ERR = re.compile(r"^e: .*SystemTrayNotifier\.kt:64|id: kotlin:compiler:error:RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY" + LOC, re.M)
+WARN = re.compile(r"^w: .*SystemTrayNotifier\.kt:64|id: kotlin:compiler:warning:RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY" + LOC, re.M)
 PROG = re.compile(r"^LAB progressiveMode=true on (\S+)", re.M)
 TRYNEXT = re.compile(r"Experimental 'kotlin\.experimental\.tryNext' Option Enabled")
 
@@ -39,7 +43,7 @@ def load(parts):
         cells[c["name"]] = {"outcome": c.get("outcome"), "guard": (c.get("guard") or {}).get("result"),
                             "line64": line, "progressive_tasks": len(set(PROG.findall(logs))),
                             "trynext_warning": bool(TRYNEXT.search(logs)),
-                            "first_error": next(iter(re.findall(r"^e: .*$", logs, re.M)), "")[:240]}
+                            "first_error": next(iter(re.findall(r"^e: .*$|^Problem found: Kotlin compiler: \S+ \(id: kotlin:compiler:error:.*$", logs, re.M)), "")[:240]}
     return cells
 
 

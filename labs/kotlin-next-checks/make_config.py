@@ -15,7 +15,8 @@ def cells(versions):
     out = []
     for v in versions:
         tag = "k" + v.replace(".", "")
-        out.append({"name": tag + "-plain", "axes": {"kotlin": v}, "flags": {}})
+        # a harmless system property, so the harness does not skip a cell equal to the project pins
+        out.append({"name": tag + "-plain", "axes": {"kotlin": v}, "flags": {}, "gradle_args": ["-Dlab.cell=plain"]})
         out.append({"name": tag + "-trynext", "axes": {"kotlin": v}, "flags": {"kotlin.experimental.tryNext": "true"}})
         out.append({"name": tag + "-progressive", "axes": {"kotlin": v}, "flags": {},
                     "gradle_args": ["--init-script", os.path.join(HERE, "progressive.init.gradle")]})
