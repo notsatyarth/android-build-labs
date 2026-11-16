@@ -2,6 +2,7 @@
 // can be run under today's language rules. KotlinVersion is loaded through the task's class loader because the init
 // script is compiled before the Kotlin Gradle plugin is on the classpath.
 gradle.lifecycle.beforeProject { p ->
+    if (p.gradle.parent != null) return
     p.tasks.configureEach { t ->
         if (t.name.startsWith("compile") && t.name.endsWith("Kotlin") && t.hasProperty("compilerOptions")) {
             def kv = t.class.classLoader.loadClass("org.jetbrains.kotlin.gradle.dsl.KotlinVersion")
