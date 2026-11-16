@@ -2,15 +2,15 @@
 // Kotlin compile task of that project (main, unit test and Android test sources, every variant), so one unqualified
 // task name compiles all Kotlin code. Included builds (build-logic) are skipped.
 // Each matched compile task prints, when it is configured, the language version it is set to ("unset" = the
-// compiler's default). Tasks are matched by name only (TaskCollection.named(Spec)), so no other task is created:
+// compiler's default). The dependency matches tasks by name only (TaskCollection.named(Spec)), so no other task is created:
 // creating every task eagerly breaks plugins such as Dependency Guard. Isolated Projects safe: each hook touches only
 // its own project.
 gradle.lifecycle.beforeProject { p ->
     if (p.gradle.parent != null) return
     def kotlinCompiles = p.tasks.named { n -> n.startsWith("compile") && n.endsWith("Kotlin") }
     p.tasks.register("readinessCompileAll") { t -> t.dependsOn(kotlinCompiles) }
-    kotlinCompiles.configureEach { t ->
-        if (t.hasProperty("compilerOptions")) {
+    p.tasks.configureEach { t ->
+        if (t.name.startsWith("compile") && t.name.endsWith("Kotlin") && t.hasProperty("compilerOptions")) {
             def lv = t.compilerOptions.languageVersion.getOrNull()
             println("LAB lv=" + (lv == null ? "unset" : lv.version) + " " + t.path)
         }

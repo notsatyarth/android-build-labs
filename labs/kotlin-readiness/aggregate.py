@@ -35,17 +35,29 @@ def by_letter(cells):
     return {name.split("-", 1)[0]: c for name, c in cells.items()}
 
 
-def kotlin(c, sev=None, project_only=True):
+def kotlin(c, sev=None, project_only=True, raw=False):
     out = [d for d in c["diagnostics"] if d["source"] == "kotlin-compiler"]
     if project_only:
         out = [d for d in out if d["origin"] == "project"]
     if sev:
         out = [d for d in out if d["severity"] == sev]
-    return out
+    return out if raw else group(out)
 
 
 def key(d):
     return (d["file"], d["line"])
+
+
+def group(diags):
+    """One entry per (severity, name, file, line, message): the same diagnostic is reported once per variant task
+    (demo/prod x debug/release). The entry keeps every task that reported it."""
+    out = {}
+    for d in diags:
+        k = (d["severity"], d["name"], d["file"], d["line"], d["message"] if not d["file"] else None)
+        if k not in out:
+            out[k] = dict(d, tasks=[])
+        out[k]["tasks"].append(d["task"])
+    return list(out.values())
 
 
 def index(diags):
@@ -57,7 +69,7 @@ def index(diags):
 
 
 def brief(d):
-    return {k: d.get(k) for k in ("severity", "name", "file", "line", "task", "message", "marker")}
+    return {k: d.get(k) for k in ("severity", "name", "file", "line", "tasks", "message", "marker")}
 
 
 def modules_not_checked(c):
@@ -69,7 +81,9 @@ def future_errors(a, b, next_lang):
     And A's warnings marked for next_lang that did not become errors in B."""
     aw = index(kotlin(a, "warning"))
     out = {"predicted": [], "warned_not_marked": [], "silent": [], "ambiguous": [], "marked_not_failed": []}
-    berr = kotlin(b, "error")
+    base = {key(e) for e in kotlin(a, "error")}
+    out["baseline_errors"] = [brief(e) for e in kotlin(a, "error")]
+    berr = [e for e in kotlin(b, "error") if key(e) not in base]
     for e in berr:
         ws = aw.get(key(e), [])
         if len(ws) > 1:
@@ -81,11 +95,11 @@ def future_errors(a, b, next_lang):
         else:
             out["silent"].append({"error": brief(e)})
     bkeys = {key(e) for e in berr}
-    executed_b = {d["task"] for d in b["diagnostics"]} | set(b.get("executed_compile_tasks", []))
+    executed_b = set(b.get("executed_compile_tasks", []))
     for w in kotlin(a, "warning"):
         if w["marker"] and next_lang in (None, w["marker"]["language"]) and key(w) not in bkeys:
             # was the same task compiled in B? if not, the module never compiled (masked), not a schedule change
-            reason = "compiled, no error" if w["task"] in executed_b else "not compiled in B (masked)"
+            reason = "compiled, no error" if set(w["tasks"]) & executed_b else "not compiled in B (masked)"
             out["marked_not_failed"].append({"warning": brief(w), "reason": reason})
     return out
 
@@ -144,7 +158,8 @@ def state(c, file_line):
 def predictions(L):
     """(letter, expected outcome, expected line-64 state, note). Expected outcome None = record only."""
     return [
-        ("A", "PASS", "warning", "today's compiler: line 64 warns, marked for language 2.5 (measured 2026-11-16)"),
+        ("A", None, "warning", "today's compiler: line 64 warns, marked for language 2.5 (measured 2026-11-16); outcome"
+                               " record only: nowinandroid's prod unit tests do not compile (baseline, not Kotlin)"),
         ("B", "FAIL", "error", "tryNext = language 2.5: KTLC-288 is an error (measured 2026-11-16)"),
         ("C", None, "warning", "prediction: the next compiler under language 2.4 keeps line 64 a warning"),
         ("D", "FAIL", "error", "prediction: language 2.5 is the RC's default, so line 64 fails as on 2.5.0-Beta2"),
@@ -186,7 +201,9 @@ def main():
     if "A" in L and "C" in L:
         comps["A_vs_C_next_compiler_warnings"] = new_warnings(L["A"], L["C"])
     if "B" in L and "D" in L:
-        be, de = {key(d) for d in kotlin(L["B"], "error")}, {key(d) for d in kotlin(L["D"], "error")}
+        base = {key(d) for d in kotlin(L["A"], "error")} if "A" in L else set()
+        be = {key(d) for d in kotlin(L["B"], "error")} - base
+        de = {key(d) for d in kotlin(L["D"], "error")} - base
         comps["B_vs_D_same_language_rules"] = {"both": len(be & de), "only_B": sorted(map(list, be - de)),
                                                "only_D": sorted(map(list, de - be))}
     out = {"schema": SCHEMA, "run_id": a.run_id, "harness_sha": a.harness_sha, "nowinandroid_sha": a.nia_sha,
@@ -215,9 +232,10 @@ def main():
     fe = comps.get("A_vs_B_future_errors")
     if fe:
         print("\nB errors vs A warnings (language %s%s): predicted %d, warned not marked %d, silent %d, ambiguous %d;"
-              " marked but not failed %d" % (fe["language"], ", lower bound" if fe["lower_bound"] else "",
+              " marked but not failed %d; baseline errors (already in A) %d" % (fe["language"], ", lower bound" if fe["lower_bound"] else "",
                                              len(fe["predicted"]), len(fe["warned_not_marked"]), len(fe["silent"]),
-                                             len(fe["ambiguous"]), len(fe["marked_not_failed"])))
+                                             len(fe["ambiguous"]), len(fe["marked_not_failed"]),
+                                             len(fe["baseline_errors"])))
     nw = comps.get("A_vs_C_next_compiler_warnings")
     if nw:
         print("Next compiler vs today's (language 2.4): %d new warnings, %d gone" % (len(nw["new"]), len(nw["gone"])))
