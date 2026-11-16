@@ -164,7 +164,7 @@ a{color:var(--blue)}
 <div class="card"><div class="scroll" id="rd-cells"></div><p class="note" id="rd-meta"></p></div>
 <div class="card"><h3>Errors under the next language rules, against today's warnings</h3>
 <p class="note">Joined on file and line, not on the diagnostic name: the warning and the later error have different names.</p>
-<div class="scroll" id="rd-buckets"></div><p class="note" id="rd-lower"></p></div>
+<div class="scroll" id="rd-buckets"></div><p class="note" id="rd-lower"></p><div class="scroll" id="rd-fix"></div></div>
 <div class="card"><h3>Every diagnostic, per cell</h3>
 <p class="note">W warning, E error, &middot; not reported. "Not compiled" means the module depends on a module that failed, so its code was never checked. A diagnostic reported for several variants is one row.</p>
 <div class="scroll" id="rd-diags"></div></div>
@@ -349,7 +349,8 @@ availTable($("fa-agp"), D.flagAvailability.agp); availTable($("fa-kgp"), D.flagA
   const runs = D.readiness||[]; if(!runs.length){ $("rd-cells").innerHTML="<p>No run frozen yet.</p>"; return; }
   const R = runs[runs.length-1];
   const desc = {A:["current","current default","today's full warning list"],B:["current + tryNext","current + 1","errors under the next language rules"],
-                C:["next","2.4 (pinned)","the next compiler's warnings under today's rules"],D:["next","next default","the real upgrade"]};
+                C:["next","2.4 (pinned)","the next compiler's warnings under today's rules"],D:["next","next default","the real upgrade"],
+                E:["current + tryNext","current + 1","B on a modified commit (line 64 fixed)"],F:["next","next default","D on a modified commit (line 64 fixed)"]};
   const L = c => c.cell.split("-")[0];
   $("rd-cells").innerHTML = table(["Cell","Compiler","Language","Outcome","Failure class",{t:"Compiled",num:1},{t:"No source",num:1},{t:"Not compiled",num:1},{t:"Warnings",num:1},{t:"Errors",num:1},"What it gives"],
     R.cells.map(c=>[L(c), (c.requested||{}).kotlin+(c.flags&&c.flags["kotlin.experimental.tryNext"]?" + tryNext":""), (c.language_versions||[]).map(v=>v==="unset"?"compiler default":v).join(", ")||desc[L(c)][1],
@@ -365,6 +366,12 @@ availTable($("fa-agp"), D.flagAvailability.agp); availTable($("fa-kgp"), D.flagA
     ["Ambiguous",n("ambiguous"),"several warnings at that line"],
     ["Marked, did not fail",n("marked_not_failed"),"the schedule moved, or the module was not compiled"],
     ["Baseline (already an error today)",n("baseline_errors"),"not an upgrade effect"]]);
+  const fx = R.comparisons.A_vs_E_future_errors_fix64;
+  if(fx){ const m = k => (fx[k]||[]).length;
+    $("rd-fix").innerHTML = "<h3>With line 64 fixed (modified commit, cell E against A)</h3><p class=\"note\">The one-line fix lets the modules behind :core:notifications compile under language "+esc(fx.language)+". "+
+      (fx.lower_bound ? "Still not compiled: "+esc((fx.modules_not_checked||[]).join(", "))+"." : "Every compile task ran: this list is complete.")+"</p>"+
+      table(["Outcome",{t:"Count",num:1}],[["Predicted",m("predicted")],["Warned, not marked",m("warned_not_marked")],["Silent",m("silent")],["Ambiguous",m("ambiguous")],["Marked, did not fail",m("marked_not_failed")]]);
+  }
   $("rd-lower").textContent = fe.lower_bound ? "At least these: "+(fe.modules_not_checked||[]).length+" modules were not compiled under the next rules because a module they depend on failed ("+(fe.modules_not_checked||[]).join(", ")+")." : "";
   // diagnostic x cell matrix
   const cells = R.cells.map(c=>c.cell), rows = {};
@@ -374,12 +381,13 @@ availTable($("fa-agp"), D.flagAvailability.agp); availTable($("fa-kgp"), D.flagA
     r.st[cn] = (r.st[cn]==="E"||d.severity==="error") ? "E" : "W"; }); });
   const masked = new Set(fe.modules_not_checked||[]);
   const bCell = cells.find(c=>c.startsWith("B-")), dCell = cells.find(c=>c.startsWith("D-"));
+  const maskedFix = new Set((fx||{}).modules_not_checked||[]), patched = c => /-fix64$/.test(c);
   const mod = d => (d.task||"").split(":").slice(0,-1).join(":");
   const list = Object.values(rows).sort((a,b)=>(a.d.file||"").localeCompare(b.d.file||"")||(a.d.line||0)-(b.d.line||0));
   $("rd-diags").innerHTML = "<table><thead><tr><th>File:line</th><th>Diagnostic</th>"+cells.map(c=>'<th class="num">'+esc(c.split("-")[0])+"</th>").join("")+"<th>Message</th></tr></thead><tbody>"+
     list.map(r=>{ const d=r.d, f=(d.file||"(no file) "+d.task).split("/").pop();
       return "<tr><td title=\""+esc(d.file||"")+"\"><code>"+esc(f)+(d.line?":"+d.line:"")+"</code></td><td><code>"+esc(d.name||"(unnamed)")+"</code></td>"+
-        cells.map(c=>{ const v=r.st[c]; const nc=!v&&(c===bCell||c===dCell)&&masked.has(mod(d));
+        cells.map(c=>{ const v=r.st[c]; const nc=!v&&(((c===bCell||c===dCell)&&masked.has(mod(d)))||(patched(c)&&maskedFix.has(mod(d))));
           return '<td class="num '+(v==="E"?"fail":"")+'">'+(v||(nc?'<span title="not compiled">nc</span>':"\u00B7"))+"</td>"; }).join("")+
         "<td>"+esc(d.message.slice(0,140))+(d.marker?' <span class="st st-probe">'+esc(d.marker.text)+"</span>":"")+"</td></tr>"; }).join("")+"</tbody></table>";
   $("rd-pred").innerHTML = R.predictions.map(p=>'<li class="'+(p.agree?"pass":"fail")+'">'+(p.agree?"Agrees":"Disagrees")+": "+esc(p.cell)+" \u2014 "+esc(p.note)+"</li>").join("");

@@ -5,6 +5,9 @@
   B  <current> tryNext         today's compiler, language + 1: errors under the next language rules
   C  <next>    language 2.4    the next compiler under today's language: its full warning list
   D  <next>    plain           the real upgrade: next compiler, its default language
+  E  <current> tryNext, fix64  B on a modified commit with line 64 fixed: the modules B could not compile
+  F  <next>    plain, fix64    D on the same modified commit
+Cells whose name ends in -fix64 need labs/kotlin-readiness/fix_line64.sh applied to the clone first (the workflow does).
 
 Usage: make_config.py OUT.json [--current 2.4.21] [--next 2.5.0-RC] [--list-cells]"""
 import argparse
@@ -27,6 +30,8 @@ def cells(current, nxt):
         {"name": "B-%s-trynext" % ca, "axes": {"kotlin": current}, "flags": {"kotlin.experimental.tryNext": "true"}},
         {"name": "C-%s-lang24" % nx, "axes": {"kotlin": nxt}, "flags": {}, "gradle_args": ["--init-script", LANG24]},
         {"name": "D-%s-plain" % nx, "axes": {"kotlin": nxt}, "flags": {}, "gradle_args": ["-Dlab.cell=D"]},
+        {"name": "E-%s-trynext-fix64" % ca, "axes": {"kotlin": current}, "flags": {"kotlin.experimental.tryNext": "true"}},
+        {"name": "F-%s-plain-fix64" % nx, "axes": {"kotlin": nxt}, "flags": {}, "gradle_args": ["-Dlab.cell=F"]},
     ]
 
 

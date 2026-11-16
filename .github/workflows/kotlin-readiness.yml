@@ -1,5 +1,6 @@
 # Kotlin readiness probes on nowinandroid (labs/kotlin-readiness): every Kotlin compile task, four cells
-# (A current plain, B current tryNext, C next compiler with language 2.4, D next plain). One job per cell; a failing
+# (A current plain, B current tryNext, C next compiler with language 2.4, D next plain; E and F = B and D on a
+# modified commit with SystemTrayNotifier.kt line 64 fixed). One job per cell; a failing
 # build is a result. Each cell uploads diagnostics.json (one record per compiler diagnostic); the aggregate job merges
 # them into readiness.json, compares the cells and checks the predictions.
 name: kotlin-readiness
@@ -38,7 +39,7 @@ jobs:
     timeout-minutes: 120
     strategy:
       fail-fast: false
-      max-parallel: 4
+      max-parallel: 6
       matrix:
         cell: ${{ fromJSON(needs.plan.outputs.cells) }}
     steps:
@@ -57,6 +58,7 @@ jobs:
           NEXT: ${{ inputs.next }}
           CELL: ${{ matrix.cell }}
         run: |
+          case "$CELL" in *-fix64) bash labs/kotlin-readiness/fix_line64.sh "$RUNNER_TEMP/nia" | tee -a "$GITHUB_STEP_SUMMARY";; esac
           python3 labs/kotlin-readiness/make_config.py "$RUNNER_TEMP/m.json" --current "$CUR" --next "$NEXT"
           python3 tools/version-matrix/vmatrix.py run --config "$RUNNER_TEMP/m.json" --project "$RUNNER_TEMP/nia" --cells "$CELL" --out out --offline --fail-on never
       - name: Extract diagnostics

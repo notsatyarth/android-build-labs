@@ -163,6 +163,8 @@ def predictions(L):
         ("B", "FAIL", "error", "tryNext = language 2.5: KTLC-288 is an error (measured 2026-11-16)"),
         ("C", None, "warning", "prediction: the next compiler under language 2.4 keeps line 64 a warning"),
         ("D", "FAIL", "error", "prediction: language 2.5 is the RC's default, so line 64 fails as on 2.5.0-Beta2"),
+        ("E", None, "clean", "modified commit (line 64 fixed): tryNext compiles past :core:notifications; record only"),
+        ("F", None, "clean", "modified commit (line 64 fixed): the RC compiles past :core:notifications; record only"),
     ]
 
 
@@ -180,6 +182,8 @@ def main():
     checks = []
     for letter, outcome, s64, note in predictions(L):
         c = L.get(letter)
+        if c is None and letter in "EF":
+            continue  # optional patch cells
         if c is None:
             checks.append({"cell": letter, "agree": False, "note": "missing cell"})
             ok = False
@@ -206,6 +210,23 @@ def main():
         de = {key(d) for d in kotlin(L["D"], "error")} - base
         comps["B_vs_D_same_language_rules"] = {"both": len(be & de), "only_B": sorted(map(list, be - de)),
                                                "only_D": sorted(map(list, de - be))}
+    # patch cells: line 64 is fixed on purpose, so it is not a "marked but did not fail" case
+    for x, y, name in (("A", "E", "A_vs_E_future_errors_fix64"),):
+        if x in L and y in L:
+            nl = (L[y]["language_versions"] or [None])[-1]
+            fe = future_errors(L[x], L[y], nl)
+            fe["marked_not_failed"] = [m for m in fe["marked_not_failed"]
+                                       if (m["warning"]["file"], m["warning"]["line"]) != LINE64]
+            nc = modules_not_checked(L[y])
+            comps[name] = dict(fe, language=nl or "unknown", lower_bound=bool(nc), modules_not_checked=nc,
+                               patched=[{"file": LINE64[0], "line": LINE64[1], "change": "explicit return type Unit"}])
+    if "E" in L and "F" in L:
+        comps["E_vs_F_next_compiler_at_next_language"] = new_warnings(L["E"], L["F"])
+        base = {key(d) for d in kotlin(L["A"], "error")} if "A" in L else set()
+        ee = {key(d) for d in kotlin(L["E"], "error")} - base
+        fe2 = {key(d) for d in kotlin(L["F"], "error")} - base
+        comps["E_vs_F_same_language_rules"] = {"both": len(ee & fe2), "only_E": sorted(map(list, ee - fe2)),
+                                               "only_F": sorted(map(list, fe2 - ee))}
     out = {"schema": SCHEMA, "run_id": a.run_id, "harness_sha": a.harness_sha, "nowinandroid_sha": a.nia_sha,
            "line_under_test": {"file": LINE64[0], "line": LINE64[1]},
            "cells": [summary(cells[n]) for n in sorted(cells)], "predictions": checks, "comparisons": comps,
@@ -245,6 +266,21 @@ def main():
     if bd:
         print("B vs D errors (same language rules, different compiler): both %d, only B %d, only D %d" % (
             bd["both"], len(bd["only_B"]), len(bd["only_D"])))
+    fx = comps.get("A_vs_E_future_errors_fix64")
+    if fx:
+        print("\nWith line 64 fixed (E vs A, language %s%s): predicted %d, warned not marked %d, silent %d, ambiguous %d;"
+              " marked but not failed %d" % (fx["language"], ", lower bound" if fx["lower_bound"] else ", complete",
+                                             len(fx["predicted"]), len(fx["warned_not_marked"]), len(fx["silent"]),
+                                             len(fx["ambiguous"]), len(fx["marked_not_failed"])))
+        for b in ("warned_not_marked", "silent"):
+            for x in fx[b]:
+                e = x["error"]
+                print("  %s: %s %s:%s %s" % (b, e["name"], e["file"], e["line"], (e["message"] or "")[:90]))
+    ef = comps.get("E_vs_F_next_compiler_at_next_language")
+    if ef:
+        print("RC vs 2.4.21, both at language 2.5 (F vs E): %d new warnings, %d gone" % (len(ef["new"]), len(ef["gone"])))
+        for d in ef["new"][:20]:
+            print("  new: %s %s:%s %s" % (d["name"], d["file"], d["line"], (d["message"] or "")[:90]))
     sys.exit(0 if ok else 1)
 
 
