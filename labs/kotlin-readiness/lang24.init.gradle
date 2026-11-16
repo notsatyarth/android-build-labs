@@ -1,0 +1,12 @@
+// Kotlin readiness probes, cell C: pin language and API version 2.4 on every Kotlin compile task, so a newer compiler
+// can be run under today's language rules. KotlinVersion is loaded through the task's class loader because the init
+// script is compiled before the Kotlin Gradle plugin is on the classpath.
+gradle.lifecycle.beforeProject { p ->
+    p.tasks.configureEach { t ->
+        if (t.name.startsWith("compile") && t.name.endsWith("Kotlin") && t.hasProperty("compilerOptions")) {
+            def kv = t.class.classLoader.loadClass("org.jetbrains.kotlin.gradle.dsl.KotlinVersion")
+            t.compilerOptions.languageVersion.set(Enum.valueOf(kv, "KOTLIN_2_4"))
+            t.compilerOptions.apiVersion.set(Enum.valueOf(kv, "KOTLIN_2_4"))
+        }
+    }
+}

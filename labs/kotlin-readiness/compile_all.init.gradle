@@ -1,0 +1,20 @@
+// Kotlin readiness probes: register `readinessCompileAll` in every project of the root build. It depends on every
+// Kotlin compile task of that project (main, unit test and Android test sources, every variant), so one unqualified
+// task name compiles all Kotlin code. build-logic is an included build and is not affected.
+// Also prints, at configuration time, the language version each compile task is set to ("convention" = KGP default
+// for that compiler, unless tryNext or an explicit setting changes it). Isolated Projects safe: each hook touches
+// only its own project.
+def isKotlinCompile = { t -> t.name.startsWith("compile") && t.name.endsWith("Kotlin") && t.hasProperty("compilerOptions") }
+
+gradle.lifecycle.beforeProject { p ->
+    p.tasks.register("readinessCompileAll") { t ->
+        t.dependsOn(p.tasks.matching { isKotlinCompile(it) })
+    }
+}
+
+gradle.lifecycle.afterProject { p ->
+    p.tasks.matching { isKotlinCompile(it) }.each { t ->
+        def lv = t.compilerOptions.languageVersion.getOrNull()
+        println("LAB lv=" + (lv == null ? "unset" : lv.version) + " " + t.path)
+    }
+}
