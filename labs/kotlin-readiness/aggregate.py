@@ -137,7 +137,7 @@ def summary(c):
         "cell": c["cell"], "requested": c["requested"], "flags": c["flags"], "gradle_args": c["gradle_args"],
         "outcome": c["outcome"], "failure_class": failure_class(c), "duration_s": c["duration_s"],
         "language_versions": c["language_versions"],
-        "compile_tasks": {k2: (v if isinstance(v, int) else len(v)) for k2, v in c["compile_tasks"].items()},
+        "compile_tasks": {k2: (v if isinstance(v, (int, bool)) else len(v)) for k2, v in c["compile_tasks"].items()},
         "failed_tasks": c["failed_tasks"], "modules_not_checked": modules_not_checked(c),
         "counts": {"kotlin_all": len(k), "project_warnings": sum(d["severity"] == "warning" for d in p),
                    "project_errors": sum(d["severity"] == "error" for d in p),

@@ -172,7 +172,8 @@ def extract(cell_dir):
     expected = sorted(lv)  # every compile task the init script saw at configuration time
     executed = sorted(t for t, s in kc.items() if s in ("EXECUTED", "FAILED"))
     not_run = sorted(t for t in expected if t not in kc)
-    skipped = sorted(t for t, s in kc.items() if s not in ("EXECUTED", "FAILED"))
+    no_source = sorted(t for t, s in kc.items() if s == "NO-SOURCE")
+    skipped = sorted(t for t, s in kc.items() if s not in ("EXECUTED", "FAILED", "NO-SOURCE"))
     return {
         "schema": SCHEMA,
         "cell": cell.get("name") or os.path.basename(cell_dir.rstrip("/")),
@@ -182,7 +183,8 @@ def extract(cell_dir):
         "duration_s": cell.get("duration_s"), "guard": (cell.get("guard") or {}).get("status"),
         "logs": [os.path.basename(p) for p in logs],
         "compile_tasks": {"expected": len(expected), "executed": len(executed), "not_run": not_run,
-                          "up_to_date_or_cached": skipped, "failed": [t for t in failed if is_kotlin_compile(t)]},
+                          "no_source": no_source, "up_to_date_or_cached": skipped,
+                          "complete": bool(expected) and not not_run and not skipped, "failed": [t for t in failed if is_kotlin_compile(t)]},
         "executed_compile_tasks": executed,
         "failed_tasks": failed,
         "language_versions": sorted(set(lv.values())),

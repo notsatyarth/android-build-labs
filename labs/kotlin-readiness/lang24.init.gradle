@@ -8,6 +8,7 @@ gradle.lifecycle.beforeProject { p ->
             def kv = t.class.classLoader.loadClass("org.jetbrains.kotlin.gradle.dsl.KotlinVersion")
             t.compilerOptions.languageVersion.set(Enum.valueOf(kv, "KOTLIN_2_4"))
             t.compilerOptions.apiVersion.set(Enum.valueOf(kv, "KOTLIN_2_4"))
+            println("LAB lv=2.4 " + t.path + " (pinned)")
         }
     }
 }

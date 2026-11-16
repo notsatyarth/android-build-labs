@@ -20,6 +20,8 @@ data = {
     "features": load("data/features/features.json"),
     "knownIssues": [load(p) for p in sorted(
         os.path.relpath(g, root) for g in glob.glob(os.path.join(root, "data/known-issues/*.json")))],
+    "readiness": [load(p) for p in sorted(
+        os.path.relpath(g, root) for g in glob.glob(os.path.join(root, "data/readiness/*.json")))],
 }
 out = os.path.join(root, "docs", "dashboard", "data.js")
 with open(out, "w") as f:

@@ -159,6 +159,16 @@ a{color:var(--blue)}
 <div class="card"><p id="fb-how" class="note"></p><div class="fgrid"><button type="button" id="f-open">Open all</button><button type="button" id="f-close">Close all</button></div></div>
 <div id="features"></div>
 <div class="card"><h3>Cautions</h3><ul id="f-cautions"></ul><h3>Not run</h3><ul id="f-notrun"></ul></div>
+<h2 id="readiness">6. Kotlin readiness: what the next Kotlin means for the code</h2>
+<p>Every Kotlin compile task of nowinandroid (all variants, unit and Android test sources), built four ways. The compiler's own messages, unedited; only project code is counted (build-logic is compiled by Gradle's own Kotlin).</p>
+<div class="card"><div class="scroll" id="rd-cells"></div><p class="note" id="rd-meta"></p></div>
+<div class="card"><h3>Errors under the next language rules, against today's warnings</h3>
+<p class="note">Joined on file and line, not on the diagnostic name: the warning and the later error have different names.</p>
+<div class="scroll" id="rd-buckets"></div><p class="note" id="rd-lower"></p></div>
+<div class="card"><h3>Every diagnostic, per cell</h3>
+<p class="note">W warning, E error, &middot; not reported. "Not compiled" means the module depends on a module that failed, so its code was never checked. A diagnostic reported for several variants is one row.</p>
+<div class="scroll" id="rd-diags"></div></div>
+<div class="card"><h3>Predictions</h3><ul id="rd-pred"></ul></div>
 </main>
 <div id="tip" role="tooltip"></div>
 <script src="data.js"></script>
@@ -332,6 +342,47 @@ availTable($("fa-agp"), D.flagAvailability.agp); availTable($("fa-kgp"), D.flagA
   const setAll = o => document.querySelectorAll("details.feat").forEach(d=>d.open=o);
   $("f-open").onclick=()=>setAll(true); $("f-close").onclick=()=>setAll(false);
   if(location.hash){ const t=document.querySelector(location.hash.replace(/[^#\w-]/g,"")); if(t&&t.tagName==="DETAILS") t.open=true; }
+})();
+
+// ---- Kotlin readiness ----
+(function(){
+  const runs = D.readiness||[]; if(!runs.length){ $("rd-cells").innerHTML="<p>No run frozen yet.</p>"; return; }
+  const R = runs[runs.length-1];
+  const desc = {A:["current","current default","today's full warning list"],B:["current + tryNext","current + 1","errors under the next language rules"],
+                C:["next","2.4 (pinned)","the next compiler's warnings under today's rules"],D:["next","next default","the real upgrade"]};
+  const L = c => c.cell.split("-")[0];
+  $("rd-cells").innerHTML = table(["Cell","Compiler","Language","Outcome","Failure class",{t:"Compiled",num:1},{t:"No source",num:1},{t:"Not compiled",num:1},{t:"Warnings",num:1},{t:"Errors",num:1},"What it gives"],
+    R.cells.map(c=>[L(c), (c.requested||{}).kotlin+(c.flags&&c.flags["kotlin.experimental.tryNext"]?" + tryNext":""), (c.language_versions||[]).map(v=>v==="unset"?"compiler default":v).join(", ")||desc[L(c)][1],
+      c.outcome, c.failure_class||"", c.compile_tasks.executed, c.compile_tasks.no_source, c.compile_tasks.not_run, c.counts.project_warnings, c.counts.project_errors, desc[L(c)][2]]));
+  $("rd-meta").innerHTML = "nowinandroid "+esc((R.nowinandroid_sha||"").slice(0,7))+" \u00B7 CI run "+(R.run_id?'<a href="https://github.com/notsatyarth/android-build-labs/actions/runs/'+esc(R.run_id)+'" rel="noopener">'+esc(R.run_id)+"</a>":"?")+
+    " \u00B7 x86 Linux runners, one cold build per cell. Errors present in cell A are nowinandroid's own (baseline) and are not counted as upgrade effects.";
+  const fe = R.comparisons.A_vs_B_future_errors||{};
+  const n = k => (fe[k]||[]).length;
+  $("rd-buckets").innerHTML = table(["Outcome",{t:"Count",num:1},"Meaning"],[
+    ["Predicted",n("predicted"),"today's warning at that line says it will become an error in language "+(fe.language||"N")],
+    ["Warned, not marked",n("warned_not_marked"),"a warning at that line, without the 'will become an error' sentence"],
+    ["Silent",n("silent"),"no warning at that line today"],
+    ["Ambiguous",n("ambiguous"),"several warnings at that line"],
+    ["Marked, did not fail",n("marked_not_failed"),"the schedule moved, or the module was not compiled"],
+    ["Baseline (already an error today)",n("baseline_errors"),"not an upgrade effect"]]);
+  $("rd-lower").textContent = fe.lower_bound ? "At least these: "+(fe.modules_not_checked||[]).length+" modules were not compiled under the next rules because a module they depend on failed ("+(fe.modules_not_checked||[]).join(", ")+")." : "";
+  // diagnostic x cell matrix
+  const cells = R.cells.map(c=>c.cell), rows = {};
+  cells.forEach(cn=>{ (R.diagnostics[cn]||[]).filter(d=>d.source==="kotlin-compiler"&&d.origin==="project").forEach(d=>{
+    const k=[d.file||d.task,d.line||"",d.name||d.message.slice(0,60)].join("|");
+    const r = rows[k] || (rows[k]={d, st:{}, tasks:new Set()}); r.tasks.add(d.task);
+    r.st[cn] = (r.st[cn]==="E"||d.severity==="error") ? "E" : "W"; }); });
+  const masked = new Set(fe.modules_not_checked||[]);
+  const bCell = cells.find(c=>c.startsWith("B-")), dCell = cells.find(c=>c.startsWith("D-"));
+  const mod = d => (d.task||"").split(":").slice(0,-1).join(":");
+  const list = Object.values(rows).sort((a,b)=>(a.d.file||"").localeCompare(b.d.file||"")||(a.d.line||0)-(b.d.line||0));
+  $("rd-diags").innerHTML = "<table><thead><tr><th>File:line</th><th>Diagnostic</th>"+cells.map(c=>'<th class="num">'+esc(c.split("-")[0])+"</th>").join("")+"<th>Message</th></tr></thead><tbody>"+
+    list.map(r=>{ const d=r.d, f=(d.file||"(no file) "+d.task).split("/").pop();
+      return "<tr><td title=\""+esc(d.file||"")+"\"><code>"+esc(f)+(d.line?":"+d.line:"")+"</code></td><td><code>"+esc(d.name||"(unnamed)")+"</code></td>"+
+        cells.map(c=>{ const v=r.st[c]; const nc=!v&&(c===bCell||c===dCell)&&masked.has(mod(d));
+          return '<td class="num '+(v==="E"?"fail":"")+'">'+(v||(nc?'<span title="not compiled">nc</span>':"\u00B7"))+"</td>"; }).join("")+
+        "<td>"+esc(d.message.slice(0,140))+(d.marker?' <span class="st st-probe">'+esc(d.marker.text)+"</span>":"")+"</td></tr>"; }).join("")+"</tbody></table>";
+  $("rd-pred").innerHTML = R.predictions.map(p=>'<li class="'+(p.agree?"pass":"fail")+'">'+(p.agree?"Agrees":"Disagrees")+": "+esc(p.cell)+" \u2014 "+esc(p.note)+"</li>").join("");
 })();
 
 // ---- known issue ----
