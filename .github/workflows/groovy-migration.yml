@@ -13,6 +13,10 @@ on:
         description: "rounds (each round = one kts run + one groovy run)"
         required: false
         default: "3"
+      mode:
+        description: "full = the four steps of run.sh; abi = only the build-logic API change case (abi.sh)"
+        required: false
+        default: "full"
 permissions:
   contents: read
 jobs:
@@ -37,7 +41,18 @@ jobs:
           cd "$RUNNER_TEMP/nia" && ./gradlew :app:assembleDemoDebug --console=plain -q && ./gradlew --stop
           python3 -I "$GITHUB_WORKSPACE/labs/groovy-migration/convert.py" . && ./gradlew :app:assembleDemoDebug --console=plain -q && ./gradlew --stop
           git checkout -q -- . && git clean -fdxq
+      - name: Build-logic API change (abi.sh)
+        if: inputs.mode == 'abi'
+        env:
+          ROUNDS: ${{ inputs.rounds }}
+        run: |
+          set -o pipefail
+          echo '## Groovy migration: build-logic API change (CI: x86 Linux runner)' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          bash labs/groovy-migration/abi.sh "$RUNNER_TEMP/nia" out/abi "$ROUNDS" | tee -a "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
       - name: Alternating runs
+        if: inputs.mode != 'abi'
         env:
           ROUNDS: ${{ inputs.rounds }}
         run: |
@@ -45,7 +60,7 @@ jobs:
             for v in kts groovy; do bash labs/groovy-migration/run.sh "$RUNNER_TEMP/nia" out "$v" "r$r"; done
           done
       - name: Compare
-        if: always()
+        if: always() && inputs.mode != 'abi'
         run: |
           set -o pipefail
           echo '## Groovy migration (CI: x86 Linux runner)' >> "$GITHUB_STEP_SUMMARY"
