@@ -16,6 +16,10 @@ on:
         description: "Gradle tasks, space separated (release: ':app:assembleDemoRelease :app:lintDemoRelease :app:testDemoDebugUnitTest')"
         required: false
         default: ":app:assembleDemoDebug"
+      java:
+        description: "JDK major version for Gradle and the build (nowinandroid's own CI uses 21; 17 kept as default for earlier runs)"
+        required: false
+        default: "17"
 permissions:
   contents: read
 jobs:
@@ -27,7 +31,7 @@ jobs:
       - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: ${{ inputs.java }}
       - name: Runner info
         run: bash .github/scripts/runner_info.sh
       - name: Clone nowinandroid
@@ -39,7 +43,7 @@ jobs:
       - name: Summary
         if: always()
         run: |
-          echo "### Per-process CPU, wall and peak memory, nowinandroid clean build: ${{ inputs.tasks }} (CI: x86 Linux runner)" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Per-process CPU, wall and peak memory, nowinandroid clean build: ${{ inputs.tasks }}, JDK ${{ inputs.java }} (CI: x86 Linux runner)" >> "$GITHUB_STEP_SUMMARY"
           python3 -I labs/process-samples/summarize.py out | tee -a "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
