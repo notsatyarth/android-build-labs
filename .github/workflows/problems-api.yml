@@ -1,0 +1,78 @@
+# Problems API through the Tooling API on nowinandroid (labs/problems-api). One job per cell; every cell runs
+# :app:assembleDemoDebug --rerun-tasks --no-build-cache --warning-mode=all through ProblemsRunner.java and writes one
+# JSON line per problem, plus the console log of the same build for comparison with console parsing.
+# A cell whose build fails is a result; a runner error is not.
+name: problems-api
+on:
+  workflow_dispatch:
+    inputs:
+      nia_ref:
+        description: "nowinandroid commit (full SHA)"
+        required: false
+        default: "2982e63cb691ad49cd009aab43dc206fee6699c2"
+permissions:
+  contents: read
+jobs:
+  cell:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        cell: [c1-k230, c2-k230-agp, c3-k2421-agp, c4-k2421-agp-next]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Runner info
+        run: bash .github/scripts/runner_info.sh
+      - name: Clone nowinandroid
+        env:
+          REF: ${{ inputs.nia_ref }}
+        run: bash .github/scripts/clone_nia.sh "$RUNNER_TEMP/nia" "$REF"
+      - name: Tooling API jar
+        run: |
+          mkdir -p "$RUNNER_TEMP/tapi"
+          curl -sfL -o "$RUNNER_TEMP/tapi/gradle-tooling-api-9.7.1.jar" https://repo.gradle.org/gradle/libs-releases/org/gradle/gradle-tooling-api/9.7.1/gradle-tooling-api-9.7.1.jar
+          echo "e40a1f7707e4bf22f8039f6bbcdb012198f0f172d9331963bc7b41eb0ff5051b  $RUNNER_TEMP/tapi/gradle-tooling-api-9.7.1.jar" | sha256sum -c -
+          (cd "$RUNNER_TEMP/nia" && ./gradlew --version --console=plain)
+      - name: Build through the problems runner
+        env:
+          CELL: ${{ matrix.cell }}
+        run: |
+          LIB=$(ls -d "$HOME"/.gradle/wrapper/dists/gradle-9.7.1-bin/*/gradle-9.7.1/lib)
+          bash labs/problems-api/run_cell.sh "$RUNNER_TEMP/nia" "$CELL" "out/$CELL" "$RUNNER_TEMP/tapi/gradle-tooling-api-9.7.1.jar:$LIB/slf4j-api-2.0.17.jar"
+      - name: Summary
+        if: always()
+        env:
+          CELL: ${{ matrix.cell }}
+        run: python3 -I labs/problems-api/summarize.py "out/$CELL" --markdown | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: cell-${{ matrix.cell }}
+          path: out/
+          retention-days: 90
+  compare:
+    needs: cell
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: parts
+          merge-multiple: true
+      - name: Compare
+        run: |
+          set -o pipefail
+          ls parts
+          { echo "### Problems API via the Tooling API, nowinandroid (CI: x86 Linux runner)"; python3 -I labs/problems-api/compare.py parts --markdown --out results.json; } | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: compare
+          path: results.json
+          retention-days: 90
