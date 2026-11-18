@@ -85,6 +85,8 @@ def summarize(d):
         groups[" > ".join(e["group_path"])] += e["total"]
     severities = collections.Counter(r.get("severity_name", "?") for r in probs)
     kc = [r for r in probs if kotlin_compiler(r)]
+    # build-logic is compiled by Gradle's embedded Kotlin (kotlin-dsl), not the project's Kotlin version
+    kc_project = [r for r in kc if not (r.get("task") or "").startswith(":build-logic")]
     kc_ids = [e for e in by_id.values() if e["id_display_name"] and e["id_display_name"].lower().startswith("kotlin compiler")]
     line64 = [r for r in probs if any((l.get("path") or "").endswith("SystemTrayNotifier.kt") and l.get("line") == 64
                                       for l in r["origin_locations"] + r["contextual_locations"])]
@@ -113,6 +115,8 @@ def summarize(d):
                  "severities_single": dict(severities), "by_owner": dict(owners), "by_group_path": dict(groups),
                  "kotlin_compiler_single": len(kc),
                  "kotlin_compiler_total": sum(e["total"] for e in kc_ids),
+                 "kotlin_compiler_project_single": len(kc_project),
+                 "kotlin_compiler_build_logic_single": len(kc) - len(kc_project),
                  "with_failure": sum(1 for r in probs if r.get("has_failure"))},
         "console": {k: console.get(k, 0) for k in CONSOLE},
         "line64": line64[:3],
@@ -134,6 +138,7 @@ def markdown(s):
            "| Tooling API summarised (beyond threshold) | %d |" % t["summarised"],
            "| Tooling API total | %d |" % t["total"],
            "| of which Kotlin compiler (total) | %d |" % t["kotlin_compiler_total"],
+           "| Kotlin compiler single events, project / build-logic | %d / %d |" % (t["kotlin_compiler_project_single"], t["kotlin_compiler_build_logic_single"]),
            ] + ["| console `%s` lines | %d |" % (k, n) for k, n in c.items()] + [
            "",
            "| Owner (from group path) | Group path | Id | Total |", "|---|---|---|---|"]

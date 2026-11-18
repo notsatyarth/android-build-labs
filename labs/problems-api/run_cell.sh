@@ -26,7 +26,7 @@ case "$CELL" in
   c4-k2421-agp-next) set_kotlin 2.4.21; ARGS+=(-Pandroid.enableProblemsAPI=true -Pkotlin.experimental.tryNext=true) ;;
   *) echo "unknown cell $CELL"; exit 2 ;;
 esac
-mkdir -p "$OUT"
+mkdir -p "$OUT"; OUT=$(cd "$OUT" && pwd)  # absolute: later steps cd into the project
 {
   echo "cell=$CELL"
   echo "nia=$(git -C "$NIA" rev-parse HEAD)"

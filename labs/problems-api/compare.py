@@ -6,7 +6,8 @@ DIR holds one sub-directory per cell, each with summary.json (summarize.py). Exp
                A broken harness is the only thing that makes this script exit non-zero.
   H2 outcome   c1, c2, c3 build successfully; c4 (tryNext on Kotlin 2.4.21) fails (line 64 of SystemTrayNotifier.kt,
                KTLC-288, seen in the kotlin-readiness and kotlin-next-checks labs).
-  H3 Kotlin    Kotlin compiler diagnostics reach the Problems API on Kotlin 2.4.21 (c3) but not on 2.3.0 (c1, c2).
+  H3 Kotlin    Kotlin compiler diagnostics of project modules reach the Problems API on Kotlin 2.4.21 (c3) but not on
+               2.3.0 (c1, c2). build-logic is compiled by Gradle's embedded Kotlin and is counted separately.
                Source: "What's new in Kotlin 2.4.0" (compiler messages for Kotlin/JVM go to the Problems API).
   H4 AGP       no AGP problem in c1 (android.enableProblemsAPI defaults to false); c2 to c4 informational only:
                AGP reports sync issues, and a clean nowinandroid build may have none.
@@ -50,11 +51,12 @@ def main():
               "outcome %s, %d single problem events" % (s["outcome"], t["single"]))
         want = "failure" if name.startswith("c4") else "success"
         check("H2", name, "PASS" if s["outcome"] == want else "DIFF", "expected %s, got %s" % (want, s["outcome"]))
-        kc = t["kotlin_compiler_total"]
+        kc = t["kotlin_compiler_project_single"]
+        bl = "; build-logic (Gradle's embedded Kotlin): %d" % t["kotlin_compiler_build_logic_single"]
         if name in ("c1-k230", "c2-k230-agp"):
-            check("H3", name, "PASS" if kc == 0 else "DIFF", "Kotlin compiler problems on 2.3.0: %d (expected 0)" % kc)
+            check("H3", name, "PASS" if kc == 0 else "DIFF", "project Kotlin compiler problems on 2.3.0: %d (expected 0)%s" % (kc, bl))
         elif name == "c3-k2421-agp":
-            check("H3", name, "PASS" if kc > 0 else "DIFF", "Kotlin compiler problems on 2.4.21: %d (expected > 0)" % kc)
+            check("H3", name, "PASS" if kc > 0 else "DIFF", "project Kotlin compiler problems on 2.4.21: %d (expected > 0)%s" % (kc, bl))
         agp = owner_total(s, "AGP")
         if name == "c1-k230":
             check("H4", name, "PASS" if agp == 0 else "DIFF", "AGP problems without the flag: %d (expected 0)" % agp)
