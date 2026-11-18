@@ -1,0 +1,126 @@
+# Probe 3: the performance cost of one upgrade on nowinandroid, time and peak memory per process (labs/probe3).
+# Pair K: Kotlin OLD_K -> NEW_K at one nowinandroid commit, both sides with the SystemTrayNotifier.kt line-64 fix, nothing
+# else different. Pair A: AGP 8.13.1 -> 9.0.0 (old-vs-new p2 commits); its time comes from old-vs-new run 44225818987
+# (data/probe3), only its memory is measured here. Numbers are x86 Linux runner numbers.
+name: probe3
+on:
+  workflow_dispatch:
+    inputs:
+      nia_ref:
+        description: "nowinandroid commit for pair K (full SHA)"
+        required: false
+        default: "2982e63cb691ad49cd009aab43dc206fee6699c2"
+      old_kotlin:
+        description: "pair K old Kotlin (the commit's own catalog value)"
+        required: false
+        default: "2.3.0"
+      new_kotlin:
+        description: "pair K new Kotlin"
+        required: false
+        default: "2.5.0-RC"
+      iterations:
+        description: "gradle-profiler measured iterations per scenario (pair K)"
+        required: false
+        default: "10"
+      builds:
+        description: "procwatch clean builds per side (memory)"
+        required: false
+        default: "5"
+      java:
+        description: "JDK major version, all jobs"
+        required: false
+        default: "17"
+permissions:
+  contents: read
+jobs:
+  time-k:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.java }}
+      - name: Runner info
+        run: bash .github/scripts/runner_info.sh
+      - name: Time, pair K
+        env:
+          WORK: ${{ runner.temp }}/p3t
+          ITER: ${{ inputs.iterations }}
+          NIA_REF: ${{ inputs.nia_ref }}
+          OLD_K: ${{ inputs.old_kotlin }}
+          NEW_K: ${{ inputs.new_kotlin }}
+        run: bash labs/probe3/time_k.sh
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: time-K
+          path: |
+            ${{ runner.temp }}/p3t/profiler-out/**/benchmark.csv
+            ${{ runner.temp }}/p3t/profiler-out/*.log
+            ${{ runner.temp }}/p3t/profiler-out/*.txt
+            ${{ runner.temp }}/p3t/profiler-out/*.conf
+            ${{ runner.temp }}/p3t/profiler-out/agg.json
+          retention-days: 90
+  mem:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        pair: [K, A]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.java }}
+      - name: Runner info
+        run: bash .github/scripts/runner_info.sh
+      - name: Memory, pair ${{ matrix.pair }}
+        env:
+          NIA_REF: ${{ inputs.nia_ref }}
+          OLD_K: ${{ inputs.old_kotlin }}
+          NEW_K: ${{ inputs.new_kotlin }}
+        run: bash labs/probe3/mem.sh ${{ matrix.pair }} out "${{ inputs.builds }}"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: mem-${{ matrix.pair }}
+          path: out/
+          retention-days: 90
+  analyse:
+    needs: [time-k, mem]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: parts
+      - name: Analyse and check
+        env:
+          OLD_K: ${{ inputs.old_kotlin }}
+          NEW_K: ${{ inputs.new_kotlin }}
+        run: |
+          set -o pipefail
+          read -r KO KN < parts/time-K/sides.txt
+          {
+            echo "### Probe 3 (CI: x86 Linux runner, JDK ${{ inputs.java }})"
+            python3 -I labs/probe3/analyse.py probe3.json --meta old_kotlin "$OLD_K" --meta new_kotlin "$NEW_K" \
+              --time K parts/time-K/agg.json "$KO" "$KN" \
+              --time A data/probe3/old-vs-new-p2-run44225818987-agg.json ade8065442 2c56ce13b \
+              --mem parts/mem-K/mem-K.json --mem parts/mem-A/mem-A.json
+            echo
+            echo "Resolved versions (time-K):"; sed 's/^/    /' parts/time-K/versions.txt
+            echo "Resolved versions (mem-A):"; sed 's/^/    /' parts/mem-A/versions.txt
+            echo
+            python3 -I labs/probe3/compare.py probe3.json parts/time-K parts/mem-K parts/mem-A
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: probe3
+          path: probe3.json
+          retention-days: 90
