@@ -1,0 +1,22 @@
+ade8065442:
+  Gradle 9.2.1
+  Kotlin:        2.2.20
+  Launcher JVM:  17.0.21 (Eclipse Adoptium 17.0.21+9)
+  Daemon JVM:    /usr/lib/jvm/temurin-17-jdk-amd64 (no JDK specified, using current Java home)
+  com.android.tools.build:gradle:8.13.1
+  com.google.devtools.ksp:symbol-processing-api:2.3.4
+  com.google.devtools.ksp:symbol-processing-gradle-plugin:2.3.4
+  org.jetbrains.kotlin:compose-compiler-gradle-plugin:2.3.0
+  org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.0
+2c56ce13b:
+  Gradle 9.2.1
+  Kotlin:        2.2.20
+  Launcher JVM:  17.0.21 (Eclipse Adoptium 17.0.21+9)
+  Daemon JVM:    /usr/lib/jvm/temurin-17-jdk-amd64 (no JDK specified, using current Java home)
+  com.android.tools.build:gradle:9.0.0
+  com.google.devtools.ksp:symbol-processing-api:2.3.4
+  com.google.devtools.ksp:symbol-processing-gradle-plugin:2.2.10-2.0.2 -> 2.3.4
+  com.google.devtools.ksp:symbol-processing-gradle-plugin:2.3.4
+  org.jetbrains.kotlin:compose-compiler-gradle-plugin:2.3.0
+  org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.10 -> 2.3.0
+  org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.0

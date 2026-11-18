@@ -25,3 +25,21 @@ What does one upgrade cost in build time and memory? Two pairs on nowinandroid, 
 - `compare.py`: both sides built, the resolved KGP is the requested one with AGP, KSP and Gradle equal, pair A CI time
   directions against the macOS medians of old-vs-new.
 - Workflow: `probe3` (inputs `nia_ref`, `old_kotlin`, `new_kotlin`, `iterations`, `builds`, `java`).
+
+## Results: run 44264907185 (attempt 2; mem-K from attempt 1)
+
+Data in `data/probe3/run44264907185/` (`probe3.json` has every value). ubuntu-24.04 image 20261111, 4 vCPU, about 15.5 GiB,
+Temurin 17.0.21; each job on its own runner (time-K: AMD EPYC 7763; mem-K: AMD EPYC 9V74; mem-A: Intel Xeon 6975P-C), so
+compare within a pair only. Attempt 1 of time-K and mem-A failed in the unmeasured prime build on plugin resolution
+(`com.android.lint:9.3.2` not found; `kotlin-stdlib-2.2.20.pom` could not be fetched from plugins.gradle.org); rerun once.
+Resolved, pair K: Gradle 9.7.1, AGP 9.3.2, KSP 2.3.4 on both sides; KGP and Compose compiler plugin 2.3.0 vs 2.5.0-RC.
+
+Measurable (95 % interval of the percent change of medians excludes 0):
+- Pair K time: none of the three scenarios (clean -8.58 % [-18.6, 27.6], config +1.15 % [-13.2, 16.4], nonabi +3.85 % [-10.3, 18.5]).
+- Pair K memory: peak total RSS -12.0 % [-20.4, -1.59] (8740 to 7700 MB; without build 1: -7.80 % [-19.3, -0.487]);
+  second Kotlin daemon -25.1 % [-43.1, -0.221] with all builds, not measurable without build 1 (-21.8 % [-39.2, 0.871]).
+- Pair A time (old-vs-new run 44225818987): config -28.2 %, nonabi -25.1 % measurable; clean +1.40 % [-16.2, 30.0] not.
+- Pair A memory: nothing measurable.
+- Two Kotlin daemons in every build of both pairs. No Gradle worker process was seen in any build.
+- The gradle-profiler clean iterations still drift downwards on both sides (k230 61.6 s to 38.6 s, k250rc 70.2 s to
+  38.6 s over the 10 measured iterations), so one warm-up is not enough for a steady state on these runners.

@@ -1,0 +1,285 @@
+{
+ "pair": "A",
+ "sides": [
+  "ade8065442",
+  "2c56ce13b"
+ ],
+ "builds": {
+  "ade8065442": [
+   {
+    "gradle_daemon_peak_mb": 4742,
+    "kotlin_daemon_1_peak_mb": 765,
+    "kotlin_daemon_2_peak_mb": 3652,
+    "kotlin_daemons": 2,
+    "gradle_workers_peak_mb": 0,
+    "aapt2_peak_mb": 37,
+    "total_peak_mb": 9135,
+    "total_peak_at_s": 102.8,
+    "wall_s": 103.8,
+    "exit_code": 0,
+    "other_kinds": [],
+    "build": 1
+   },
+   {
+    "gradle_daemon_peak_mb": 5385,
+    "kotlin_daemon_1_peak_mb": 766,
+    "kotlin_daemon_2_peak_mb": 2023,
+    "kotlin_daemons": 2,
+    "gradle_workers_peak_mb": 0,
+    "aapt2_peak_mb": 37,
+    "total_peak_mb": 8158,
+    "total_peak_at_s": 100.2,
+    "wall_s": 101.2,
+    "exit_code": 0,
+    "other_kinds": [],
+    "build": 2
+   },
+   {
+    "gradle_daemon_peak_mb": 4952,
+    "kotlin_daemon_1_peak_mb": 734,
+    "kotlin_daemon_2_peak_mb": 2292,
+    "kotlin_daemons": 2,
+    "gradle_workers_peak_mb": 0,
+    "aapt2_peak_mb": 47,
+    "total_peak_mb": 7966,
+    "total_peak_at_s": 101.2,
+    "wall_s": 102.3,
+    "exit_code": 0,
+    "other_kinds": [],
+    "build": 3
+   },
+   {
+    "gradle_daemon_peak_mb": 4718,
+    "kotlin_daemon_1_peak_mb": 726,
+    "kotlin_daemon_2_peak_mb": 2163,
+    "kotlin_daemons": 2,
+    "gradle_workers_peak_mb": 0,
+    "aapt2_peak_mb": 32,
+    "total_peak_mb": 7600,
+    "total_peak_at_s": 101.1,
+    "wall_s": 102.1,
+    "exit_code": 0,
+    "other_kinds": [],
+    "build": 4
+   },
+   {
+    "gradle_daemon_peak_mb": 5226,
+    "kotlin_daemon_1_peak_mb": 750,
+    "kotlin_daemon_2_peak_mb": 3314,
+    "kotlin_daemons": 2,
+    "gradle_workers_peak_mb": 0,
+    "aapt2_peak_mb": 47,
+    "total_peak_mb": 9305,
+    "total_peak_at_s": 100.2,
+    "wall_s": 101.2,
+    "exit_code": 0,
+    "other_kinds": [],
+    "build": 5
+   }
+  ],
+  "2c56ce13b": [
+   {
+    "gradle_daemon_peak_mb": 5323,
+    "kotlin_daemon_1_peak_mb": 756,
+    "kotlin_daemon_2_peak_mb": 2188,
+    "kotlin_daemons": 2,
+    "gradle_workers_peak_mb": 0,
+    "aapt2_peak_mb": 24,
+    "total_peak_mb": 8259,
+    "total_peak_at_s": 104.1,
+    "wall_s": 105.1,
+    "exit_code": 0,
+    "other_kinds": [],
+    "build": 1
+   },
+   {
+    "gradle_daemon_peak_mb": 5364,
+    "kotlin_daemon_1_peak_mb": 751,
+    "kotlin_daemon_2_peak_mb": 2769,
+    "kotlin_daemons": 2,
+    "gradle_workers_peak_mb": 0,
+    "aapt2_peak_mb": 47,
+    "total_peak_mb": 8872,
+    "total_peak_at_s": 99.0,
+    "wall_s": 100.0,
+    "exit_code": 0,
+    "other_kinds": [],
+    "build": 2
+   },
+   {
+    "gradle_daemon_peak_mb": 5363,
+    "kotlin_daemon_1_peak_mb": 754,
+    "kotlin_daemon_2_peak_mb": 2431,
+    "kotlin_daemons": 2,
+    "gradle_workers_peak_mb": 0,
+    "aapt2_peak_mb": 24,
+    "total_peak_mb": 8541,
+    "total_peak_at_s": 98.6,
+    "wall_s": 99.6,
+    "exit_code": 0,
+    "other_kinds": [],
+    "build": 3
+   },
+   {
+    "gradle_daemon_peak_mb": 5135,
+    "kotlin_daemon_1_peak_mb": 742,
+    "kotlin_daemon_2_peak_mb": 2262,
+    "kotlin_daemons": 2,
+    "gradle_workers_peak_mb": 0,
+    "aapt2_peak_mb": 45,
+    "total_peak_mb": 8141,
+    "total_peak_at_s": 100.1,
+    "wall_s": 101.1,
+    "exit_code": 0,
+    "other_kinds": [],
+    "build": 4
+   },
+   {
+    "gradle_daemon_peak_mb": 5071,
+    "kotlin_daemon_1_peak_mb": 762,
+    "kotlin_daemon_2_peak_mb": 2796,
+    "kotlin_daemons": 2,
+    "gradle_workers_peak_mb": 0,
+    "aapt2_peak_mb": 47,
+    "total_peak_mb": 8630,
+    "total_peak_at_s": 102.2,
+    "wall_s": 103.3,
+    "exit_code": 0,
+    "other_kinds": [],
+    "build": 5
+   }
+  ]
+ },
+ "measures": {
+  "ade8065442": {
+   "aapt2_peak_mb": [
+    37,
+    37,
+    47,
+    32,
+    47
+   ],
+   "gradle_daemon_peak_mb": [
+    4742,
+    5385,
+    4952,
+    4718,
+    5226
+   ],
+   "gradle_workers_peak_mb": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "kotlin_daemon_1_peak_mb": [
+    765,
+    766,
+    734,
+    726,
+    750
+   ],
+   "kotlin_daemon_2_peak_mb": [
+    3652,
+    2023,
+    2292,
+    2163,
+    3314
+   ],
+   "kotlin_daemons": [
+    2,
+    2,
+    2,
+    2,
+    2
+   ],
+   "total_peak_at_s": [
+    102.8,
+    100.2,
+    101.2,
+    101.1,
+    100.2
+   ],
+   "total_peak_mb": [
+    9135,
+    8158,
+    7966,
+    7600,
+    9305
+   ],
+   "wall_s": [
+    103.8,
+    101.2,
+    102.3,
+    102.1,
+    101.2
+   ]
+  },
+  "2c56ce13b": {
+   "aapt2_peak_mb": [
+    24,
+    47,
+    24,
+    45,
+    47
+   ],
+   "gradle_daemon_peak_mb": [
+    5323,
+    5364,
+    5363,
+    5135,
+    5071
+   ],
+   "gradle_workers_peak_mb": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "kotlin_daemon_1_peak_mb": [
+    756,
+    751,
+    754,
+    742,
+    762
+   ],
+   "kotlin_daemon_2_peak_mb": [
+    2188,
+    2769,
+    2431,
+    2262,
+    2796
+   ],
+   "kotlin_daemons": [
+    2,
+    2,
+    2,
+    2,
+    2
+   ],
+   "total_peak_at_s": [
+    104.1,
+    99.0,
+    98.6,
+    100.1,
+    102.2
+   ],
+   "total_peak_mb": [
+    8259,
+    8872,
+    8541,
+    8141,
+    8630
+   ],
+   "wall_s": [
+    105.1,
+    100.0,
+    99.6,
+    101.1,
+    103.3
+   ]
+  }
+ }
+}
