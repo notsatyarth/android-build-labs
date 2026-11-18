@@ -105,7 +105,8 @@ def parse_markers(text):
                 "previews": m.group(5)}
     rc = re.search(r"^LAB-PROBE root-classpath agp=(\S+) kgp=(\S+)", text, re.M)
     agp = sorted(set(re.findall(r"^LAB-PROBE agp=(\S+) project=", text, re.M)))
-    kgp = sorted(set(re.findall(r"^LAB-PROBE kgp=(\S+) project=", text, re.M)))
+    # "none": the project has no kotlin extension, e.g. because applying the Android plugin failed; not a version
+    kgp = sorted(set(re.findall(r"^LAB-PROBE kgp=(\S+) project=", text, re.M)) - {"none"})
     lv = dict((t, v) for v, t in re.findall(r"^LAB-PROBE lv=(\S+) (\S+)$", text, re.M))
     return {"root": root, "root_agp": rc.group(1) if rc else None, "root_kgp": rc.group(2) if rc else None, "agp": agp, "kgp": kgp, "lv_by_task": lv, "lv_values": sorted(set(lv.values()))}
 
@@ -336,6 +337,7 @@ def main():
         "jvm": r["version"]["jvm"], "build_exit": exit_code, "duration_s": r["duration_s"],
         "configuration_failed": configuration_failed, "counts": counts, "failed": failed_detail,
         "build_errors": first_errors(text, nia), "test_failures": test_failures,
+        "gradle_deprecation_summary": (re.search(r"^Deprecated Gradle features were used in this build[^\n]*", text, re.M) or [None])[0],
         "proof": proof, "harness_fault": bool(faults), "harness_faults": faults,
         "outcomes": outcomes, "kotlin_language_by_task": markers["lv_by_task"],
     }

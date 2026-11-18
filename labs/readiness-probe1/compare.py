@@ -81,11 +81,14 @@ def main():
         fs = failed_set(b)
         known_seen = sorted(fs & known)
         new = sorted(fs - base_failed - known) if (base and name != "baseline") else []
-        lost = []
-        if base and name != "baseline":
+        lost, absent = [], []
+        if base and name != "baseline" and not b["configuration_failed"]:
             for t, o in base["outcomes"].items():
-                if o not in ("failed", "not-run") and b["outcomes"].get(t) in (None, "not-run"):
-                    lost.append(t)
+                if o not in ("failed", "not-run"):
+                    if b["outcomes"].get(t) == "not-run":
+                        lost.append(t)
+                    elif t not in b["outcomes"]:
+                        absent.append(t)
         c = b["counts"]
         raised = b.get("gradle_raised") or {}
         vers = "%s / %s / %s" % (e["gradle"], e["agp"], e["kotlin"])
@@ -105,7 +108,8 @@ def main():
                      "new_failures_vs_baseline": "" if name == "baseline" or b["configuration_failed"] else len(new),
                      "known_baseline_failures_seen": len(known_seen), "harness_fault": b["harness_fault"],
                      "baseline_usable": baseline_usable})
-        report["builds"][name] = {"new_failures": {t: first_line(b, t) for t in new}, "lost_vs_baseline": len(lost),
+        report["builds"][name] = {"new_failures": {t: first_line(b, t) for t in new}, "not_run_vs_baseline": len(lost), "absent_vs_baseline": len(absent),
+                                  "gradle_deprecation_summary": b.get("gradle_deprecation_summary"),
                                   "known_seen": known_seen, "configuration_failed": b["configuration_failed"],
                                   "harness_faults": b["harness_faults"], "proof": b["proof"]}
         sec = ["#### %s" % name, ""]
@@ -126,7 +130,11 @@ def main():
         if known_seen and name != "baseline":
             sec.append("- Known baseline failures present (not counted as new): %s" % ", ".join(known_seen))
         if lost:
-            sec.append("- %d task(s) that ran in the baseline did not run here (not-run or absent from the task graph)" % len(lost))
+            sec.append("- %d task(s) that ran in the baseline were not run here (an upstream task failed)" % len(lost))
+        if absent:
+            sec.append("- %d task(s) of the baseline's task graph are not in this build's task graph, e.g. %s" % (len(absent), ", ".join(absent[:3])))
+        if b.get("gradle_deprecation_summary"):
+            sec.append("- Gradle: `%s`" % b["gradle_deprecation_summary"])
         if b["test_failures"]:
             sec.append("- Failed tests (first %d): %s" % (len(b["test_failures"]), "; ".join(b["test_failures"][:5])))
         details += sec + [""]
