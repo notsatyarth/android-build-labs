@@ -1,0 +1,135 @@
+# Readiness probe 1 on nowinandroid (labs/readiness-probe1): a baseline build and six one-tool builds of the same commit,
+# same runner image, JDK 21, same task command (probe_config.json), --continue, no build cache.
+#   1a "next versions": newest AGP (Google Maven), newest Kotlin (Maven Central), newest Gradle nightly, resolved at run time.
+#   1b "next defaults today": android.simulateAgpVersionBehavior=10.0.0, kotlin.experimental.tryNext=true,
+#      --warning-mode=fail plus the NO_IMPLICIT_LOOKUP_IN_PARENT_PROJECTS feature preview.
+# One job per build; a failing build is a result. The compare job diffs each build with the baseline per task and
+# appends one CSV line per build to data/readiness-probe1/runs.csv on the probe-data branch.
+name: readiness-probe1
+on:
+  workflow_dispatch:
+    inputs:
+      nia_ref:
+        description: "nowinandroid commit (full SHA)"
+        required: false
+        default: "2982e63cb691ad49cd009aab43dc206fee6699c2"
+      store:
+        description: "Append the CSV lines to the probe-data branch"
+        type: boolean
+        required: false
+        default: true
+  schedule:
+    - cron: "23 2 * * 1"  # weekly, Monday 02:23 UTC
+concurrency:
+  group: readiness-probe1
+  cancel-in-progress: false
+permissions:
+  contents: read
+env:
+  NIA_REF: ${{ inputs.nia_ref || '2982e63cb691ad49cd009aab43dc206fee6699c2' }}
+jobs:
+  resolve:
+    runs-on: ubuntu-24.04
+    outputs:
+      builds: ${{ steps.r.outputs.builds }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Clone nowinandroid
+        run: bash .github/scripts/clone_nia.sh "$RUNNER_TEMP/nia" "$NIA_REF"
+      - name: Resolve versions
+        id: r
+        run: |
+          set -o pipefail
+          python3 -I labs/readiness-probe1/resolve.py "$RUNNER_TEMP/nia" resolved.json | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "builds=$(python3 -c 'import json; print(json.dumps(list(json.load(open("labs/readiness-probe1/probe_config.json"))["builds"])))')" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: resolved
+          path: resolved.json
+          retention-days: 90
+  build:
+    needs: resolve
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      max-parallel: 7
+      matrix:
+        build: ${{ fromJSON(needs.resolve.outputs.builds) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Runner info
+        run: bash .github/scripts/runner_info.sh
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: resolved
+      - name: Clone nowinandroid
+        run: bash .github/scripts/clone_nia.sh "$RUNNER_TEMP/nia" "$NIA_REF"
+      - name: Build
+        env:
+          BUILD: ${{ matrix.build }}
+        run: |
+          set -o pipefail
+          python3 -I labs/readiness-probe1/run_build.py "$BUILD" --nia "$RUNNER_TEMP/nia" --resolved resolved.json --out "out/$BUILD" | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: build-${{ matrix.build }}
+          path: out/
+          retention-days: 90
+  compare:
+    needs: [resolve, build]
+    if: always() && needs.resolve.result == 'success'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: build-*
+          path: parts
+      - name: Compare with baseline
+        env:
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          set -o pipefail
+          echo "### Readiness probe 1 on nowinandroid (CI: x86 Linux runner, run $RUN_ID)" >> "$GITHUB_STEP_SUMMARY"
+          python3 -I labs/readiness-probe1/compare.py parts --run-id "$RUN_ID" --csv lines.csv --json compare.json | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: compare
+          path: |
+            lines.csv
+            compare.json
+          retention-days: 90
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: github.event_name == 'schedule' || inputs.store
+        with:
+          ref: probe-data
+          path: probe-data
+      - name: Append to the probe-data branch
+        if: github.event_name == 'schedule' || inputs.store
+        env:
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          set -eu
+          f=probe-data/data/readiness-probe1/runs.csv
+          mkdir -p "$(dirname "$f")"
+          if [ -s "$f" ]; then tail -n +2 lines.csv >> "$f"; else cp lines.csv "$f"; fi
+          cd probe-data
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/readiness-probe1/runs.csv
+          git commit -q -m "readiness-probe1: run $RUN_ID"
+          ok=0
+          for i in 1 2 3; do
+            if git pull -q --rebase origin probe-data && git push -q origin HEAD:probe-data; then ok=1; break; fi
+            sleep 5
+          done
+          [ "$ok" = 1 ] || { echo "push to probe-data failed 3 times"; exit 1; }
+          echo "Appended $(($(wc -l < ../lines.csv) - 1)) line(s) to $f on probe-data" >> "$GITHUB_STEP_SUMMARY"

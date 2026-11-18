@@ -1,0 +1,158 @@
+// Readiness probe 1: per-task outcomes and version markers, compatible with the configuration cache and Isolated
+// Projects (nowinandroid turns both on, with configuration cache problems set to fail).
+//
+// Needs -Dprobe.out=DIR. Writes:
+//   DIR/events.jsonl  one line per finished task (root and included builds), written by a shared build service that
+//                     listens through BuildEventsListenerRegistry.onTaskCompletion (the configuration-cache-compatible
+//                     replacement for TaskExecutionListener). Outcome: success, up-to-date, from-cache, no-source,
+//                     skipped, failed.
+//   DIR/planned.json  every task path in the root build's task graph, written from taskGraph.whenReady at configuration
+//                     time. A planned task with no event never ran (an upstream task failed). No planned.json after a
+//                     failed build = the build failed before the task graph was ready ("configuration failed").
+// Logs (logger.lifecycle, one line each, prefix "LAB-PROBE"): Gradle version, JVM, warning mode, active feature
+// previews (internal API, best effort), AGP version (com.android.Version via the plugin's classloader), KGP version,
+// and the Kotlin language version of every configured Kotlin compile task ("lv=unset" = compiler default).
+import groovy.json.JsonOutput
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
+import org.gradle.build.event.BuildEventsListenerRegistry
+import org.gradle.tooling.events.FinishEvent
+import org.gradle.tooling.events.OperationCompletionListener
+import org.gradle.tooling.events.task.TaskFailureResult
+import org.gradle.tooling.events.task.TaskFinishEvent
+import org.gradle.tooling.events.task.TaskSkippedResult
+import org.gradle.tooling.events.task.TaskSuccessResult
+import javax.inject.Inject
+
+interface LabProbeParams extends BuildServiceParameters {
+    Property<String> getOutFile()
+}
+
+abstract class LabProbeEvents implements BuildService<LabProbeParams>, OperationCompletionListener {
+    @Override
+    void onFinish(FinishEvent e) {
+        if (!(e instanceof TaskFinishEvent)) return
+        def r = e.result
+        String outcome
+        List<String> msgs = []
+        if (r instanceof TaskFailureResult) {
+            outcome = "failed"
+            def walk
+            walk = { fs, depth ->
+                fs.each { f ->
+                    if (msgs.size() < 6 && f.message) msgs << f.message.readLines().take(3).join(" | ")
+                    if (depth < 4) walk(f.causes, depth + 1)
+                }
+            }
+            walk(r.failures, 0)
+        } else if (r instanceof TaskSkippedResult) {
+            outcome = r.skipMessage == "NO-SOURCE" ? "no-source" : "skipped"
+            msgs << r.skipMessage
+        } else if (r instanceof TaskSuccessResult) {
+            outcome = r.fromCache ? "from-cache" : (r.upToDate ? "up-to-date" : "success")
+        } else {
+            outcome = "unknown:" + r.getClass().simpleName
+        }
+        def line = JsonOutput.toJson([path: e.descriptor.taskPath, outcome: outcome, messages: msgs]) + "\n"
+        synchronized (LabProbeEvents) {
+            new File(parameters.outFile.get()).append(line, "UTF-8")
+        }
+    }
+}
+
+abstract class LabProbeSettingsPlugin implements Plugin<Settings> {
+    @Inject
+    abstract BuildEventsListenerRegistry getRegistry()
+
+    void apply(Settings s) {
+        def out = new File(System.getProperty("probe.out"))
+        out.mkdirs()
+        def svc = s.gradle.sharedServices.registerIfAbsent("labProbeEvents", LabProbeEvents) {
+            it.parameters.outFile.set(new File(out, "events.jsonl").absolutePath)
+        }
+        registry.onTaskCompletion(svc)
+    }
+}
+
+def probeOut = System.getProperty("probe.out")
+if (probeOut == null) throw new GradleException("probe.init.gradle needs -Dprobe.out=DIR")
+
+if (gradle.parent == null) {
+    gradle.beforeSettings { s -> s.pluginManager.apply(LabProbeSettingsPlugin) }
+
+    gradle.settingsEvaluated { s ->
+        def sp = s.gradle.startParameter
+        String previews = "unknown"
+        try {
+            // Settings.enableFeaturePreview stores the flag in the settings' FeatureFlags service (Gradle 9.7.1 bytecode)
+            def flagsClass = Class.forName("org.gradle.internal.buildoption.FeatureFlags", true, s.getClass().classLoader)
+            def featureClass = Class.forName('org.gradle.api.internal.FeaturePreviews$Feature', true, s.getClass().classLoader)
+            def flags = s.services.get(flagsClass)
+            previews = featureClass.enumConstants.findAll { it.isActive() && flags.isEnabled(it) }*.name().sort().join(",") ?: "none"
+        } catch (Throwable t) {
+            previews = "unknown(" + t.getClass().simpleName + ")"
+        }
+        Logging.getLogger("lab-probe").lifecycle("LAB-PROBE gradle=" + s.gradle.gradleVersion +
+                " jvm=" + System.getProperty("java.version") + " vendor=" + System.getProperty("java.vendor").replace(' ', '_') +
+                " warningMode=" + sp.warningMode + " previews=" + previews)
+    }
+
+    gradle.taskGraph.whenReady { g ->
+        def paths = g.allTasks.collect { it.path }
+        new File(probeOut).mkdirs()
+        new File(probeOut, "planned.json").setText(JsonOutput.toJson(paths), "UTF-8")
+        Logging.getLogger("lab-probe").lifecycle("LAB-PROBE planned=" + paths.size())
+    }
+
+    gradle.lifecycle.beforeProject { p ->
+        if (p.path == ":") {
+            // The root project puts every plugin on its classpath (plugins { ... apply false }), and it is configured
+            // before any subproject, so these markers appear even when a subproject then fails to configure.
+            p.afterEvaluate {
+                def cl = p.buildscript.classLoader
+                String agp, kgp
+                try {
+                    agp = cl.loadClass("com.android.Version").getField("ANDROID_GRADLE_PLUGIN_VERSION").get(null)
+                } catch (Throwable t) { agp = "unknown(" + t.getClass().simpleName + ")" }
+                try {
+                    def jar = new File(cl.loadClass("org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper")
+                            .protectionDomain.codeSource.location.toURI()).name
+                    def m = jar =~ /^kotlin-gradle-plugin-(.+?)(-gradle\d+)?\.jar$/
+                    kgp = m.find() ? m.group(1) : "unknown(jar " + jar + ")"
+                } catch (Throwable t) { kgp = "unknown(" + t.getClass().simpleName + ")" }
+                p.logger.lifecycle("LAB-PROBE root-classpath agp=" + agp + " kgp=" + kgp)
+            }
+        }
+        p.pluginManager.withPlugin("com.android.base") {
+            if (p.path == ":app") {
+                try {
+                    def ext = p.extensions.getByName("androidComponents")
+                    def v = ext.getClass().classLoader.loadClass("com.android.Version").getField("ANDROID_GRADLE_PLUGIN_VERSION").get(null)
+                    p.logger.lifecycle("LAB-PROBE agp=" + v + " project=" + p.path)
+                } catch (Throwable t) {
+                    p.logger.lifecycle("LAB-PROBE agp=unknown(" + t + ") project=" + p.path)
+                }
+            }
+        }
+        if (p.path == ":app" || p.path == ":core:model") {
+            p.afterEvaluate {
+                def k = p.extensions.findByName("kotlin")
+                if (k == null) { p.logger.lifecycle("LAB-PROBE kgp=none project=" + p.path); return }
+                String v
+                try {
+                    v = k.getClass().classLoader.loadClass("org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapperKt")
+                            .getMethod("getKotlinPluginVersion", Project).invoke(null, p)
+                } catch (Throwable t) {
+                    v = "unknown(" + t.getClass().simpleName + ")"
+                }
+                p.logger.lifecycle("LAB-PROBE kgp=" + v + " project=" + p.path)
+            }
+        }
+        p.tasks.configureEach { t ->
+            if (t.name.startsWith("compile") && t.name.endsWith("Kotlin") && t.hasProperty("compilerOptions")) {
+                def lv = t.compilerOptions.languageVersion.getOrNull()
+                p.logger.lifecycle("LAB-PROBE lv=" + (lv == null ? "unset" : lv.version) + " " + t.path)
+            }
+        }
+    }
+}

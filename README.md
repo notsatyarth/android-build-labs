@@ -33,6 +33,7 @@ Results from GitHub-hosted runners are x86 Linux numbers. Do not compare their t
 | `labs/groovy-migration/` | Does moving nowinandroid's module build scripts (`build.gradle.kts`, `settings.gradle.kts`) to Groovy change configuration time, build time, memory or the number of Kotlin daemons? build-logic stays Kotlin (`convert.py`, hand-written `overrides/`) | yes: `groovy-migration` (variants alternate on one runner, `compare.py`) |
 | `labs/time-share/` | Share of build task time owned by Gradle, AGP, Kotlin and KSP, from a build operation trace, in four scenarios | yes: `time-share` (`compare.py`) |
 | `labs/old-vs-new/` | Old versus new nowinandroid commits (three pairs) with gradle-profiler 0.26.0: configuration, clean and incremental build time, peak RSS, release APK size | yes: `old-vs-new` (one job per pair, `pairs` input) |
+| `labs/readiness-probe1/` | Does nowinandroid build on the next versions today? Baseline plus one build per tool: newest real AGP, Kotlin and Gradle nightly (1a), and today's versions with the next-version switches (1b). Per-task outcomes (failed, not run, passed) from a configuration-cache-safe init script, proof each change took effect, new failures versus baseline | yes: `readiness-probe1` (weekly and manual; `compare.py`; CSV series on the `probe-data` branch) |
 | `labs/version-matrix/` | CI matrix config for `tools/version-matrix` on nowinandroid: baseline, next Gradle, AGP and Kotlin, `simulateAgpVersionBehavior`, `tryNext`, `--warning-mode=fail` | yes: `version-matrix` (cells that fail are findings) |
 | `tools/version-matrix/` | Run one project against a matrix of Gradle, AGP, Kotlin and KSP versions and report what broke and who owns it | used by `version-matrix`; example workflows in `ci/` |
 | `docs/compat-tracking.md` | Feature compatibility tracking: probes, flow, how to add a probe or adapt it to another project; dashboard in `docs/dashboard/` | yes: `history-series`, `flag-availability`, `flag-builds`, `known-issue` |
@@ -52,7 +53,7 @@ cd samples/ksp-root-classpath
 
 ## Running in GitHub Actions
 
-Workflows are `workflow_dispatch` only (Actions tab, "Run workflow"). Each uploads its logs as artifacts and writes a summary table. No workflow publishes a build scan or needs a secret.
+Workflows are `workflow_dispatch` only (Actions tab, "Run workflow"), except `readiness-probe1`, which also runs weekly. Each uploads its logs as artifacts and writes a summary table. No workflow publishes a build scan or needs a secret.
 
 ## Rules for these labs
 

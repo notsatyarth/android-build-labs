@@ -1,0 +1,18 @@
+{
+  "_comment": "Shared by every build of readiness probe 1 (run_build.py) and by compare.py. Change the task command or the known failures here only, so all builds stay identical.",
+  "tasks": [":app:assembleDemoDebug", "testDemoDebugUnitTest"],
+  "common_args": ["--console=plain", "--continue", "--no-build-cache", "-Proborazzi.test.verify=false"],
+  "known_failures": {
+    ":feature:foryou:impl:compileProdDebugUnitTestKotlin": "baseline failure on nowinandroid 2982e63 (ForYouScreenScreenshotTests.kt:21, unresolved import 'test'); not requested by the task command above (demo variant only, like nowinandroid's own CI). Recorded as a known baseline failure, never excluded with -x, and subtracted from 'new failures' if it ever appears."
+  },
+  "builds": {
+    "baseline":  {"mode": "baseline", "tool": "-"},
+    "1a-agp":    {"mode": "real", "tool": "agp"},
+    "1a-kotlin": {"mode": "real", "tool": "kotlin"},
+    "1a-gradle": {"mode": "real", "tool": "gradle"},
+    "1b-agp":    {"mode": "switch", "tool": "agp", "props": {"android.simulateAgpVersionBehavior": "10.0.0"}},
+    "1b-kotlin": {"mode": "switch", "tool": "kotlin", "props": {"kotlin.experimental.tryNext": "true"}},
+    "1b-gradle": {"mode": "switch", "tool": "gradle", "args": ["--warning-mode=fail"],
+                  "settings_append": "enableFeaturePreview(\"NO_IMPLICIT_LOOKUP_IN_PARENT_PROJECTS\")"}
+  }
+}
