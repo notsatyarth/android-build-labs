@@ -1,0 +1,787 @@
+{
+ "schema": "problems-api-run/1",
+ "run_id": 44257421730,
+ "harness_sha": "ffaefeca18a48129742771f8b42981113b66a346",
+ "runner": "GitHub Actions ubuntu-24.04 (x86 Linux)",
+ "checks": [
+  {
+   "id": "H1",
+   "cell": "c1-k230",
+   "result": "PASS",
+   "text": "outcome success, 2 single problem events"
+  },
+  {
+   "id": "H2",
+   "cell": "c1-k230",
+   "result": "PASS",
+   "text": "expected success, got success"
+  },
+  {
+   "id": "H3",
+   "cell": "c1-k230",
+   "result": "PASS",
+   "text": "project Kotlin compiler problems on 2.3.0: 0 (expected 0); build-logic (Gradle's embedded Kotlin): 2"
+  },
+  {
+   "id": "H4",
+   "cell": "c1-k230",
+   "result": "PASS",
+   "text": "AGP problems without the flag: 0 (expected 0)"
+  },
+  {
+   "id": "H6",
+   "cell": "c1-k230",
+   "result": "INFO",
+   "text": "Tooling API 2 (single 2 + summarised 0) vs console: Problem found 2, w: 17, e: 0, Gradle deprecation lines 0, javac warnings 0, WARNING: 76"
+  },
+  {
+   "id": "H1",
+   "cell": "c2-k230-agp",
+   "result": "PASS",
+   "text": "outcome success, 19 single problem events"
+  },
+  {
+   "id": "H2",
+   "cell": "c2-k230-agp",
+   "result": "PASS",
+   "text": "expected success, got success"
+  },
+  {
+   "id": "H3",
+   "cell": "c2-k230-agp",
+   "result": "PASS",
+   "text": "project Kotlin compiler problems on 2.3.0: 0 (expected 0); build-logic (Gradle's embedded Kotlin): 2"
+  },
+  {
+   "id": "H4",
+   "cell": "c2-k230-agp",
+   "result": "INFO",
+   "text": "AGP problems with android.enableProblemsAPI=true: 78"
+  },
+  {
+   "id": "H6",
+   "cell": "c2-k230-agp",
+   "result": "INFO",
+   "text": "Tooling API 80 (single 19 + summarised 61) vs console: Problem found 19, w: 17, e: 0, Gradle deprecation lines 0, javac warnings 0, WARNING: 78"
+  },
+  {
+   "id": "H1",
+   "cell": "c3-k2421-agp",
+   "result": "PASS",
+   "text": "outcome success, 24 single problem events"
+  },
+  {
+   "id": "H2",
+   "cell": "c3-k2421-agp",
+   "result": "PASS",
+   "text": "expected success, got success"
+  },
+  {
+   "id": "H3",
+   "cell": "c3-k2421-agp",
+   "result": "PASS",
+   "text": "project Kotlin compiler problems on 2.4.21: 5 (expected > 0); build-logic (Gradle's embedded Kotlin): 2"
+  },
+  {
+   "id": "H4",
+   "cell": "c3-k2421-agp",
+   "result": "INFO",
+   "text": "AGP problems with android.enableProblemsAPI=true: 78"
+  },
+  {
+   "id": "H6",
+   "cell": "c3-k2421-agp",
+   "result": "INFO",
+   "text": "Tooling API 85 (single 24 + summarised 61) vs console: Problem found 24, w: 0, e: 0, Gradle deprecation lines 0, javac warnings 0, WARNING: 78"
+  },
+  {
+   "id": "H1",
+   "cell": "c4-k2421-agp-next",
+   "result": "PASS",
+   "text": "outcome failure, 36 single problem events"
+  },
+  {
+   "id": "H2",
+   "cell": "c4-k2421-agp-next",
+   "result": "PASS",
+   "text": "expected failure, got failure"
+  },
+  {
+   "id": "H4",
+   "cell": "c4-k2421-agp-next",
+   "result": "INFO",
+   "text": "AGP problems with android.enableProblemsAPI=true: 78"
+  },
+  {
+   "id": "H5",
+   "cell": "c4-k2421-agp-next",
+   "result": "PASS",
+   "text": "line-64 problem: RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE (kotlin > compiler:error)"
+  },
+  {
+   "id": "H6",
+   "cell": "c4-k2421-agp-next",
+   "result": "INFO",
+   "text": "Tooling API 97 (single 36 + summarised 61) vs console: Problem found 36, w: 2, e: 0, Gradle deprecation lines 0, javac warnings 0, WARNING: 78"
+  }
+ ],
+ "cells": {
+  "c1-k230": {
+   "cell": "c1-k230",
+   "versions": {
+    "nia": "2982e63cb691ad49cd009aab43dc206fee6699c2",
+    "catalog_kotlin": "2.3.0",
+    "catalog_agp": "9.3.2",
+    "catalog_ksp": "2.3.4",
+    "resolved_agp": "com.android.tools.build:gradle:9.3.2",
+    "resolved_kgp": "org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.10 -> 2.3.0",
+    "resolved_ksp": "com.google.devtools.ksp:symbol-processing-gradle-plugin:2.2.10-2.0.2 -> 2.3.4",
+    "gradle": "9.7.1",
+    "java": "openjdk version \"21.0.13\" 2026-10-20 LTS"
+   },
+   "task": ":app:assembleDemoDebug",
+   "args": "--rerun-tasks --no-build-cache --warning-mode=all",
+   "outcome": "success",
+   "wall_ms": 241218,
+   "tooling_api_client": "9.7.1",
+   "gradle_version_reported": "9.7.1",
+   "failure_messages": [],
+   "task_outcomes": {
+    "SUCCESS": 555,
+    "UP-TO-DATE": 74,
+    "skipped": 43
+   },
+   "tapi": {
+    "single": 2,
+    "summarised": 0,
+    "total": 2,
+    "summary_records": 0,
+    "other_problem_events": 0,
+    "severities_single": {
+     "WARNING": 2
+    },
+    "by_owner": {
+     "Kotlin": 2
+    },
+    "by_group_path": {
+     "kotlin > compiler:warning": 2
+    },
+    "kotlin_compiler_single": 2,
+    "kotlin_compiler_total": 2,
+    "kotlin_compiler_project_single": 0,
+    "kotlin_compiler_build_logic_single": 2,
+    "with_failure": 0
+   },
+   "console": {
+    "problem_found": 2,
+    "kotlin_w": 17,
+    "kotlin_e": 0,
+    "gradle_deprecation": 0,
+    "javac_warning": 0,
+    "agp_warning": 76
+   },
+   "line64": [],
+   "ids": [
+    {
+     "group_path": [
+      "kotlin",
+      "compiler:warning"
+     ],
+     "group_display_path": [
+      "Kotlin",
+      "Kotlin Compiler Warning"
+     ],
+     "id_name": "compiler-warning",
+     "id_display_name": "Kotlin compiler warning",
+     "owner": "Kotlin",
+     "single": 2,
+     "summarised": 0,
+     "severities": {
+      "WARNING": 2
+     },
+     "total": 2
+    }
+   ]
+  },
+  "c2-k230-agp": {
+   "cell": "c2-k230-agp",
+   "versions": {
+    "nia": "2982e63cb691ad49cd009aab43dc206fee6699c2",
+    "catalog_kotlin": "2.3.0",
+    "catalog_agp": "9.3.2",
+    "catalog_ksp": "2.3.4",
+    "resolved_agp": "com.android.tools.build:gradle:9.3.2",
+    "resolved_kgp": "org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.10 -> 2.3.0",
+    "resolved_ksp": "com.google.devtools.ksp:symbol-processing-gradle-plugin:2.2.10-2.0.2 -> 2.3.4",
+    "gradle": "9.7.1",
+    "java": "openjdk version \"21.0.13\" 2026-10-20 LTS"
+   },
+   "task": ":app:assembleDemoDebug",
+   "args": "--rerun-tasks --no-build-cache --warning-mode=all -Pandroid.enableProblemsAPI=true",
+   "outcome": "success",
+   "wall_ms": 265059,
+   "tooling_api_client": "9.7.1",
+   "gradle_version_reported": "9.7.1",
+   "failure_messages": [],
+   "task_outcomes": {
+    "SUCCESS": 555,
+    "UP-TO-DATE": 74,
+    "skipped": 43
+   },
+   "tapi": {
+    "single": 19,
+    "summarised": 61,
+    "total": 80,
+    "summary_records": 1,
+    "other_problem_events": 0,
+    "severities_single": {
+     "WARNING": 19
+    },
+    "by_owner": {
+     "AGP": 78,
+     "Kotlin": 2
+    },
+    "by_group_path": {
+     "agp-sync-issues": 78,
+     "kotlin > compiler:warning": 2
+    },
+    "kotlin_compiler_single": 2,
+    "kotlin_compiler_total": 2,
+    "kotlin_compiler_project_single": 0,
+    "kotlin_compiler_build_logic_single": 2,
+    "with_failure": 17
+   },
+   "console": {
+    "problem_found": 19,
+    "kotlin_w": 17,
+    "kotlin_e": 0,
+    "gradle_deprecation": 0,
+    "javac_warning": 0,
+    "agp_warning": 78
+   },
+   "line64": [],
+   "ids": [
+    {
+     "group_path": [
+      "agp-sync-issues"
+     ],
+     "group_display_path": [
+      "Sync Issues"
+     ],
+     "id_name": "32",
+     "id_display_name": "UNSUPPORTED_PROJECT_OPTION_USE",
+     "owner": "AGP",
+     "single": 2,
+     "summarised": 0,
+     "severities": {
+      "WARNING": 2
+     },
+     "total": 2
+    },
+    {
+     "group_path": [
+      "kotlin",
+      "compiler:warning"
+     ],
+     "group_display_path": [
+      "Kotlin",
+      "Kotlin Compiler Warning"
+     ],
+     "id_name": "compiler-warning",
+     "id_display_name": "Kotlin compiler warning",
+     "owner": "Kotlin",
+     "single": 2,
+     "summarised": 0,
+     "severities": {
+      "WARNING": 2
+     },
+     "total": 2
+    },
+    {
+     "group_path": [
+      "agp-sync-issues"
+     ],
+     "group_display_path": [
+      "Sync Issues"
+     ],
+     "id_name": "0",
+     "id_display_name": "GENERIC",
+     "owner": "AGP",
+     "single": 15,
+     "summarised": 61,
+     "severities": {
+      "WARNING": 15
+     },
+     "total": 76
+    }
+   ]
+  },
+  "c3-k2421-agp": {
+   "cell": "c3-k2421-agp",
+   "versions": {
+    "nia": "2982e63cb691ad49cd009aab43dc206fee6699c2",
+    "catalog_kotlin": "2.4.21",
+    "catalog_agp": "9.3.2",
+    "catalog_ksp": "2.3.4",
+    "resolved_agp": "com.android.tools.build:gradle:9.3.2",
+    "resolved_kgp": "org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.10 -> 2.4.21",
+    "resolved_ksp": "com.google.devtools.ksp:symbol-processing-gradle-plugin:2.2.10-2.0.2 -> 2.3.4",
+    "gradle": "9.7.1",
+    "java": "openjdk version \"21.0.13\" 2026-10-20 LTS"
+   },
+   "task": ":app:assembleDemoDebug",
+   "args": "--rerun-tasks --no-build-cache --warning-mode=all -Pandroid.enableProblemsAPI=true",
+   "outcome": "success",
+   "wall_ms": 282071,
+   "tooling_api_client": "9.7.1",
+   "gradle_version_reported": "9.7.1",
+   "failure_messages": [],
+   "task_outcomes": {
+    "SUCCESS": 555,
+    "UP-TO-DATE": 74,
+    "skipped": 43
+   },
+   "tapi": {
+    "single": 24,
+    "summarised": 61,
+    "total": 85,
+    "summary_records": 1,
+    "other_problem_events": 0,
+    "severities_single": {
+     "WARNING": 24
+    },
+    "by_owner": {
+     "AGP": 78,
+     "Kotlin": 7
+    },
+    "by_group_path": {
+     "agp-sync-issues": 78,
+     "kotlin > compiler:warning": 7
+    },
+    "kotlin_compiler_single": 7,
+    "kotlin_compiler_total": 7,
+    "kotlin_compiler_project_single": 5,
+    "kotlin_compiler_build_logic_single": 2,
+    "with_failure": 17
+   },
+   "console": {
+    "problem_found": 24,
+    "kotlin_w": 0,
+    "kotlin_e": 0,
+    "gradle_deprecation": 0,
+    "javac_warning": 0,
+    "agp_warning": 78
+   },
+   "line64": [
+    {
+     "kind": "problem",
+     "seq": 22,
+     "group_path": [
+      "kotlin",
+      "compiler:warning"
+     ],
+     "group_display_path": [
+      "Kotlin",
+      "Kotlin Compiler Warning"
+     ],
+     "id_name": "RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING",
+     "id_display_name": "Kotlin compiler: RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING",
+     "severity": 1,
+     "severity_known": true,
+     "severity_name": "WARNING",
+     "contextual_label": "Kotlin compiler warning",
+     "details": "Return in function with expression body and without explicit return type. Use block body '{...}' or add an explicit return type. This will become an error in language version 2.5. See https://youtrack.jetbrains.com/issue/KTLC-288.",
+     "documentation": null,
+     "origin_locations": [
+      {
+       "type": "line_in_file",
+       "path": "<project>/core/notifications/src/main/kotlin/com/google/samples/apps/nowinandroid/core/notifications/SystemTrayNotifier.kt",
+       "line": 64,
+       "column": 13,
+       "length": 6
+      }
+     ],
+     "contextual_locations": [
+      {
+       "type": "task_path",
+       "task_path": ":core:notifications:compileDemoDebugKotlin"
+      }
+     ],
+     "solutions": [],
+     "has_failure": false,
+     "additional_data_class": "CustomAdditionalData",
+     "parent_operation": "Run build",
+     "task": ":core:notifications:compileDemoDebugKotlin"
+    }
+   ],
+   "ids": [
+    {
+     "group_path": [
+      "agp-sync-issues"
+     ],
+     "group_display_path": [
+      "Sync Issues"
+     ],
+     "id_name": "32",
+     "id_display_name": "UNSUPPORTED_PROJECT_OPTION_USE",
+     "owner": "AGP",
+     "single": 2,
+     "summarised": 0,
+     "severities": {
+      "WARNING": 2
+     },
+     "total": 2
+    },
+    {
+     "group_path": [
+      "kotlin",
+      "compiler:warning"
+     ],
+     "group_display_path": [
+      "Kotlin",
+      "Kotlin Compiler Warning"
+     ],
+     "id_name": "compiler-warning",
+     "id_display_name": "Kotlin compiler warning",
+     "owner": "Kotlin",
+     "single": 2,
+     "summarised": 0,
+     "severities": {
+      "WARNING": 2
+     },
+     "total": 2
+    },
+    {
+     "group_path": [
+      "agp-sync-issues"
+     ],
+     "group_display_path": [
+      "Sync Issues"
+     ],
+     "id_name": "0",
+     "id_display_name": "GENERIC",
+     "owner": "AGP",
+     "single": 15,
+     "summarised": 61,
+     "severities": {
+      "WARNING": 15
+     },
+     "total": 76
+    },
+    {
+     "group_path": [
+      "kotlin",
+      "compiler:warning"
+     ],
+     "group_display_path": [
+      "Kotlin",
+      "Kotlin Compiler Warning"
+     ],
+     "id_name": "OPT_IN_REQUIREMENT_MARKER_IS_UNRESOLVED",
+     "id_display_name": "Kotlin compiler: OPT_IN_REQUIREMENT_MARKER_IS_UNRESOLVED",
+     "owner": "Kotlin",
+     "single": 2,
+     "summarised": 0,
+     "severities": {
+      "WARNING": 2
+     },
+     "total": 2
+    },
+    {
+     "group_path": [
+      "kotlin",
+      "compiler:warning"
+     ],
+     "group_display_path": [
+      "Kotlin",
+      "Kotlin Compiler Warning"
+     ],
+     "id_name": "RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING",
+     "id_display_name": "Kotlin compiler: RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING",
+     "owner": "Kotlin",
+     "single": 1,
+     "summarised": 0,
+     "severities": {
+      "WARNING": 1
+     },
+     "total": 1
+    },
+    {
+     "group_path": [
+      "kotlin",
+      "compiler:warning"
+     ],
+     "group_display_path": [
+      "Kotlin",
+      "Kotlin Compiler Warning"
+     ],
+     "id_name": "DEPRECATION",
+     "id_display_name": "Kotlin compiler: DEPRECATION",
+     "owner": "Kotlin",
+     "single": 2,
+     "summarised": 0,
+     "severities": {
+      "WARNING": 2
+     },
+     "total": 2
+    }
+   ]
+  },
+  "c4-k2421-agp-next": {
+   "cell": "c4-k2421-agp-next",
+   "versions": {
+    "nia": "2982e63cb691ad49cd009aab43dc206fee6699c2",
+    "catalog_kotlin": "2.4.21",
+    "catalog_agp": "9.3.2",
+    "catalog_ksp": "2.3.4",
+    "resolved_agp": "com.android.tools.build:gradle:9.3.2",
+    "resolved_kgp": "org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.10 -> 2.4.21",
+    "resolved_ksp": "com.google.devtools.ksp:symbol-processing-gradle-plugin:2.2.10-2.0.2 -> 2.3.4",
+    "gradle": "9.7.1",
+    "java": "openjdk version \"21.0.13\" 2026-10-20 LTS"
+   },
+   "task": ":app:assembleDemoDebug",
+   "args": "--rerun-tasks --no-build-cache --warning-mode=all -Pandroid.enableProblemsAPI=true -Pkotlin.experimental.tryNext=true",
+   "outcome": "failure",
+   "wall_ms": 129995,
+   "tooling_api_client": "9.7.1",
+   "gradle_version_reported": "9.7.1",
+   "failure_messages": [
+    "Execution failed for task ':core:notifications:compileDemoDebugKotlin' (registered by plugin 'com.android.internal.library')."
+   ],
+   "task_outcomes": {
+    "SUCCESS": 116,
+    "UP-TO-DATE": 50,
+    "failed": 1,
+    "skipped": 10
+   },
+   "tapi": {
+    "single": 36,
+    "summarised": 61,
+    "total": 97,
+    "summary_records": 1,
+    "other_problem_events": 0,
+    "severities_single": {
+     "WARNING": 35,
+     "ERROR": 1
+    },
+    "by_owner": {
+     "AGP": 78,
+     "Kotlin": 19
+    },
+    "by_group_path": {
+     "agp-sync-issues": 78,
+     "kotlin > kgp:experimental": 2,
+     "kotlin > compiler:warning": 16,
+     "kotlin > compiler:error": 1
+    },
+    "kotlin_compiler_single": 17,
+    "kotlin_compiler_total": 17,
+    "kotlin_compiler_project_single": 15,
+    "kotlin_compiler_build_logic_single": 2,
+    "with_failure": 18
+   },
+   "console": {
+    "problem_found": 36,
+    "kotlin_w": 2,
+    "kotlin_e": 0,
+    "gradle_deprecation": 0,
+    "javac_warning": 0,
+    "agp_warning": 78
+   },
+   "line64": [
+    {
+     "kind": "problem",
+     "seq": 31,
+     "group_path": [
+      "kotlin",
+      "compiler:error"
+     ],
+     "group_display_path": [
+      "Kotlin",
+      "Kotlin Compiler Error"
+     ],
+     "id_name": "RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE",
+     "id_display_name": "Kotlin compiler: RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE",
+     "severity": 2,
+     "severity_known": true,
+     "severity_name": "ERROR",
+     "contextual_label": "Kotlin compiler error",
+     "details": "Returns are prohibited in functions with expression body and without explicit return type. Use block body '{...}' or add an explicit return type.",
+     "documentation": null,
+     "origin_locations": [
+      {
+       "type": "line_in_file",
+       "path": "<project>/core/notifications/src/main/kotlin/com/google/samples/apps/nowinandroid/core/notifications/SystemTrayNotifier.kt",
+       "line": 64,
+       "column": 13,
+       "length": 6
+      }
+     ],
+     "contextual_locations": [
+      {
+       "type": "task_path",
+       "task_path": ":core:notifications:compileDemoDebugKotlin"
+      }
+     ],
+     "solutions": [],
+     "has_failure": true,
+     "failure_message": "Returns are prohibited in functions with expression body and without explicit return type. Use block body '{...}' or add an explicit return type.",
+     "additional_data_class": "CustomAdditionalData",
+     "parent_operation": "Run build",
+     "task": ":core:notifications:compileDemoDebugKotlin"
+    }
+   ],
+   "ids": [
+    {
+     "group_path": [
+      "agp-sync-issues"
+     ],
+     "group_display_path": [
+      "Sync Issues"
+     ],
+     "id_name": "32",
+     "id_display_name": "UNSUPPORTED_PROJECT_OPTION_USE",
+     "owner": "AGP",
+     "single": 2,
+     "summarised": 0,
+     "severities": {
+      "WARNING": 2
+     },
+     "total": 2
+    },
+    {
+     "group_path": [
+      "kotlin",
+      "kgp:experimental"
+     ],
+     "group_display_path": [
+      "Kotlin",
+      "Kotlin Gradle Plugin Experimental Feature"
+     ],
+     "id_name": "experimental-try-next-warning",
+     "id_display_name": "Experimental 'kotlin.experimental.tryNext' Option Enabled",
+     "owner": "Kotlin",
+     "single": 2,
+     "summarised": 0,
+     "severities": {
+      "WARNING": 2
+     },
+     "total": 2
+    },
+    {
+     "group_path": [
+      "kotlin",
+      "compiler:warning"
+     ],
+     "group_display_path": [
+      "Kotlin",
+      "Kotlin Compiler Warning"
+     ],
+     "id_name": "compiler-warning",
+     "id_display_name": "Kotlin compiler warning",
+     "owner": "Kotlin",
+     "single": 2,
+     "summarised": 0,
+     "severities": {
+      "WARNING": 2
+     },
+     "total": 2
+    },
+    {
+     "group_path": [
+      "agp-sync-issues"
+     ],
+     "group_display_path": [
+      "Sync Issues"
+     ],
+     "id_name": "0",
+     "id_display_name": "GENERIC",
+     "owner": "AGP",
+     "single": 15,
+     "summarised": 61,
+     "severities": {
+      "WARNING": 15
+     },
+     "total": 76
+    },
+    {
+     "group_path": [
+      "kotlin",
+      "compiler:warning"
+     ],
+     "group_display_path": [
+      "Kotlin",
+      "Kotlin Compiler Warning"
+     ],
+     "id_name": "EXPERIMENTAL_LANGUAGE_VERSION",
+     "id_display_name": "Kotlin compiler: EXPERIMENTAL_LANGUAGE_VERSION",
+     "owner": "Kotlin",
+     "single": 10,
+     "summarised": 0,
+     "severities": {
+      "WARNING": 10
+     },
+     "total": 10
+    },
+    {
+     "group_path": [
+      "kotlin",
+      "compiler:warning"
+     ],
+     "group_display_path": [
+      "Kotlin",
+      "Kotlin Compiler Warning"
+     ],
+     "id_name": "OPT_IN_REQUIREMENT_MARKER_IS_UNRESOLVED",
+     "id_display_name": "Kotlin compiler: OPT_IN_REQUIREMENT_MARKER_IS_UNRESOLVED",
+     "owner": "Kotlin",
+     "single": 2,
+     "summarised": 0,
+     "severities": {
+      "WARNING": 2
+     },
+     "total": 2
+    },
+    {
+     "group_path": [
+      "kotlin",
+      "compiler:error"
+     ],
+     "group_display_path": [
+      "Kotlin",
+      "Kotlin Compiler Error"
+     ],
+     "id_name": "RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE",
+     "id_display_name": "Kotlin compiler: RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE",
+     "owner": "Kotlin",
+     "single": 1,
+     "summarised": 0,
+     "severities": {
+      "ERROR": 1
+     },
+     "total": 1
+    },
+    {
+     "group_path": [
+      "kotlin",
+      "compiler:warning"
+     ],
+     "group_display_path": [
+      "Kotlin",
+      "Kotlin Compiler Warning"
+     ],
+     "id_name": "DEPRECATION",
+     "id_display_name": "Kotlin compiler: DEPRECATION",
+     "owner": "Kotlin",
+     "single": 2,
+     "summarised": 0,
+     "severities": {
+      "WARNING": 2
+     },
+     "total": 2
+    }
+   ]
+  }
+ }
+}
