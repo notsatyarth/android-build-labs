@@ -1,0 +1,8 @@
+date,run_id,nia_commit,build,mode,tool,gradle,agp,kotlin,jvm,gradle_raised_from,build_exit,configuration_failed,failed,not_run,passed,planned,new_failures_vs_baseline,known_baseline_failures_seen,harness_fault,baseline_usable
+2026-11-18,44256256333,2982e63cb691ad49cd009aab43dc206fee6699c2,baseline,baseline,-,9.7.1,9.3.2,2.3.0,21.0.13,,0,False,0,0,1147,1147,,0,False,True
+2026-11-18,44256256333,2982e63cb691ad49cd009aab43dc206fee6699c2,1a-agp,real,agp,9.8.2,9.6.0-alpha04,2.3.0,21.0.13,9.7.1,0,False,0,0,1176,1176,0,0,False,True
+2026-11-18,44256256333,2982e63cb691ad49cd009aab43dc206fee6699c2,1a-kotlin,real,kotlin,9.7.1,9.3.2,2.5.0-RC,21.0.13,,1,False,1,253,893,1147,1,0,False,True
+2026-11-18,44256256333,2982e63cb691ad49cd009aab43dc206fee6699c2,1a-gradle,real,gradle,9.10.0-20261117032655+0000,9.3.2,2.3.0,21.0.13,,0,False,0,0,1147,1147,0,0,False,True
+2026-11-18,44256256333,2982e63cb691ad49cd009aab43dc206fee6699c2,1b-agp,switch,agp,9.7.1,9.3.2,2.3.0,21.0.13,,1,True,0,0,0,,,0,True,True
+2026-11-18,44256256333,2982e63cb691ad49cd009aab43dc206fee6699c2,1b-kotlin,switch,kotlin,9.7.1,9.3.2,2.3.0,21.0.13,,1,False,1,253,893,1147,1,0,False,True
+2026-11-18,44256256333,2982e63cb691ad49cd009aab43dc206fee6699c2,1b-gradle,switch,gradle,9.7.1,9.3.2,2.3.0,21.0.13,,0,False,0,0,1147,1147,0,0,False,True
