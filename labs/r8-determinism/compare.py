@@ -4,6 +4,7 @@
 Predictions were written before the first CI run (2026-11-06); no macOS run exists for this lab, so each
 line states the expectation and whether the CI run agrees. Verdicts: AGREES, DIFFERS, MISSING.
 Exit code 0 always: a DIFFERS line is a finding.
+Part C (versions.json, added 2026-11-19): one unchanged program through R8 8.0.40 to 9.3.16.
 Usage: compare.py LOGS_DIR [--markdown]
 """
 import json
@@ -128,6 +129,29 @@ def main():
     check("J5", "run time: with @SerializedName the old JSON is read correctly after adding a field",
           lambda: rd("annotated-base -> annotated-addfield").startswith(ok_line),
           lambda: "%s | %s" % (rd("annotated-base writes"), rd("annotated-base -> annotated-addfield")))
+
+    # Part C (added 2026-11-19, predictions written before the first run): one unchanged program, R8 8.0.40 to 9.3.16
+    V = load(logs, "versions.json") or {}
+    vb, vr = V.get("builds") or {}, V.get("reads") or {}
+    vs = V.get("versions") or []
+    def vnames(v):
+        n = vb[v]["names"]
+        return {c.split(".")[-1]: n[c]["fields"] for c in sorted(n)}
+    def vread(k):
+        lines = vr[k]["out"].splitlines()
+        hit = [l for l in lines if l.startswith("LAB_READ")]
+        exc = [l.strip() for l in lines if "Exception" in l and not l.strip().startswith("at ")]
+        return hit[-1] if hit else (exc[0][:200] if exc else (lines[-1] if lines else ""))
+    check("V0", "(sample check) every R8 version from 8.0.40 to 9.3.16 shrinks the program and keeps the Settings and Profile fields",
+          lambda: len(vs) > 1 and all(vb[v]["r8_exit"] == 0 and len(vnames(v).get("Settings", {})) == 3 and len(vnames(v).get("Profile", {})) == 10 for v in vs),
+          lambda: "; ".join("%s exit %s" % (v, vb[v]["r8_exit"]) for v in vs))
+    check("V1", "(prediction) an R8 upgrade alone, 8.x to 9.x, does not rename the obfuscated fields of an unchanged class",
+          lambda: all(vnames(v) == vnames(vs[0]) for v in vs),
+          lambda: " ; ".join("%s %s" % (v, vnames(v)) for v in vs))
+    check("V2", "(prediction) JSON written by any of these R8 versions is read correctly by every other one",
+          lambda: all(vread(w + " -> " + r) == vread(w + " -> " + w) and vr[w + " -> " + r]["exit"] == 0 for w in vs for r in vs),
+          lambda: "; ".join("%s->%s: %s" % (w, r, vread(w + " -> " + r)[:90]) for w in vs for r in vs
+                            if vread(w + " -> " + r) != vread(w + " -> " + w) or vr[w + " -> " + r]["exit"] != 0) or "all %d pairs read correctly" % (len(vs) ** 2))
 
     if md:
         print("| ID | Hypothesis | Verdict | Measured |\n|---|---|---|---|")

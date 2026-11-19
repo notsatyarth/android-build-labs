@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "parts to run: android,jvm (empty: both)"
+        description: "parts to run: android,jvm,versions (empty: all)"
         required: false
         default: ""
 permissions:

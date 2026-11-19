@@ -13,8 +13,11 @@ Part B, jvm: the same question at run time. A plain Java program (Gson, one Sett
 shrunk by the R8 jar AGP uses (classfile output) and run: the baseline build WRITES the JSON, the other
 builds READ it, so a renamed field shows up as a lost or wrong value.
 
+Part C, versions: one unchanged program (Settings, 3 fields; Profile, 10 fields) shrunk by R8 8.0.40 to 9.3.16;
+each version writes the JSON and every version reads it (does an R8 upgrade alone rename fields?).
+
 Usage (JAVA_HOME 17, ANDROID_HOME set):
-  python3 run.py [--logs logs] [--only android,jvm]
+  python3 run.py [--logs logs] [--only android,jvm,versions]
 Writes logs/android.json, logs/jvm.json and build logs. compare.py checks the hypotheses.
 """
 import argparse, hashlib, json, os, re, shutil, subprocess, sys, tempfile, urllib.request, zipfile
@@ -417,6 +420,105 @@ def run_jvm(logs, work, r8_version):
     return res
 
 
+# ---------------------------------------------------------------- Part C: one program, many R8 versions
+# Question (speaker, 2026-11-19): does a major R8 upgrade (8.x -> 9.x) alone rename the obfuscated fields of
+# an unchanged class? Same sources, same Gson, same rules; only the R8 jar changes. Each version writes the
+# JSON and every version reads every other version's JSON.
+R8_VERSIONS = ["8.0.40", "8.5.35", "8.9.35", "8.13.25", "9.0.55", "9.3.16"]
+WIDE = [("id", "long"), ("displayName", "String"), ("email", "String"), ("age", "int"), ("score", "double"),
+        ("premium", "boolean"), ("locale", "String"), ("visits", "int"), ("lastSeen", "long"), ("darkMode", "boolean")]
+WIDE_ARGS = ["7", "Asha", "a@example.com", "31", "4.5", "true", "en-IN", "12", "1700000000", "false"]
+
+
+def java_wide():
+    decl = "\n".join("  private final %s %s;" % (t, n) for n, t in WIDE)
+    params = ", ".join("%s %s" % (t, n) for n, t in WIDE)
+    assign = " ".join("this.%s = %s;" % (n, n) for n, _ in WIDE)
+    desc = ' + " " + '.join('"%s=" + %s' % (n, n) for n, _ in WIDE)
+    return f"package lab.jvm.model;\npublic final class Profile {{\n{decl}\n  public Profile({params}) {{ {assign} }}\n  public String describe() {{ return {desc}; }}\n}}\n"
+
+
+def java_main_versions():
+    parse = {"long": "Long.parseLong(a[%d])", "int": "Integer.parseInt(a[%d])", "double": "Double.parseDouble(a[%d])",
+             "boolean": "Boolean.parseBoolean(a[%d])", "String": "a[%d]"}
+    wargs = ", ".join(parse[t] % (5 + i) for i, (_, t) in enumerate(WIDE))
+    return f'''package lab.jvm;
+import com.google.gson.Gson;
+import java.nio.file.*;
+import lab.jvm.model.Settings;
+import lab.jvm.model.Profile;
+public final class Main {{
+  public static void main(String[] a) throws Exception {{
+    Gson gson = new Gson();
+    Path ps = Paths.get(a[1] + ".settings.json"), pp = Paths.get(a[1] + ".profile.json");
+    if (a[0].equals("write")) {{
+      String js = gson.toJson(new Settings(a[2], Integer.parseInt(a[3]), Boolean.parseBoolean(a[4])));
+      String jp = gson.toJson(new Profile({wargs}));
+      Files.write(ps, js.getBytes("UTF-8")); Files.write(pp, jp.getBytes("UTF-8"));
+      System.out.println("LAB_JSON " + js + " " + jp);
+    }} else {{
+      Settings s = gson.fromJson(new String(Files.readAllBytes(ps), "UTF-8"), Settings.class);
+      Profile q = gson.fromJson(new String(Files.readAllBytes(pp), "UTF-8"), Profile.class);
+      System.out.println("LAB_READ userName=" + s.userName() + " themeId=" + s.themeId() + " notificationsOn=" + s.notificationsOn() + " | " + q.describe());
+    }}
+  }}
+}}
+'''
+
+
+def run_versions(logs, work):
+    gson_jar = fetch(f"{CENTRAL}/com/google/code/gson/gson/{BASE_GSON}/gson-{BASE_GSON}.jar", os.path.join(work, f"gson-{BASE_GSON}.jar"))
+    with zipfile.ZipFile(gson_jar) as z:
+        gson_rules = os.path.join(work, "gson.pro")
+        open(gson_rules, "wb").write(z.read("META-INF/proguard/gson.pro"))
+    src = os.path.join(work, "versions-src")
+    shutil.rmtree(src, ignore_errors=True)
+    files = {"lab/jvm/model/Settings.java": java_settings(False, False), "lab/jvm/model/Profile.java": java_wide(),
+             "lab/jvm/Main.java": java_main_versions()}
+    for p, t in files.items():
+        os.makedirs(os.path.dirname(os.path.join(src, p)), exist_ok=True)
+        open(os.path.join(src, p), "w").write(t)
+    classes = os.path.join(work, "versions-classes")
+    shutil.rmtree(classes, ignore_errors=True); os.makedirs(classes)
+    subprocess.run(["javac", "--release", "17", "-cp", gson_jar, "-d", classes] + [os.path.join(src, p) for p in files], check=True)
+    app_jar = os.path.join(work, "versions-app.jar")
+    subprocess.run(["jar", "--create", "--file", app_jar, "-C", classes, "."], check=True)
+    rules = os.path.join(work, "versions-rules.pro")
+    open(rules, "w").write("-keep class lab.jvm.Main { public static void main(java.lang.String[]); }\n-dontwarn **\n")
+    res = {"gson": BASE_GSON, "versions": R8_VERSIONS, "builds": {}, "reads": {}}
+    jars = {}
+    for v in R8_VERSIONS:
+        r8_jar = fetch(f"{GOOGLE}/com/android/tools/r8/{v}/r8-{v}.jar", os.path.join(work, f"r8-{v}.jar"))
+        d = os.path.join(work, "v-" + v); os.makedirs(d, exist_ok=True)
+        out_jar, mp = os.path.join(d, "out.jar"), os.path.join(d, "mapping.txt")
+        cmd = ["java", "-cp", r8_jar, "com.android.tools.r8.R8", "--release", "--classfile", "--output", out_jar,
+               "--pg-conf", rules, "--pg-conf", gson_rules, "--pg-map-output", mp, "--lib", os.environ["JAVA_HOME"], app_jar, gson_jar]
+        p = subprocess.run(cmd, capture_output=True, text=True)
+        open(os.path.join(logs, f"versions-r8-{v}.log"), "w").write("$ " + " ".join(cmd) + "\n" + p.stdout + p.stderr)
+        b = {"r8_exit": p.returncode, "r8_output": (p.stdout + p.stderr)[-400:]}
+        if p.returncode == 0:
+            b["mapping_sha"] = sha(mp)
+            b["names"] = parse_mapping(mp, {"lab.jvm.model.Settings", "lab.jvm.model.Profile"})
+            shutil.copy(mp, os.path.join(logs, f"versions-mapping-{v}.txt"))
+            jars[v] = out_jar
+        res["builds"][v] = b
+        print("R8 %-8s exit=%s %s" % (v, p.returncode, json.dumps(b.get("names"))), flush=True)
+
+    def run(v, mode, base):
+        p = subprocess.run(["java", "-cp", jars[v], "lab.jvm.Main", mode, base, "jesse", "2", "true"] + WIDE_ARGS, capture_output=True, text=True)
+        o = (p.stdout + p.stderr).strip()
+        return {"exit": p.returncode, "out": o if len(o) <= 1200 else o[:800] + "\n...\n" + o[-400:]}
+
+    for w in jars:
+        base = os.path.join(work, "w-" + w)
+        res["reads"][w + " writes"] = run(w, "write", base)
+        for r in jars:
+            res["reads"][w + " -> " + r] = run(r, "read", base)
+    for k, v in res["reads"].items():
+        print("%-22s %s" % (k, v["out"].splitlines()[-1] if v["out"] else v), flush=True)
+    return res
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--logs", default=os.path.join(HERE, "logs"))
@@ -424,7 +526,7 @@ def main():
     a = ap.parse_args()
     logs = os.path.abspath(a.logs)
     os.makedirs(logs, exist_ok=True)
-    only = set(a.only.split(",")) if a.only else {"android", "jvm"}
+    only = set(a.only.split(",")) if a.only else {"android", "jvm", "versions"}
     work = tempfile.mkdtemp(prefix="r8-determinism-")
     r8v = None
     if "android" in only:
@@ -440,6 +542,9 @@ def main():
             print("R8 version from probe build:", r8v, flush=True)
         rj = run_jvm(logs, work, r8v)
         json.dump(rj, open(os.path.join(logs, "jvm.json"), "w"), indent=1)
+    if "versions" in only:
+        rv = run_versions(logs, work)
+        json.dump(rv, open(os.path.join(logs, "versions.json"), "w"), indent=1)
     shutil.rmtree(work, ignore_errors=True)
 
 
